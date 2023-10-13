@@ -5,8 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class IconHomeManagerUI : MonoBehaviour {
-    
-    
     [SerializeField] private IconHome iconHome;
     [SerializeField] private GameObject parentHomeHor;
     [SerializeField] private Transform content;
@@ -30,6 +28,8 @@ public class IconHomeManagerUI : MonoBehaviour {
 
             List<IconHome> targets = new List<IconHome>();
             for (int j = startIndexPeople; j < startIndexPeople + e.peoples.Count; j++) {
+                
+                
                 IconHome icon;
                 if (j >= IconHomes.Count) {
                     icon = Instantiate(iconHome, parent);
@@ -37,6 +37,7 @@ public class IconHomeManagerUI : MonoBehaviour {
                 }
                 else {
                     icon = IconHomes[j];
+                    icon.transform.SetParent(parent);
                 }
                 
                 icon.transform.position = Camera.main.WorldToScreenPoint(e.home.transform.position);
@@ -47,7 +48,8 @@ public class IconHomeManagerUI : MonoBehaviour {
             gamePlayUI.GetIconPeopleManagerUI().Add(targets, e.peoples, startIndexPeople);
             startIndexPeople += e.peoples.Count;
         }
-        
+
+        gamePlayUI.GetIconPeopleManagerUI().SetAmountPeople(startIndexPeople);
         iconHome.gameObject.SetActive(false);
         parentHomeHor.SetActive(false);
     }

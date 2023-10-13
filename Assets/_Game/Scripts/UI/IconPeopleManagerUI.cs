@@ -5,58 +5,54 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class IconPeopleManagerUI : MonoBehaviour {
+public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconPeople> {
 	public Action<PeopleSO> OnPeopleCorrectHome;
-
-	[SerializeField] private IconPeople iconPeople;
-	[SerializeField] private Transform content;
-	private List<IconPeople> iconPeoples;
-//List<MapManager.ElementMap> homes, List<Transform> IconHomes
+	private int amountPeople;
 
 	public void TryAgain() {
-		if (iconPeoples == null || iconPeoples.Count <= 0) return;
+		if (pooledObjects == null || pooledObjects.Count <= 0) return;
 
-		foreach (var icon in iconPeoples) {
+		foreach (var icon in pooledObjects) {
 			icon.EnableIgnoreLayout(false);
 			icon.transform.SetParent(content);
+			icon.gameObject.SetActive(false);
+			ResetSetupPoolObject(icon);
 		}
 	}
 
 	public void Add(List<IconHome> targets, List<PeopleSO> peoplesSO, int startIndexPeople) {
-		if (iconPeoples == null) {
-			iconPeoples = new List<IconPeople>();
-			iconPeople.gameObject.SetActive(false);
-		}
-		
 		int index = 0;
 		for (int i = startIndexPeople; i < startIndexPeople + peoplesSO.Count; i++) {
-			IconPeople icon;
-			if (i >= iconPeoples.Count) {
-				icon = Instantiate(iconPeople, content);
-				iconPeoples.Add(icon);
-			}
-			else {
-				icon = iconPeoples[index];
-			}
-
+			IconPeople icon = GetObjectPooledAvailable();
 			icon.Init(targets, peoplesSO[index]);
+			
 			icon.OnCorrectTarget += OnPeopleCorrectHome;
 			icon.OnCorrectTarget += (x) => {
-				foreach (var icon in iconPeoples) {
-					icon.RemoveTarget(icon.currentTarget);
+				for (int j = 0; j < amountPeople; j++) {
+					pooledObjects[j].RemoveTarget(icon.currentTarget);
 				}
 			};
+			
 			icon.OnCorrectTarget += GameManager.Instance.GetCurrentMapManager().SetCorrectTarget;
+			icon.OnCorrectTarget += (x) => {
+				icon.RemoveAllAction();
+			};
+
 			icon.OnIncorrect += GameManager.Instance.Incorrent;
 			icon.OnIncorrect += SFX.Instance.PlayIncorrect;
+			
 			icon.gameObject.SetActive(true);
 			index++;
 		}
 	}
 
 	public void SetAllHomesForIcon(List<IconHome> iconHomes) {
-		foreach (var icon in iconPeoples) {
-			icon.SetAllHomes(iconHomes);
+		for (int j = 0; j < amountPeople; j++) {
+			pooledObjects[j].SetAllHomes(iconHomes);
 		}
+	}
+
+	public void SetAmountPeople(int amountPeople) {
+		this.amountPeople = amountPeople;
 	}
 }

@@ -63,7 +63,7 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 	public void OnPointerUp(PointerEventData eventData) {
 		isSelected = false;
 
-		IconHome currentTarget = CheckAllTarget();
+		currentTarget = CheckAllTarget();
 		if (currentTarget) {
 			rect.SetParent(currentTarget.transform);
 			rect.anchorMin = Vector2.one * 0.5f;
@@ -114,5 +114,10 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 
 	public void RemoveTarget(IconHome target) {
 		targets.Remove(target);
+	}
+
+	public void RemoveAllAction() {
+		OnIncorrect = null;
+		OnCorrectTarget = null;
 	}
 }

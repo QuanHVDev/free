@@ -4,34 +4,17 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
-public class MessageManagerUI : MonoBehaviour {
-    [SerializeField] private MessageLine tmpMessage;
-    [SerializeField] private Transform content;
-    private List<MessageLine> messageLineList;
+public class MessageManagerUI : PoolingManagerBase<MessageManagerUI, MessageLine> {
     public void Init(List<MapManager.ElementMessage> messagesForHint) {
-        if (messageLineList == null) {
-            messageLineList = new List<MessageLine>();
-        }
-
         for (int i = 0; i < messagesForHint.Count; i++) {
-            MessageLine messageLine;
-            if (i >= messageLineList.Count) {
-                messageLine = Instantiate(tmpMessage, content);
-                messageLineList.Add(messageLine);
-            }
-            else {
-                messageLine = messageLineList[i];
-            }
-            
+            MessageLine messageLine = GetObjectPooledAvailable();
             messageLine.Init(messagesForHint[i]);
             messageLine.Show();
         }
-        
-        tmpMessage.gameObject.SetActive(false);
     }
 
     public void CheckCorrect(PeopleSO peopleSO) {
-        foreach (var messageLine in messageLineList) {
+        foreach (var messageLine in pooledObjects) {
             if (messageLine.gameObject.activeSelf && messageLine.RemovePeople(peopleSO)) {
                 messageLine.Hide();
             }
@@ -39,7 +22,7 @@ public class MessageManagerUI : MonoBehaviour {
     }
 
     public void HideAllLine() {
-        foreach (var messageLine in messageLineList) {
+        foreach (var messageLine in pooledObjects) {
             messageLine.gameObject.SetActive(false);
         }
     }
