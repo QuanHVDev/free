@@ -2,14 +2,29 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class MapManager : MonoBehaviour {
 	public Action OnFinishLevel;
 	
 	[Serializable]
 	public class ElementMap {
-		public Transform home;
-		public List<PeopleSO> peoples;
+		public Transform target;
+		public List<ElementPeople> peoples;
+
+		public List<PeopleSO> GetPeoplesSO() {
+			List<PeopleSO> list = new List<PeopleSO>();
+			foreach (var e in peoples) {
+				list.Add(e.people);
+			}
+
+			return list;
+		}
+	}
+
+	[Serializable]
+	public class ElementPeople {
+		public PeopleSO people;
 		public bool isComeHome = false;
 	}
 	
@@ -19,14 +34,16 @@ public class MapManager : MonoBehaviour {
 		public String message;
 	}
 
-	[SerializeField] private List<ElementMap> homes;
+	[SerializeField] private List<ElementMap> element;
 	[SerializeField] private List<ElementMessage> messagesForHint;
 
-	public void SetCorrectTarget(PeopleSO target) {
-		foreach (var e in homes) {
-			if (e.peoples.Contains(target)) {
-				e.isComeHome = true;
-				break;
+	public void SetCorrectTarget(PeopleSO peopleSO) {
+		foreach (var e in element) {
+			foreach (var house in e.peoples) {
+				if (house.people == peopleSO) {
+					house.isComeHome = true;
+					break;
+				}
 			}
 		}
 
@@ -36,9 +53,11 @@ public class MapManager : MonoBehaviour {
 	}
 
 	private bool CheckDoneAllHome() {
-		foreach (var e in homes) {
-			if (!e.isComeHome) {
-				return false;
+		foreach (var e in element) {
+			foreach (var house in e.peoples) {
+				if (!house.isComeHome) {
+					return false;
+				}
 			}
 		}
 
@@ -46,7 +65,7 @@ public class MapManager : MonoBehaviour {
 	}
 
 	public List<ElementMap> GetHomes() {
-		return homes;
+		return element;
 	}
 
 	public List<ElementMessage> GetMessagesForHint() {

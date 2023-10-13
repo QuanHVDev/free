@@ -13,13 +13,13 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 	[Header("Element")] [SerializeField] private Image imgAvatar;
 	[SerializeField] private TMP_Text txtName;
 	[SerializeField] private LayoutElement layoutElement;
+	[SerializeField] private RectTransform rect;
 
 	private float delta = 50;
 	private Vector2 offset = new Vector2(0, 100);
 	private Vector2 originLocalPosition;
 	private Vector2 originAnchor;
-	private bool isSelected;
-	private RectTransform rect;
+	private bool isSelected = false;
 	private PeopleSO data;
 	private List<IconHome> targets;
 
@@ -28,11 +28,6 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 		this.data = data;
 		imgAvatar.sprite = data.avatar;
 		txtName.text = data.name;
-	}
-
-	private void Start() {
-		isSelected = false;
-		rect = transform.GetComponent<RectTransform>();
 	}
 
 	private void Update() {
@@ -48,7 +43,7 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 		originAnchor = rect.anchoredPosition;
 	}
 
-	private void ComeHome() {
+	private void ComeBar() {
 		rect.localPosition = originLocalPosition;
 		rect.anchoredPosition = originAnchor;
 		EnableIgnoreLayout(false);
@@ -65,22 +60,29 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 
 		currentTarget = CheckAllTarget();
 		if (currentTarget) {
-			rect.SetParent(currentTarget.transform);
-			rect.anchorMin = Vector2.one * 0.5f;
-			rect.anchorMax = Vector2.one * 0.5f;
-			rect.pivot = Vector2.one;
-			rect.anchoredPosition = rect.sizeDelta / 2;
-
-			SFX.Instance.PlayCorrect();
-			OnCorrectTarget?.Invoke(data);
+			ComHome();
 		}
 		else {
 			if (CheckMergeIncorrect()) {
 				OnIncorrect?.Invoke();
 			}
 
-			ComeHome();
+			ComeBar();
 		}
+	}
+
+	public void ComHome(bool isSetUp = false) {
+		if(!isSetUp) SFX.Instance.PlayCorrect();
+		if (currentTarget == null) {
+			currentTarget = targets[0];
+		}
+		
+		rect.SetParent(currentTarget.transform);
+		rect.anchorMin = Vector2.one * 0.5f;
+		rect.anchorMax = Vector2.one * 0.5f;
+		rect.pivot = Vector2.one;
+		rect.anchoredPosition = rect.sizeDelta / 2;
+		OnCorrectTarget?.Invoke(data);
 	}
 
 	private IconHome CheckAllTarget() {
