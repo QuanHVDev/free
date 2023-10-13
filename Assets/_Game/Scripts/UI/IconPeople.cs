@@ -21,9 +21,9 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 	private bool isSelected;
 	private RectTransform rect;
 	private PeopleSO data;
-	private List<Transform> targets;
+	private List<IconHome> targets;
 
-	public void Init(List<Transform> targets, PeopleSO data) {
+	public void Init(List<IconHome> targets, PeopleSO data) {
 		this.targets = targets;
 		this.data = data;
 		imgAvatar.sprite = data.avatar;
@@ -43,7 +43,7 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 
 	public void OnPointerDown(PointerEventData eventData) {
 		isSelected = true;
-		layoutElement.ignoreLayout = true;
+		EnableIgnoreLayout(true);
 		originLocalPosition = rect.localPosition;
 		originAnchor = rect.anchoredPosition;
 	}
@@ -51,17 +51,21 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 	private void ComeHome() {
 		rect.localPosition = originLocalPosition;
 		rect.anchoredPosition = originAnchor;
-		layoutElement.ignoreLayout = false;
+		EnableIgnoreLayout(false);
 	}
 
-	public Transform currentTarget { get; private set; }
+	public void EnableIgnoreLayout(bool enable) {
+		layoutElement.ignoreLayout = enable;
+	}
+
+	public IconHome currentTarget { get; private set; }
 
 	public void OnPointerUp(PointerEventData eventData) {
 		isSelected = false;
 
-		Transform currentTarget = CheckAllTarget();
+		IconHome currentTarget = CheckAllTarget();
 		if (currentTarget) {
-			rect.SetParent(currentTarget);
+			rect.SetParent(currentTarget.transform);
 			rect.anchorMin = Vector2.one * 0.5f;
 			rect.anchorMax = Vector2.one * 0.5f;
 			rect.pivot = Vector2.one;
@@ -79,18 +83,18 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 		}
 	}
 
-	private Transform CheckAllTarget() {
-		foreach (var trans in targets) {
-			float x = Vector2.Distance(transform.position, trans.position);
-			if (x < delta) return trans;
+	private IconHome CheckAllTarget() {
+		foreach (var icon in targets) {
+			float x = Vector2.Distance(transform.position, icon.transform.position);
+			if (x < delta) return icon;
 		}
 
 		return null;
 	}
 
 	private bool CheckMergeIncorrect() {
-		foreach (Transform trans in iconHomes) {
-			float x = Vector2.Distance(transform.position, trans.position);
+		foreach (IconHome icon in iconHomes) {
+			float x = Vector2.Distance(transform.position, icon.transform.position);
 			if (x < delta) {
 				return true;
 			}
@@ -99,16 +103,16 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 		return false;
 	}
 
-	private List<Transform> iconHomes;
+	private List<IconHome> iconHomes;
 
-	public void SetAllHomes(List<Transform> iconHomes) {
-		this.iconHomes = new List<Transform>(iconHomes);
+	public void SetAllHomes(List<IconHome> iconHomes) {
+		this.iconHomes = new List<IconHome>(iconHomes);
 		foreach (var target in targets) {
 			this.iconHomes.Remove(target);
 		}
 	}
 
-	public void RemoveTarget(Transform target) {
+	public void RemoveTarget(IconHome target) {
 		targets.Remove(target);
 	}
 }

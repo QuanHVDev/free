@@ -23,12 +23,12 @@ public class GameManager : SingletonBehaviour<GameManager> {
     public void SpawnLevel() {
         if (currentMapManager) {
             gamePlayUI.GetIconHomeManagerUI().FinishMap();
+            gamePlayUI.GetIconPeopleManagerUI().TryAgain();
             Destroy(currentMapManager.gameObject);
         }
 
         LoadLevel(indexMap);
-        gamePlayUI.GetIconPeopleManagerUI().Init();
-        gamePlayUI.GetIconHomeManagerUI().Init(currentMapManager, gamePlayUI);
+        gamePlayUI.GetIconHomeManagerUI().Add(currentMapManager, gamePlayUI);
         gamePlayUI.GetIconPeopleManagerUI().SetAllHomesForIcon(gamePlayUI.GetIconHomeManagerUI().IconHomes);
         gamePlayUI.GetMessageManagerUI().Init(currentMapManager.GetMessagesForHint());
         
