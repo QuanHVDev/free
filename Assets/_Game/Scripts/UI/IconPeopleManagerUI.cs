@@ -10,15 +10,10 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 	private int amountPeople;
 
 	public void FinishMap() {
-		if (pooledObjects == null || pooledObjects.Count <= 0) return;
-
-		foreach (var icon in pooledObjects) {
-			icon.EnableIgnoreLayout(false);
-			icon.transform.SetParent(content);
-			icon.gameObject.SetActive(false);
-			icon.RemoveAllAction();
-
-			ResetSetupPoolObject(icon);
+		for (int i = 0; i < amountPeople; i++) {
+			pooledObjects[i].EnableIgnoreLayout(false);
+			pooledObjects[i].RemoveAllAction();
+			ResetSetupPoolObject(pooledObjects[i]);
 		}
 	}
 
@@ -32,6 +27,7 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 			icon.OnCorrectTarget += (x) => {
 				for (int j = 0; j < amountPeople; j++) {
 					pooledObjects[j].RemoveTarget(icon.currentTarget);
+					pooledObjects[j].RemoveHome(icon.currentTarget);
 				}
 			};
 			

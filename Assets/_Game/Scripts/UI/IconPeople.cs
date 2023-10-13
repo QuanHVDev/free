@@ -120,4 +120,8 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 		OnIncorrect = null;
 		OnCorrectTarget = null;
 	}
+
+	public void RemoveHome(IconHome iconCurrentTarget) {
+		this.iconHomes.Remove(iconCurrentTarget);
+	}
 }
