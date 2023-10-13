@@ -4,61 +4,54 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class IconHomeManagerUI : MonoBehaviour {
-    [SerializeField] private IconHome iconHome;
-    [SerializeField] private GameObject parentHomeHor;
-    [SerializeField] private Transform content;
+public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome> {
+	[SerializeField] private GameObject parentHomeHor;
 
-    public void Add(MapManager mapManager, GamePlayUI gamePlayUI) {
-        if (IconHomes == null) {
-            IconHomes = new List<IconHome>();
-        }
-        
-        int startIndexPeople = 0;
-        
-        for (int i = 0; i < mapManager.GetHomes().Count; i++) {
-            var e = mapManager.GetHomes()[i];
-            Transform parent = content;
-            
-            if (e.peoples.Count > 1) {
-                parent = Instantiate(parentHomeHor, transform).transform;
-                parent.position = Camera.main.WorldToScreenPoint(e.home.transform.position);
-                parent.gameObject.SetActive(true);
-            }
+	private int amount;
+	public void Add(MapManager mapManager, GamePlayUI gamePlayUI) {
+		int startIndexPeople = 0;
+		for (int i = 0; i <  mapManager.GetHomes().Count; i++) {
+			var e = mapManager.GetHomes()[i];
+			Transform parent = content;
 
-            List<IconHome> targets = new List<IconHome>();
-            for (int j = startIndexPeople; j < startIndexPeople + e.peoples.Count; j++) {
-                
-                
-                IconHome icon;
-                if (j >= IconHomes.Count) {
-                    icon = Instantiate(iconHome, parent);
-                    IconHomes.Add(icon);
-                }
-                else {
-                    icon = IconHomes[j];
-                    icon.transform.SetParent(parent);
-                }
-                
-                icon.transform.position = Camera.main.WorldToScreenPoint(e.home.transform.position);
-                icon.gameObject.SetActive(true);
-                targets.Add(icon);
-            }
+			if (e.peoples.Count > 1) {
+				parent = Instantiate(parentHomeHor, transform).transform;
+				parent.position = Camera.main.WorldToScreenPoint(e.home.transform.position);
+				parent.gameObject.SetActive(true);
+			}
 
-            gamePlayUI.GetIconPeopleManagerUI().Add(targets, e.peoples, startIndexPeople);
-            startIndexPeople += e.peoples.Count;
-        }
+			List<IconHome> targets = new List<IconHome>();
+			for (int j = startIndexPeople; j < startIndexPeople + e.peoples.Count; j++) {
+				IconHome icon = GetObjectPooledAvailable();
+				icon.transform.SetParent(parent);
 
-        gamePlayUI.GetIconPeopleManagerUI().SetAmountPeople(startIndexPeople);
-        iconHome.gameObject.SetActive(false);
-        parentHomeHor.SetActive(false);
-    }
+				icon.transform.position = Camera.main.WorldToScreenPoint(e.home.transform.position);
+				icon.gameObject.SetActive(true);
+				targets.Add(icon);
+			}
 
-    public void FinishMap() {
-        // for (int i = 0; i < IconHomes.Count; i++) {
-        //     Destroy(IconHomes[i].gameObject);
-        // }
-    }
-    
-    public List<IconHome> IconHomes { get; private set; }
+			gamePlayUI.GetIconPeopleManagerUI().Add(targets, e.peoples, startIndexPeople);
+			startIndexPeople += e.peoples.Count;
+		}
+
+		gamePlayUI.GetIconPeopleManagerUI().SetAmountPeople(startIndexPeople);
+		parentHomeHor.SetActive(false);
+		
+		amount = startIndexPeople;
+	}
+
+	public void FinishMap() {
+		for (int i = 0; i < amount; i++) {
+			ResetSetupPoolObject(pooledObjects[i]);
+		}
+	}
+
+	public List<IconHome> GetCurrentIconForMap() {
+		List<IconHome> listCurrentIcon = new List<IconHome>();
+		for (int i = 0; i < amount; i++) {
+			listCurrentIcon.Add(pooledObjects[i]);
+		}
+
+		return listCurrentIcon;
+	}
 }

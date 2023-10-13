@@ -12,7 +12,7 @@ public class PoolingManagerBase<T, K> : MonoBehaviour where T : MonoBehaviour wh
     private RectTransform originRectTransformObject;
     private Transform originTransformObject;
     
-    private void Start() {
+    private void Awake() {
         pooledObjects = new List<K>();
         GetSetupOrigin();
         for (int i = 0; i < amountToPool; i++) {
@@ -50,7 +50,7 @@ public class PoolingManagerBase<T, K> : MonoBehaviour where T : MonoBehaviour wh
         return CreateObject();
     }
 
-    protected void ResetSetupPoolObject(K obj) {
+    protected virtual void ResetSetupPoolObject(K obj) {
         if (originRectTransformObject) {
             var rect = obj.GetComponent<RectTransform>();
             rect.anchorMin = originRectTransformObject.anchorMin;
@@ -58,6 +58,9 @@ public class PoolingManagerBase<T, K> : MonoBehaviour where T : MonoBehaviour wh
             rect.pivot = originRectTransformObject.pivot;
             rect.anchoredPosition = originRectTransformObject.anchoredPosition;
         }
+
+        obj.transform.SetParent(content);
+        obj.gameObject.SetActive(false);
     }
     
 }

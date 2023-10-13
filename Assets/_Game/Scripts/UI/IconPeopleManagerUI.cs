@@ -9,13 +9,15 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 	public Action<PeopleSO> OnPeopleCorrectHome;
 	private int amountPeople;
 
-	public void TryAgain() {
+	public void FinishMap() {
 		if (pooledObjects == null || pooledObjects.Count <= 0) return;
 
 		foreach (var icon in pooledObjects) {
 			icon.EnableIgnoreLayout(false);
 			icon.transform.SetParent(content);
 			icon.gameObject.SetActive(false);
+			icon.RemoveAllAction();
+
 			ResetSetupPoolObject(icon);
 		}
 	}
@@ -34,10 +36,6 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 			};
 			
 			icon.OnCorrectTarget += GameManager.Instance.GetCurrentMapManager().SetCorrectTarget;
-			icon.OnCorrectTarget += (x) => {
-				icon.RemoveAllAction();
-			};
-
 			icon.OnIncorrect += GameManager.Instance.Incorrent;
 			icon.OnIncorrect += SFX.Instance.PlayIncorrect;
 			

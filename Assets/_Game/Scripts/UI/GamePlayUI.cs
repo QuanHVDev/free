@@ -16,7 +16,7 @@ public class GamePlayUI : MonoBehaviour
 	private void Start() {
 		iconHealthManagerUI.OnOverHealth += IconHealthManagerUI_OnOverHealth;
 		iconPeopleManagerUI.OnPeopleCorrectHome += messageManagerUI.CheckCorrect;
-		tryAgainUI.OnTryAgain += iconPeopleManagerUI.TryAgain;
+		tryAgainUI.OnTryAgain += iconPeopleManagerUI.FinishMap;
 		tryAgainUI.OnTryAgain += iconHomeManagerUI.FinishMap;
 		winUI.OnHideLine += messageManagerUI.HideAllLine;
 		
