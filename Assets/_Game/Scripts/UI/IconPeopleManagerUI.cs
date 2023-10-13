@@ -10,10 +10,11 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 	private int amountPeople;
 
 	public void FinishMap() {
-		for (int i = 0; i < amountPeople; i++) {
+		for (int i = amountPeople - 1; i >= 0 ; i--) {
 			pooledObjects[i].EnableIgnoreLayout(false);
 			pooledObjects[i].RemoveAllAction();
 			ResetSetupPoolObject(pooledObjects[i]);
+			pooledObjects[i].transform.SetAsFirstSibling();
 		}
 	}
 

@@ -13,10 +13,12 @@ public class TryAgainUI : BaseUIElement {
 	}
 
 	private void Start() {
-		btnTryAgain.onClick.AddListener(() => {
-			OnTryAgain?.Invoke();
-			Hide();
-			GameManager.Instance.SpawnLevel();
-		});
+		btnTryAgain.onClick.AddListener(TryAgain);
+	}
+
+	public void TryAgain() {
+		OnTryAgain?.Invoke();
+		Hide();
+		GameManager.Instance.SpawnLevel();
 	}
 }

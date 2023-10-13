@@ -18,6 +18,7 @@ public class GamePlayUI : MonoBehaviour
 		iconPeopleManagerUI.OnPeopleCorrectHome += messageManagerUI.CheckCorrect;
 		tryAgainUI.OnTryAgain += iconPeopleManagerUI.FinishMap;
 		tryAgainUI.OnTryAgain += iconHomeManagerUI.FinishMap;
+		tryAgainUI.OnTryAgain += messageManagerUI.HideAllLine;
 		winUI.OnHideLine += messageManagerUI.HideAllLine;
 		
 		tryAgainUI.gameObject.SetActive(false);
