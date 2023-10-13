@@ -7,7 +7,7 @@ public abstract class BaseUIElement : MonoBehaviour {
 	[SerializeField] Transform mainFrame;
 
 	public abstract void OnAwake();
-	public void Show(float toAlpha = 0.75f)
+	public void Show(float toAlpha = 0.75f, float time = 0.3f)
 	{
 		gameObject.SetActive(true);
 		if (bg) {
@@ -15,13 +15,13 @@ public abstract class BaseUIElement : MonoBehaviour {
 			var c = bg.color;
 			c.a = 0;
 			bg.color = c;
-			bg.DOFade(toAlpha, .3f).SetUpdate(true);
+			bg.DOFade(toAlpha, time).SetUpdate(true);
 		}
 
 		if (mainFrame) {
 			mainFrame.DOKill();
 			mainFrame.transform.localScale = Vector3.one * 0.5f;
-			mainFrame.DOScale(1, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
+			mainFrame.DOScale(1, time).SetEase(Ease.OutBack).SetUpdate(true);
 		}
 	}
 	public virtual void Hide()

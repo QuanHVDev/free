@@ -45,6 +45,7 @@ public class GamePlayUI : MonoBehaviour
 	}
 
 	public void ShowUIWin() {
-		winUI.Show();
+		// show trong 0.6s đợi message fade
+		winUI.Show(0.75f, 0.6f);
 	}
 }

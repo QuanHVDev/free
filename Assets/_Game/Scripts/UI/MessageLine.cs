@@ -8,16 +8,18 @@ public class MessageLine : MonoBehaviour {
     [SerializeField] private TMP_Text tmp;
 
     public List<PeopleSO> peopleSO { get; private set; }
+    public bool isFading { get; private set; }
     public void Hide() {
-        tmp.DOFade(0, 1).OnComplete(()=> {
+        isFading = true;
+        tmp.DOFade(0, 0.5f).OnComplete(()=> {
             gameObject.SetActive(false);
+            isFading = false;
         });
     }
 
     public void Show() {
-        tmp.DOFade(1, 0.01f).OnComplete(()=> {
-            gameObject.SetActive(true);
-        });
+        tmp.color = new Color(tmp.color.r, tmp.color.g, tmp.color.b);
+        gameObject.SetActive(true);
     }
 
     public void Init(MapManager.ElementMessage elementMessage) {
