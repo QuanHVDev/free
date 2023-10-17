@@ -9,6 +9,8 @@ public class GameManager : SingletonBehaviour<GameManager> {
     
     [SerializeField] private DataLevelsSO dataLevelsSO;
     [SerializeField] private int indexMap;
+    [SerializeField] private CameraMove camera;
+    
     private MapManager currentMapManager;
     
     // health
@@ -33,7 +35,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
         gamePlayUI.GetMessageManagerUI().Init(currentMapManager.GetMessagesForHint());
         
         LoadHealth();
-
+        camera.ResetToOriginPosition();
         // var inv = UserDataController.Instance.GetData<Inventory>(UserDataKeys.USER_INVENTORY, out _);
         // if (inv.currentLevel >= data.lvls.Count) {
         //     gamePlayUI.LoadContent(inv.currentLevel);

@@ -6,15 +6,27 @@ using UnityEngine.EventSystems;
 
 public class CameraMove : MonoBehaviour {
 	[SerializeField] private LayerMask mapLayer;
+	[SerializeField] private Vector3 OriginPosition;
 	private Vector2 firstPosition;
+
+	private enum StateMouse {
+		wait,
+		move,
+		inUI
+	}
+
+	private StateMouse state;
 
 	private void Start() {
 		Input.multiTouchEnabled = false;
+		state = StateMouse.wait;
 	}
 
 	private void FixedUpdate() {
-		if (Input.touchCount > 0) {
-			if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)){
+		if (Input.touchCount > 0 ) {
+			if (state == StateMouse.inUI) return;
+			if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) {
+				state = StateMouse.inUI;
 				return;
 			}
 			
@@ -30,11 +42,16 @@ public class CameraMove : MonoBehaviour {
 		}
 		else {
 			firstPosition = Vector2.zero;
+			state = StateMouse.wait;
 		}
 	}
 
 	private void MoveCameraWith(Vector2 deltaPosition) {
 		transform.position -= new Vector3(deltaPosition.x, 0, deltaPosition.y) * Time.deltaTime;
-		//Debug.Log(tPosition);
+		state = StateMouse.move;
+	}
+
+	public void ResetToOriginPosition() {
+		transform.position = OriginPosition;
 	}
 }

@@ -68,6 +68,8 @@ public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome>
 		for (int i = 0; i < amount; i++) {
 			ResetSetupPoolObject(pooledObjects[i]);
 		}
+
+		currentLevelIconHome = new List<IconHome>();
 	}
 
 	public List<IconHome> GetCurrentIconForMap() {
