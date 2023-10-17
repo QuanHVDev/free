@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2028389251167064795}
   - component: {fileID: 340030597824119408}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Map 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 985385629147701928}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.57, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -48,33 +48,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41b4cc7b8fc03264aa8b31a0975c9a5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  homes:
-  - home: {fileID: 4716890887737078963}
+  element:
+  - target: {fileID: 6887700280604823114}
     peoples:
-    - {fileID: 11400000, guid: 3d4ffc56e5d90b14d89db0746416798f, type: 2}
-    isComeHome: 0
-  - home: {fileID: 6567986887707206649}
+    - people: {fileID: 11400000, guid: 464d283d1e1588f4ea67fcb171c17614, type: 2}
+      isComeHome: 0
+  - target: {fileID: 6567986887707206649}
     peoples:
-    - {fileID: 11400000, guid: cd4f83cd818647b4e82f2c3d5798a71b, type: 2}
-    isComeHome: 0
-  - home: {fileID: 2554361169700325811}
+    - people: {fileID: 11400000, guid: 3d4ffc56e5d90b14d89db0746416798f, type: 2}
+      isComeHome: 0
+  - target: {fileID: 4716890887737078963}
     peoples:
-    - {fileID: 11400000, guid: 464d283d1e1588f4ea67fcb171c17614, type: 2}
-    isComeHome: 0
-  - home: {fileID: 6887700280604823114}
+    - people: {fileID: 11400000, guid: cd4f83cd818647b4e82f2c3d5798a71b, type: 2}
+      isComeHome: 0
+  - target: {fileID: 2554361169700325811}
     peoples:
-    - {fileID: 11400000, guid: 34d0da5261a712840a300a92ecdf5626, type: 2}
-    isComeHome: 0
+    - people: {fileID: 11400000, guid: 34d0da5261a712840a300a92ecdf5626, type: 2}
+      isComeHome: 0
   messagesForHint:
   - peoples:
-    - {fileID: 11400000, guid: 34d0da5261a712840a300a92ecdf5626, type: 2}
-    message: "Mike \u1EDF t\u1EA7ng th\u1EA5p nh\u1EA5t"
-  - peoples:
-    - {fileID: 11400000, guid: cd4f83cd818647b4e82f2c3d5798a71b, type: 2}
-    message: "George \u1EDF t\u1EA7ng cao nh\u1EA5t"
+    - {fileID: 11400000, guid: 3d4ffc56e5d90b14d89db0746416798f, type: 2}
+    message: "Ahri \u1EDF gi\u1EEFa 2 ph\xF2ng"
   - peoples:
     - {fileID: 11400000, guid: 464d283d1e1588f4ea67fcb171c17614, type: 2}
-    message: Hihi
+    message: "Tom \u1EDF t\u1EA7ng cao nh\u1EA5t"
+  - peoples:
+    - {fileID: 11400000, guid: 34d0da5261a712840a300a92ecdf5626, type: 2}
+    message: "\u0110o\xE1n xem"
+  - peoples:
+    - {fileID: 11400000, guid: cd4f83cd818647b4e82f2c3d5798a71b, type: 2}
+    message: "\u0110o\xE1n xem"
 --- !u!1 &4810206882893599986
 GameObject:
   m_ObjectHideFlags: 0
@@ -87,7 +90,7 @@ GameObject:
   - component: {fileID: 2942666704859588554}
   - component: {fileID: 4412524237828308406}
   - component: {fileID: 9075876537696375422}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -192,7 +195,7 @@ GameObject:
   - component: {fileID: 3540787258681176642}
   - component: {fileID: 3914261120246508767}
   - component: {fileID: 6497741209658902942}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +211,7 @@ Transform:
   m_GameObject: {fileID: 5518406247359080642}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.21, z: 0}
+  m_LocalPosition: {x: 0, y: 3.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -297,7 +300,7 @@ GameObject:
   - component: {fileID: 816792507422029687}
   - component: {fileID: 4539825327391664016}
   - component: {fileID: 7662734333838609933}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -402,7 +405,7 @@ GameObject:
   - component: {fileID: 2126122518838946194}
   - component: {fileID: 6877845415689596046}
   - component: {fileID: 6578166644048649670}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -418,7 +421,7 @@ Transform:
   m_GameObject: {fileID: 8758565198419055762}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.25, z: 0}
+  m_LocalPosition: {x: 0, y: 2.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

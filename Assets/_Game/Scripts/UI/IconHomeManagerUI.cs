@@ -5,19 +5,23 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome> {
-	[SerializeField] private GameObject parentHomeHor;
-
+	[SerializeField] private IconHome parentHomeHor;
+	private List<IconHome> currentLevelIconHome;
 	private int amount;
 	public void Add(MapManager mapManager, GamePlayUI gamePlayUI) {
 		int startIndexPeople = 0;
 		
 		List<IconPeople> iconDoneHome = new List<IconPeople>();
+		currentLevelIconHome = new List<IconHome>();
 		for (int i = 0; i <  mapManager.GetHomes().Count; i++) {
 			var e = mapManager.GetHomes()[i];
 			Transform parent = content;
 
 			if (e.peoples.Count > 1) {
-				parent = Instantiate(parentHomeHor, transform).transform;
+				var obj = Instantiate(parentHomeHor, transform);
+				currentLevelIconHome.Add(obj);
+				obj.SetHomeModel(e.target.transform);
+				parent = obj.transform;
 				parent.position = Camera.main.WorldToScreenPoint(e.target.transform.position);
 				parent.gameObject.SetActive(true);
 			}
@@ -28,13 +32,16 @@ public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome>
 				icon.transform.SetParent(parent);
 
 				icon.transform.position = Camera.main.WorldToScreenPoint(e.target.transform.position);
+				icon.SetHomeModel(e.target.transform);
 				icon.gameObject.SetActive(true);
 				targets.Add(icon);
+				if(e.peoples.Count < 2) currentLevelIconHome.Add(icon);
 			}
 			
 			gamePlayUI.GetIconPeopleManagerUI().Add(targets, e, startIndexPeople);
 			foreach (var icon in gamePlayUI.GetIconPeopleManagerUI().GetIconDoneHome()) {
 				iconDoneHome.Add(icon);
+				currentLevelIconHome.Remove(icon.currentTarget);
 			}
 			
 			startIndexPeople += e.peoples.Count;
@@ -46,9 +53,15 @@ public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome>
 		}
 
 		gamePlayUI.GetIconPeopleManagerUI().SetAmountPeople(startIndexPeople);
-		parentHomeHor.SetActive(false);
+		parentHomeHor.gameObject.SetActive(false);
 		
 		amount = startIndexPeople;
+	}
+
+	private void FixedUpdate() {
+		foreach (var icon in currentLevelIconHome) {
+			icon.transform.position = Camera.main.WorldToScreenPoint(icon.homeModel.position);
+		}
 	}
 
 	public void FinishMap() {
