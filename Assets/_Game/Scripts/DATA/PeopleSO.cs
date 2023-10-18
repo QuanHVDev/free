@@ -6,4 +6,5 @@ using UnityEngine;
 public class PeopleSO : ScriptableObject {
     public Sprite avatar;
     public string name;
+    public string speciality;
 }
