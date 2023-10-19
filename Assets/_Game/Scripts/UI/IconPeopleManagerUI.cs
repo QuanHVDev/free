@@ -18,8 +18,8 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 		}
 	}
 
-	public void Add(List<IconHome> targets, MapManager.ElementMap elementMap, int startIndexPeople) {
-		List<PeopleSO> peoplesSO = elementMap.GetPeoplesSO();
+	public void Add(List<IconHome> targets, MapManager.Map map, int startIndexPeople) {
+		List<PeopleSO> peoplesSO = map.GetPeoplesSO();
 		int index = 0;
 		iconDoneHome = new List<IconPeople>();
 		for (int i = startIndexPeople; i < startIndexPeople + peoplesSO.Count; i++) {
@@ -37,7 +37,7 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 			icon.OnIncorrect += GameManager.Instance.Incorrent;
 			icon.OnIncorrect += SFX.Instance.PlayIncorrect;
 			icon.gameObject.SetActive(true);
-			if (elementMap.peoples[index].isComeHome) {
+			if (map.peoples[index].isComeHome) {
 				iconDoneHome.Add(icon);
 			}
 			

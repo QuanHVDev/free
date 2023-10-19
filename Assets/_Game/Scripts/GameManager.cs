@@ -2,14 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GameManager : SingletonBehaviour<GameManager> {
     [SerializeField] private GamePlayUI gamePlayUI;
     [SerializeField] private Transform spawnMap;
     
     [SerializeField] private DataLevelsSO dataLevelsSO;
-    [SerializeField] private int indexMap;
-    [SerializeField] private CameraMove camera;
+    [SerializeField] private int indexMapManager;
+    [SerializeField] private CameraManager camera;
     
     private MapManager currentMapManager;
     
@@ -19,23 +20,38 @@ public class GameManager : SingletonBehaviour<GameManager> {
     
     
     private void Start() {
+        currentLevel = 0;
         SpawnLevel();
     }
-    
+
     public void SpawnLevel() {
+        StartCoroutine(SpawnLevelAsync());
+    }
+
+    private IEnumerator SpawnLevelAsync() {
         if (currentMapManager) {
             gamePlayUI.GetIconHomeManagerUI().FinishMap();
             gamePlayUI.GetIconPeopleManagerUI().FinishMap();
-            Destroy(currentMapManager.gameObject);
+            if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
+                camera.ReturnVirtualCameraToOrigin();
+                yield return new WaitUntil(() => {
+                    return camera.state == CameraManager.StateVirtualCamera.Finish;
+                });
+                Destroy(currentMapManager.gameObject);
+            }
         }
 
-        LoadLevel(indexMap);
+        LoadLevel(indexMapManager);
         gamePlayUI.GetIconHomeManagerUI().Add(currentMapManager, gamePlayUI);
         gamePlayUI.GetIconPeopleManagerUI().SetAllHomesForIcon(gamePlayUI.GetIconHomeManagerUI().GetCurrentIconForMap());
         gamePlayUI.GetMessageManagerUI().Init(currentMapManager.GetMessagesForHint());
         
         LoadHealth();
-        camera.ResetToOriginPosition();
+    }
+
+    //public void SpawnLevel() {
+        
+        //camera.ResetToOriginPosition();
         // var inv = UserDataController.Instance.GetData<Inventory>(UserDataKeys.USER_INVENTORY, out _);
         // if (inv.currentLevel >= data.lvls.Count) {
         //     gamePlayUI.LoadContent(inv.currentLevel);
@@ -43,16 +59,27 @@ public class GameManager : SingletonBehaviour<GameManager> {
         // else {
         //     gamePlayUI.LoadContent(currentLevel);
         // }
-    }
+    //}
     
     private void LoadLevel(int index) {
-        currentMapManager = Instantiate(dataLevelsSO.MapManagers[index], spawnMap);
-        currentMapManager.OnFinishLevel += gamePlayUI.ShowUIWin;
-        currentMapManager.OnFinishLevel += () => {
-            indexMap++;
-            if (indexMap >= dataLevelsSO.MapManagers.Count) indexMap = 0;
-        };
+        if (!currentMapManager || currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
+            currentMapManager = Instantiate(dataLevelsSO.MapManagers[index], spawnMap);
+            currentMapManager.OnFinishLevel += gamePlayUI.ShowUIWin;
+            currentMapManager.OnFinishLevel += () => {
+                currentMapManager.currentIndexMap++;
+                currentLevel++;
+                if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
+                    indexMapManager++;
+                    if (currentLevel >= dataLevelsSO.CountLevel()) indexMapManager = 0;
+                }
+            };
+        }
+        
+        var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
+        camera.MoveCameraToVirtualCamera(element);
     }
+
+    private int currentLevel;
 
     private void LoadHealth() {
         currentHealth = maxHealth;
