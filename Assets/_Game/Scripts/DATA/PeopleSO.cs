@@ -7,4 +7,5 @@ public class PeopleSO : ScriptableObject {
     public Sprite avatar;
     public string name;
     public string speciality;
+    public PrefabPeople prefab;
 }
