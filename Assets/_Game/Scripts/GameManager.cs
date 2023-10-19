@@ -17,11 +17,36 @@ public class GameManager : SingletonBehaviour<GameManager> {
     // health
     private int maxHealth = 3;
     private int currentHealth;
+
+    [Header("Config Data")] 
+    [SerializeField] private MapManager map;
     
     
     private void Start() {
         currentLevel = 0;
-        SpawnLevel();
+        if (map) {
+            currentMapManager = map;
+            currentMapManager.OnFinishLevel += gamePlayUI.ShowUIWin;
+            currentMapManager.OnFinishLevel += () => {
+                currentMapManager.currentIndexMap++;
+                currentLevel++;
+                if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
+                    indexMapManager++;
+                    if (currentLevel >= dataLevelsSO.CountLevel()) indexMapManager = 0;
+                }
+            };
+            var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
+            camera.MoveCameraToVirtualCamera(element);
+            gamePlayUI.GetIconHomeManagerUI().Add(currentMapManager, gamePlayUI);
+            gamePlayUI.GetIconPeopleManagerUI()
+                .SetAllHomesForIcon(gamePlayUI.GetIconHomeManagerUI().GetCurrentIconForMap());
+            gamePlayUI.GetMessageManagerUI().Init(currentMapManager.GetMessagesForHint());
+
+            LoadHealth();
+        }
+        else {
+            SpawnLevel();
+        }
     }
 
     public void SpawnLevel() {
