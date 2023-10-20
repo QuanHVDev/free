@@ -29,6 +29,7 @@ public class MapManager : MonoBehaviour {
 	private Transform catTarget;
 
 	private void Start() {
+		NavMesh.RemoveAllNavMeshData();
 		NavMesh.AddNavMeshData(dataNav);
 	}
 
