@@ -59,4 +59,10 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 	public List<IconPeople> GetIconDoneHome() {
 		return iconDoneHome;
 	}
+	
+	public void EnableRaycastTargetIconPeople(bool enable) {
+		foreach (var icon in pooledObjects) {
+			icon.EnableRaycastTargetIconPeople(enable);
+		}
+	}
 }

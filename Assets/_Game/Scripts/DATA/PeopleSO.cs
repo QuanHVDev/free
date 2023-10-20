@@ -8,4 +8,5 @@ public class PeopleSO : ScriptableObject {
     public string name;
     public string speciality;
     public PrefabPeople prefab;
+    public ParticleSystem vfxHide;
 }

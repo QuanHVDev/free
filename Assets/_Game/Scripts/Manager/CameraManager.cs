@@ -57,7 +57,6 @@ public class CameraManager : MonoBehaviour {
 			e.VirtualCamera.transform.SetParent(parent);
 			e.VirtualCamera.transform.localPosition = Vector3.zero;
 			e.VirtualCamera.transform.localRotation = Quaternion.Euler(Vector3.zero);
-			elementCameraPrev = e;
 			return e;
 		}
 
@@ -66,6 +65,9 @@ public class CameraManager : MonoBehaviour {
 
 	public void MoveCameraToVirtualCamera(ElementCamera elementCamera) {
 		ChangeState(elementCamera.triggerNameAnimationState.ToString(), StateVirtualCamera.Move);
+		elementCamera.VirtualCamera.gameObject.SetActive(true);
+		if(elementCameraPrev != null) elementCameraPrev.VirtualCamera.gameObject.SetActive(false);
+		elementCameraPrev = elementCamera;
 	}
 
 	[ContextMenu("ReturnVirtualCameraToOrigin")]
@@ -93,6 +95,7 @@ public class CameraManager : MonoBehaviour {
 			if (!virtualCameraElements[i].IsCanChangePosition) continue;
 			
 			virtualCameraElements[i].VirtualCamera.transform.SetParent(transform);
+			virtualCameraElements[i].VirtualCamera.gameObject.SetActive(true);
 			_drivenCamera.m_Instructions[i].m_VirtualCamera = virtualCameraElements[i].VirtualCamera;
 		}
 		

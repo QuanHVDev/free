@@ -26,15 +26,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
         currentLevel = 0;
         if (map) {
             currentMapManager = map;
-            currentMapManager.OnFinishLevel += gamePlayUI.ShowUIWin;
-            currentMapManager.OnFinishLevel += () => {
-                currentMapManager.currentIndexMap++;
-                currentLevel++;
-                if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
-                    indexMapManager++;
-                    if (currentLevel >= dataLevelsSO.CountLevel()) indexMapManager = 0;
-                }
-            };
+            SetUpActionCurrentMapManager();
             var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
             camera.MoveCameraToVirtualCamera(element);
             gamePlayUI.GetIconHomeManagerUI().Add(currentMapManager, gamePlayUI);
@@ -89,28 +81,34 @@ public class GameManager : SingletonBehaviour<GameManager> {
     private void LoadLevel(int index) {
         if (!currentMapManager || currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
             currentMapManager = Instantiate(dataLevelsSO.MapManagers[index], spawnMap);
-            currentMapManager.OnFinishLevel += gamePlayUI.ShowUIWin;
-            currentMapManager.OnFinishLevel += () => {
-                currentMapManager.currentIndexMap++;
-                currentLevel++;
-                if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
-                    indexMapManager++;
-                    if (currentLevel >= dataLevelsSO.CountLevel()) indexMapManager = 0;
-                }
-            };
-
-            currentMapManager.OnSetCatTarget += camera.GetLookTargetCamera;
-            currentMapManager.OnCameraLookTarget += (x, y)=> {
-                camera.GetElementCameraPrev().VirtualCamera.gameObject.SetActive(false);
-                camera.ChangeState(x, y);
-            };
-            currentMapManager.OnCompletePath += () => {
-                camera.GetElementCameraPrev().VirtualCamera.gameObject.SetActive(true);
-            };
+            SetUpActionCurrentMapManager();
         }
         
         var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
         camera.MoveCameraToVirtualCamera(element);
+    }
+
+    private void SetUpActionCurrentMapManager() {
+        currentMapManager.OnFinishLevel += gamePlayUI.ShowUIWin;
+        currentMapManager.OnFinishLevel += () => {
+            currentMapManager.currentIndexMap++;
+            currentLevel++;
+            if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
+                indexMapManager++;
+                if (currentLevel >= dataLevelsSO.CountLevel()) indexMapManager = 0;
+            }
+        };
+
+        currentMapManager.OnSetCatTarget += camera.GetLookTargetCamera;
+        currentMapManager.OnCameraLookTarget += (x, y)=> {
+            camera.GetElementCameraPrev().VirtualCamera.gameObject.SetActive(false);
+            camera.ChangeState(x, y);
+        };
+        currentMapManager.OnCompletePath += () => {
+            camera.GetElementCameraPrev().VirtualCamera.gameObject.SetActive(true);
+        };
+
+        currentMapManager.OnMapBusy += gamePlayUI.EnableRaycastTargetIconPeople;
     }
 
     private int currentLevel;

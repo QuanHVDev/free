@@ -9,8 +9,8 @@ using UnityEngine.UI;
 public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 	public Action OnIncorrect;
 	public Action<PeopleSO> OnCorrectTarget;
-
-	[Header("Element")] [SerializeField] private Image imgAvatar;
+	[SerializeField] private Image icon;
+	[SerializeField] private Image imgAvatar;
 	[SerializeField] private TMP_Text txtName;
 	[SerializeField] private LayoutElement layoutElement;
 	[SerializeField] private RectTransform rect;
@@ -125,5 +125,9 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 
 	public void RemoveHome(IconHome iconCurrentTarget) {
 		this.iconHomes.Remove(iconCurrentTarget);
+	}
+
+	public void EnableRaycastTargetIconPeople(bool enable) {
+		icon.raycastTarget = enable;
 	}
 }

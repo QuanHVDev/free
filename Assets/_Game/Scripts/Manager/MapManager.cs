@@ -9,9 +9,11 @@ public class MapManager : MonoBehaviour {
 	public Action OnFinishLevel, OnCompletePath;
 	public Action<string, CameraManager.StateVirtualCamera> OnCameraLookTarget;
 	public Func<Transform, Transform, CameraManager.ElementCamera> OnSetCatTarget;
+	public Action<bool> OnMapBusy;
 
 	public int currentIndexMap = 0;
-	
+	public bool IsMapBusy { get; private set; } = false;
+
 	[Serializable]
 	public class ElementMap {
 		public List<Map> element;
@@ -64,39 +66,55 @@ public class MapManager : MonoBehaviour {
 	
 
 	public void SetCorrectTarget(PeopleSO peopleSO) {
+		StartCoroutine(SetCorrectTargetAsync(peopleSO));
+	}
+
+	private IEnumerator SetCorrectTargetAsync(PeopleSO peopleSO) {
 		foreach (var e in maps[currentIndexMap].element) {
 			foreach (var house in e.peoples) {
 				if (house.people == peopleSO) {
-					house.isComeHome = true;
 					catTarget = Instantiate(peopleSO.prefab, maps[currentIndexMap].catSpawnPosition).transform; 
-					StartCoroutine(LookTargetAsync(e.target));
+					yield return LookTargetAsync(peopleSO, e.target);
+					house.isComeHome = true;
+					if (CheckDoneAllHome()) {
+						OnFinishLevel?.Invoke();
+					}
 					break;
 				}
 			}
 		}
-
-		if (CheckDoneAllHome()) {
-			OnFinishLevel?.Invoke();
-		}
 	}
 
-	private IEnumerator LookTargetAsync(Transform positionToMove) {
+	private IEnumerator LookTargetAsync(PeopleSO data, Transform positionToMove) {
 		var x = OnSetCatTarget?.Invoke(catTarget, maps[currentIndexMap].cameraPosition);
 		x.VirtualCamera.gameObject.SetActive(true);
 		OnCameraLookTarget?.Invoke(x.triggerNameAnimationState.ToString(), CameraManager.StateVirtualCamera.Wait);
-		if(catTarget.TryGetComponent(out NavMeshAgent nav)) {
+		if (catTarget.TryGetComponent(out NavMeshAgent nav)) {
+			IsMapBusy = true;
+			OnMapBusy?.Invoke(!IsMapBusy);
 			nav.SetDestination(positionToMove.position);
 			yield return new WaitUntil(() => {
-				return nav.isStopped ;
+				Debug.DrawLine(catTarget.position, positionToMove.position, Color.red);
+				bool isCame = Mathf.Abs(catTarget.position.x - positionToMove.position.x) <= 0.3f &&
+				              Mathf.Abs(catTarget.position.z - positionToMove.position.z) <= 0.3f;
+				if (isCame) {
+					IsMapBusy = false;
+					OnMapBusy?.Invoke(!IsMapBusy);
+				}
+				return isCame;
 			});
 		}
 
 		x.VirtualCamera.gameObject.SetActive(false);
+		var vfx = Instantiate(data.vfxHide, catTarget.transform.position, Quaternion.identity);
+		vfx.Play();
+		yield return new WaitForSeconds(0.1f);
+		catTarget.gameObject.SetActive(false);
 		OnCompletePath?.Invoke();
-	}
-	
-	
 
+		yield return new WaitForSeconds(0.5f);
+		Destroy(vfx.gameObject);
+	}
 
 	private bool CheckDoneAllHome() {
 		foreach (var e in maps[currentIndexMap].element) {

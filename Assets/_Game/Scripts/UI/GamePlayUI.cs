@@ -49,4 +49,8 @@ public class GamePlayUI : MonoBehaviour
 		// show trong 0.6s đợi message fade
 		winUI.Show(0.75f, 0.6f);
 	}
+	
+	public void EnableRaycastTargetIconPeople(bool enable) {
+		iconPeopleManagerUI.EnableRaycastTargetIconPeople(enable);
+	}
 }
