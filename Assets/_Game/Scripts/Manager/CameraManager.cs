@@ -8,8 +8,15 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CameraManager : MonoBehaviour {
-	private const string ANIMATION_SHOWALL = "switchCamShowAll";
 
+	public enum NameOfAnimationCamera {
+		vCamera_1,
+		vCamera_2,
+		vCamera_ShowAllMap,
+		vCamera_LTarget
+	}
+	
+	
 	[SerializeField] private CinemachineStateDrivenCamera _drivenCamera;
 	[SerializeField] private CinemachineVirtualCamera virtualCameraShowAll;
 	[SerializeField] private Animator cameraAnim;
@@ -21,7 +28,8 @@ public class CameraManager : MonoBehaviour {
 	public class ElementCamera {
 		public CinemachineVirtualCamera VirtualCamera;
 		public bool IsCanChangePosition = true;
-		public string triggerNameAnimationState;
+		public NameOfAnimationCamera triggerNameAnimationState;
+		public bool IsOnlyLookTarget = false;
 	}
 
 	[SerializeField] private LayerMask mapLayer;
@@ -29,20 +37,16 @@ public class CameraManager : MonoBehaviour {
 	[SerializeField] private float leftLimit = -12, rightLimit = 12, botLimit = -10, topLimit = 10;
 
 	private Vector2 firstPosition;
-	public bool debug;
 	private ElementCamera elementCameraPrev;
-
-	private enum StateMouse {
-		wait,
-		move,
-		inUI
-	}
-
-	//private StateMouse state;
 
 	private void Start() {
 		Input.multiTouchEnabled = false;
 	}
+
+	public ElementCamera GetElementCameraPrev() {
+		return elementCameraPrev;
+	}
+
 
 	public ElementCamera GetVirtualCameraFree(Transform parent) {
 		foreach (var e in virtualCameraElements) {
@@ -61,7 +65,7 @@ public class CameraManager : MonoBehaviour {
 	}
 
 	public void MoveCameraToVirtualCamera(ElementCamera elementCamera) {
-		SetTriggerWith(elementCamera.triggerNameAnimationState);
+		ChangeState(elementCamera.triggerNameAnimationState.ToString(), StateVirtualCamera.Move);
 	}
 
 	[ContextMenu("ReturnVirtualCameraToOrigin")]
@@ -70,9 +74,9 @@ public class CameraManager : MonoBehaviour {
 		StartCoroutine(WaitCameraMovePositionAsync());
 	}
 
-	private void SetTriggerWith(string triggerName) {
-		state = StateVirtualCamera.Move;
-		cameraAnim.SetTrigger(triggerName);
+	public void ChangeState(string triggerName, StateVirtualCamera state) {
+		this.state = state;
+		cameraAnim.Play(triggerName);
 	}
 
 	public enum StateVirtualCamera {
@@ -92,7 +96,7 @@ public class CameraManager : MonoBehaviour {
 			_drivenCamera.m_Instructions[i].m_VirtualCamera = virtualCameraElements[i].VirtualCamera;
 		}
 		
-		SetTriggerWith(ANIMATION_SHOWALL);
+		ChangeState(NameOfAnimationCamera.vCamera_ShowAllMap.ToString(), StateVirtualCamera.Move);
 		yield return new WaitUntil(() => {
 			if (Mathf.Abs(cameraAnim.gameObject.transform.position.x -
 			              virtualCameraShowAll.transform.position.x) <= Mathf.Epsilon &&
@@ -107,6 +111,20 @@ public class CameraManager : MonoBehaviour {
 
 			return false;
 		});
+	}
+
+	public ElementCamera GetLookTargetCamera(Transform target, Transform trans) {
+		foreach (var e in virtualCameraElements) {
+			if (e.IsOnlyLookTarget) {
+				e.VirtualCamera.transform.position = trans.position;
+				e.VirtualCamera.transform.rotation = trans.rotation;
+
+				e.VirtualCamera.LookAt = target;
+				return e;
+			}
+		}
+
+		return null;
 	}
 
 	private void Update() {

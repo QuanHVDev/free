@@ -1,9 +1,15 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 public class MapManager : MonoBehaviour {
-	public Action OnFinishLevel;
+	public Action OnFinishLevel, OnCompletePath;
+	public Action<string, CameraManager.StateVirtualCamera> OnCameraLookTarget;
+	public Func<Transform, Transform, CameraManager.ElementCamera> OnSetCatTarget;
+
 	public int currentIndexMap = 0;
 	
 	[Serializable]
@@ -11,9 +17,20 @@ public class MapManager : MonoBehaviour {
 		public List<Map> element;
 		public List<ElementMessage> messagesForHint;
 		public Transform cameraPosition;
+		public Transform catSpawnPosition;
 	}
 
 	[SerializeField] private List<ElementMap> maps;
+	[SerializeField] private NavMeshData dataNav;
+	[SerializeField] private NavMeshDataInstance dataNavs;
+
+	private Transform catTarget;
+
+	private void Start() {
+		NavMesh.AddNavMeshData(dataNav);
+	}
+
+	#region classElement
 
 	[Serializable]
 	public class Map {
@@ -43,12 +60,16 @@ public class MapManager : MonoBehaviour {
 	}
 
 
+	#endregion
+	
+
 	public void SetCorrectTarget(PeopleSO peopleSO) {
 		foreach (var e in maps[currentIndexMap].element) {
 			foreach (var house in e.peoples) {
 				if (house.people == peopleSO) {
 					house.isComeHome = true;
-					Instantiate(peopleSO.prefab, e.target);
+					catTarget = Instantiate(peopleSO.prefab, maps[currentIndexMap].catSpawnPosition).transform; 
+					StartCoroutine(LookTargetAsync(e.target));
 					break;
 				}
 			}
@@ -58,6 +79,24 @@ public class MapManager : MonoBehaviour {
 			OnFinishLevel?.Invoke();
 		}
 	}
+
+	private IEnumerator LookTargetAsync(Transform positionToMove) {
+		var x = OnSetCatTarget?.Invoke(catTarget, maps[currentIndexMap].cameraPosition);
+		x.VirtualCamera.gameObject.SetActive(true);
+		OnCameraLookTarget?.Invoke(x.triggerNameAnimationState.ToString(), CameraManager.StateVirtualCamera.Wait);
+		if(catTarget.TryGetComponent(out NavMeshAgent nav)) {
+			nav.SetDestination(positionToMove.position);
+			yield return new WaitUntil(() => {
+				return nav.isStopped ;
+			});
+		}
+
+		x.VirtualCamera.gameObject.SetActive(false);
+		OnCompletePath?.Invoke();
+	}
+	
+	
+
 
 	private bool CheckDoneAllHome() {
 		foreach (var e in maps[currentIndexMap].element) {

@@ -98,6 +98,15 @@ public class GameManager : SingletonBehaviour<GameManager> {
                     if (currentLevel >= dataLevelsSO.CountLevel()) indexMapManager = 0;
                 }
             };
+
+            currentMapManager.OnSetCatTarget += camera.GetLookTargetCamera;
+            currentMapManager.OnCameraLookTarget += (x, y)=> {
+                camera.GetElementCameraPrev().VirtualCamera.gameObject.SetActive(false);
+                camera.ChangeState(x, y);
+            };
+            currentMapManager.OnCompletePath += () => {
+                camera.GetElementCameraPrev().VirtualCamera.gameObject.SetActive(true);
+            };
         }
         
         var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
