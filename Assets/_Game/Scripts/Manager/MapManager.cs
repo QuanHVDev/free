@@ -24,14 +24,15 @@ public class MapManager : MonoBehaviour {
 
 	[SerializeField] private List<ElementMap> maps;
 	[SerializeField] private NavMeshData dataNav;
-	[SerializeField] private NavMeshDataInstance dataNavs;
+	private NavMeshDataInstance dataNavInstance;
 
-	private Transform catTarget;
+	private PrefabPeople catTarget;
 
 	private void Start() {
-		NavMesh.RemoveAllNavMeshData();
-		NavMesh.AddNavMeshData(dataNav);
+		dataNavInstance = NavMesh.AddNavMeshData(dataNav);
 	}
+	
+	
 
 	#region classElement
 
@@ -74,7 +75,7 @@ public class MapManager : MonoBehaviour {
 		foreach (var e in maps[currentIndexMap].element) {
 			foreach (var house in e.peoples) {
 				if (house.people == peopleSO) {
-					catTarget = Instantiate(peopleSO.prefab, maps[currentIndexMap].catSpawnPosition).transform; 
+					catTarget = Instantiate(peopleSO.prefab, maps[currentIndexMap].catSpawnPosition); 
 					yield return LookTargetAsync(peopleSO, e.target);
 					house.isComeHome = true;
 					if (CheckDoneAllHome()) {
@@ -87,17 +88,17 @@ public class MapManager : MonoBehaviour {
 	}
 
 	private IEnumerator LookTargetAsync(PeopleSO data, Transform positionToMove) {
-		var x = OnSetCatTarget?.Invoke(catTarget, maps[currentIndexMap].cameraPosition);
+		var x = OnSetCatTarget?.Invoke(catTarget.transform, maps[currentIndexMap].cameraPosition);
 		x.VirtualCamera.gameObject.SetActive(true);
 		OnCameraLookTarget?.Invoke(x.triggerNameAnimationState.ToString(), CameraManager.StateVirtualCamera.Wait);
 		if (catTarget.TryGetComponent(out NavMeshAgent nav)) {
 			IsMapBusy = true;
 			OnMapBusy?.Invoke(!IsMapBusy);
-			nav.SetDestination(positionToMove.position);
+			catTarget.SetTargetToMove(positionToMove);
 			yield return new WaitUntil(() => {
-				Debug.DrawLine(catTarget.position, positionToMove.position, Color.red);
-				bool isCame = Mathf.Abs(catTarget.position.x - positionToMove.position.x) <= 0.3f &&
-				              Mathf.Abs(catTarget.position.z - positionToMove.position.z) <= 0.3f;
+				Debug.DrawLine(catTarget.transform.position, positionToMove.position, Color.red);
+				bool isCame = Mathf.Abs(catTarget.transform.position.x - positionToMove.position.x) <= 0.3f &&
+				              Mathf.Abs(catTarget.transform.position.z - positionToMove.position.z) <= 0.3f;
 				if (isCame) {
 					IsMapBusy = false;
 					OnMapBusy?.Invoke(!IsMapBusy);
@@ -143,5 +144,9 @@ public class MapManager : MonoBehaviour {
 
 	public Transform GetCurrentCameraPosition() {
 		return maps[currentIndexMap].cameraPosition;
+	}
+
+	public void RemoveCurrentNavmeshData() {
+		NavMesh.RemoveNavMeshData(dataNavInstance);
 	}
 }
