@@ -42,24 +42,9 @@ public class PrefabPeople : MonoBehaviour {
 		ChangeState(DOG_EAT);
 	}
 
-	[SerializeField] private bool isMoving = false;
-	private Transform trans;
 	public void SetTargetToMove(Transform trans) {
-		this.trans = trans;
-		isMoving = true;
-		nav = gameObject.GetComponent<NavMeshAgent>();
-		nav.SetDestination(trans.position);
-		nextUpdate = Time.time;
-	}
-	private NavMeshAgent nav;
-	[SerializeField] private bool debug;
-	private float nextUpdate;
-
-	private void Update() {
-		if (nextUpdate < Time.time ) return;
-		if (nav.remainingDistance > nav.stoppingDistance) {
+		if (TryGetComponent(out NavMeshAgent nav)) {
 			nav.SetDestination(trans.position);
-			nextUpdate += 0.25f;
 		}
 	}
 }
