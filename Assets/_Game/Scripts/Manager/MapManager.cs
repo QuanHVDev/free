@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -20,16 +22,41 @@ public class MapManager : MonoBehaviour {
 		public List<ElementMessage> messagesForHint;
 		public Transform cameraPosition;
 		public Transform catSpawnPosition;
+
+		public ElementMap(ElementMap e) {
+			element = new List<Map>();
+			e.element.ForEach((item) =>
+			{
+				element.Add(new Map(item));
+			});
+			
+			messagesForHint = new List<ElementMessage>();
+			e.messagesForHint.ForEach((item) => {
+				messagesForHint.Add(new ElementMessage(item));
+			});
+
+			cameraPosition = e.cameraPosition;
+			catSpawnPosition = e.catSpawnPosition;
+		}
 	}
 
 	[SerializeField] private List<ElementMap> maps;
 	[SerializeField] private NavMeshData dataNav;
 	private NavMeshDataInstance dataNavInstance;
-
 	private PrefabPeople catTarget;
+
+	public List<ElementMap> Maps { get; private set; }
 
 	private void Start() {
 		dataNavInstance = NavMesh.AddNavMeshData(dataNav);
+	}
+
+	public void InitData() {
+		Maps = new List<ElementMap>();
+		maps.ForEach((item) =>
+		{
+			Maps.Add(new ElementMap(item));
+		});
 	}
 	
 	
@@ -49,6 +76,17 @@ public class MapManager : MonoBehaviour {
 
 			return list;
 		}
+
+		public Map(Map map) {
+			target = map.target;
+			peoples = new List<ElementPeople>();
+			map.peoples.ForEach((x) => {
+				var people = new ElementPeople();
+				people.people = x.people;
+				people.isComeHome = x.isComeHome;
+				peoples.Add(people);
+			});
+		}
 	}
 
 	[Serializable]
@@ -61,6 +99,15 @@ public class MapManager : MonoBehaviour {
 	public class ElementMessage {
 		public List<PeopleSO> peoples;
 		public String message;
+
+		public ElementMessage(ElementMessage e) {
+			peoples = new List<PeopleSO>();
+			e.peoples.ForEach((item) => {
+				peoples.Add(item);
+			});
+			
+			message = e.message;
+		}
 	}
 
 
@@ -72,10 +119,10 @@ public class MapManager : MonoBehaviour {
 	}
 
 	private IEnumerator SetCorrectTargetAsync(PeopleSO peopleSO) {
-		foreach (var e in maps[currentIndexMap].element) {
+		foreach (var e in Maps[currentIndexMap].element) {
 			foreach (var house in e.peoples) {
 				if (house.people == peopleSO) {
-					catTarget = Instantiate(peopleSO.prefab, maps[currentIndexMap].catSpawnPosition); 
+					catTarget = Instantiate(peopleSO.prefab, Maps[currentIndexMap].catSpawnPosition); 
 					yield return LookTargetAsync(peopleSO, e.target);
 					house.isComeHome = true;
 					if (CheckDoneAllHome()) {
@@ -88,7 +135,7 @@ public class MapManager : MonoBehaviour {
 	}
 
 	private IEnumerator LookTargetAsync(PeopleSO data, Transform positionToMove) {
-		var x = OnSetCatTarget?.Invoke(catTarget.transform, maps[currentIndexMap].cameraPosition);
+		var x = OnSetCatTarget?.Invoke(catTarget.transform, Maps[currentIndexMap].cameraPosition);
 		x.VirtualCamera.gameObject.SetActive(true);
 		OnCameraLookTarget?.Invoke(x.triggerNameAnimationState.ToString(), CameraManager.StateVirtualCamera.Wait);
 		if (catTarget.TryGetComponent(out NavMeshAgent nav)) {
@@ -119,7 +166,7 @@ public class MapManager : MonoBehaviour {
 	}
 
 	private bool CheckDoneAllHome() {
-		foreach (var e in maps[currentIndexMap].element) {
+		foreach (var e in Maps[currentIndexMap].element) {
 			foreach (var house in e.peoples) {
 				if (!house.isComeHome) {
 					return false;
@@ -131,19 +178,19 @@ public class MapManager : MonoBehaviour {
 	}
 
 	public List<Map> GetHomes() {
-		return maps[currentIndexMap].element;
+		return Maps[currentIndexMap].element;
 	}
 
 	public List<ElementMessage> GetMessagesForHint() {
-		return maps[currentIndexMap].messagesForHint;
+		return Maps[currentIndexMap].messagesForHint;
 	}
 
 	public int GetCountMaps() {
-		return maps.Count;
+		return Maps.Count;
 	}
 
 	public Transform GetCurrentCameraPosition() {
-		return maps[currentIndexMap].cameraPosition;
+		return Maps[currentIndexMap].cameraPosition;
 	}
 
 	public void RemoveCurrentNavmeshData() {
