@@ -3,48 +3,47 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class PrefabPeople : MonoBehaviour {
-	public const string DOG_EAT = "eat";
-	public const string DOG_JUMP_PLAY = "jump_play";
-	public const string DOG_PAXIA = "paxia";
-	public const string DOG_SHUMAO = "shumao";
-	public const string DOG_SIT = "sit";
-	public const string DOG_SIT_ZHAOJINGZI = "sit_zhaojingzi";
-	public const string DOG_XIZAO = "xizao";
+	public const string IDLE = "Armature|Cat_01_Idle";
+	public const string HAPPY = "Armature|Cat_02_Happy";
+	public const string RUN = "Armature|Cat_03_Run";
 
 	[SerializeField] private Animator animator;
 
-	public void ChangeState(string newState) {
+	private void ChangeState(string newState) {
 		animator.Play(newState);
 	}
 
-	[Serializable]
-	public enum stateDog {
-		eat,
-		jump_play,
-		paxia,
-		shumao,
-		sit,
-		sit_zhaojingzi,
-		xizao
+	public void StartRandomAnimFinishTarget() {
+		coroutine = StartCoroutine(StartRandomAnimFinishTargetSync());
 	}
 
-	public stateDog state;
+	private Coroutine coroutine;
 
-	[ContextMenu("PlayAnim")]
-	public void PlayAnim() {
-		ChangeState(state.ToString());
+	private IEnumerator StartRandomAnimFinishTargetSync() {
+		float nextTimePlayAnim = Time.time + Random.Range(0, 5f);
+		yield return new WaitWhile(() => {
+			if (nextTimePlayAnim > Time.time) {
+				string anim = Random.Range(0, 2) == 1 ? IDLE : HAPPY;
+				ChangeState(anim);
+			}
+
+			return true;
+		});
+	}
+
+	public void DoneLevel() {
+		StopCoroutine(coroutine);
+		
 	}
 	
-	[ContextMenu("PlayAnimE")]
-	public void PlayAnimE() {
-		ChangeState(DOG_EAT);
-	}
 
 	public void SetTargetToMove(Transform trans) {
 		if (TryGetComponent(out NavMeshAgent nav)) {
 			nav.SetDestination(trans.position);
+			ChangeState(RUN);
 		}
 	}
 }
