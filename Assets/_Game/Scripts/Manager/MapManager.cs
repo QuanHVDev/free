@@ -144,8 +144,8 @@ public class MapManager : MonoBehaviour {
 			catTarget.SetTargetToMove(positionToMove);
 			yield return new WaitUntil(() => {
 				Debug.DrawLine(catTarget.transform.position, positionToMove.position, Color.red);
-				bool isCame = Mathf.Abs(catTarget.transform.position.x - positionToMove.position.x) <= 0.3f &&
-				              Mathf.Abs(catTarget.transform.position.z - positionToMove.position.z) <= 0.3f;
+				bool isCame = Mathf.Abs(catTarget.transform.position.x - positionToMove.position.x) <= 2f &&
+				              Mathf.Abs(catTarget.transform.position.z - positionToMove.position.z) <= 2f;
 				if (isCame) {
 					IsMapBusy = false;
 					OnMapBusy?.Invoke(!IsMapBusy);
@@ -155,14 +155,14 @@ public class MapManager : MonoBehaviour {
 		}
 
 		x.VirtualCamera.gameObject.SetActive(false);
-		var vfx = Instantiate(data.vfxHide, catTarget.transform.position, Quaternion.identity);
-		vfx.Play();
-		yield return new WaitForSeconds(0.1f);
-		catTarget.gameObject.SetActive(false);
+		//var vfx = Instantiate(data.vfxHide, catTarget.transform.position, Quaternion.identity);
+		//vfx.Play();
+		//yield return new WaitForSeconds(0.1f);
+		catTarget.StartRandomAnimFinishTarget();
 		OnCompletePath?.Invoke();
 
-		yield return new WaitForSeconds(0.5f);
-		Destroy(vfx.gameObject);
+		//yield return new WaitForSeconds(0.5f);
+		//Destroy(vfx.gameObject);
 	}
 
 	private bool CheckDoneAllHome() {
@@ -186,7 +186,7 @@ public class MapManager : MonoBehaviour {
 	}
 
 	public int GetCountMaps() {
-		return Maps.Count;
+		return maps.Count;
 	}
 
 	public Transform GetCurrentCameraPosition() {

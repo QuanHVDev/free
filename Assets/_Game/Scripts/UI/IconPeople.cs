@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -10,6 +11,7 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 	public Action OnIncorrect;
 	public Action<PeopleSO> OnCorrectTarget;
 	[SerializeField] private Image icon;
+	[SerializeField] private Image iconBG;
 	[SerializeField] private Image imgAvatar;
 	[SerializeField] private TMP_Text txtName;
 	[SerializeField] private LayoutElement layoutElement;
@@ -28,6 +30,7 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 		this.data = data;
 		imgAvatar.sprite = data.avatar;
 		txtName.text = data.name;
+		DoFadeIcon(1, 0);
 	}
 
 	private void Update() {
@@ -60,7 +63,7 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 
 		currentTarget = CheckAllTarget();
 		if (currentTarget) {
-			ComHome();
+			ComeHome();
 		}
 		else {
 			if (CheckMergeIncorrect()) {
@@ -71,7 +74,7 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 		}
 	}
 
-	public void ComHome(bool isSetUp = false) {
+	public void ComeHome(bool isSetUp = false) {
 		if(!isSetUp) SFX.Instance.PlayCorrect();
 		if (currentTarget == null) {
 			currentTarget = targets[0];
@@ -83,6 +86,17 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 		rect.pivot = Vector2.one;
 		rect.anchoredPosition = rect.sizeDelta / 2;
 		OnCorrectTarget?.Invoke(data);
+		DoFadeIcon(0, 0.5f);
+		currentTarget.DoFadeIcon(0, 0.5f);
+	}
+	
+	private void DoFadeIcon(int value, float time) {
+		iconBG.DOFade(value == 1 ? 50/(255*1.0f) : value, time);
+		imgAvatar.DOFade(value, time).OnComplete(() => {
+			if (value == 0) {
+				gameObject.SetActive(false);
+			}
+		});
 	}
 
 	private IconHome CheckAllTarget() {

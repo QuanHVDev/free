@@ -49,7 +49,7 @@ public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome>
 		
 		// Call Action with icons set came home
 		foreach (var icon in iconDoneHome) {
-			icon.ComHome(true);
+			icon.ComeHome(true);
 		}
 
 		gamePlayUI.GetIconPeopleManagerUI().SetAmountPeople(startIndexPeople);
