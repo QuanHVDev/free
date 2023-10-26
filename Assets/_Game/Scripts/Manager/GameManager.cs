@@ -27,6 +27,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
         currentLevel = 0;
         if (map) {
             currentMapManager = map;
+            currentMapManager.InitData();
             SetUpActionCurrentMapManager();
             var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
             camera.MoveCameraToVirtualCamera(element);
