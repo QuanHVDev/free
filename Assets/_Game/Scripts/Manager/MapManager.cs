@@ -22,6 +22,7 @@ public class MapManager : MonoBehaviour {
 		public List<ElementMessage> messagesForHint;
 		public Transform cameraPosition;
 		public Transform catSpawnPosition;
+		public float valueZoomCamera = 0;
 
 		public ElementMap(ElementMap e) {
 			element = new List<Map>();
@@ -37,6 +38,7 @@ public class MapManager : MonoBehaviour {
 
 			cameraPosition = e.cameraPosition;
 			catSpawnPosition = e.catSpawnPosition;
+			valueZoomCamera = e.valueZoomCamera;
 		}
 	}
 
@@ -134,10 +136,11 @@ public class MapManager : MonoBehaviour {
 		}
 	}
 
-	[SerializeField] private CameraManager cameraManager;
 	private IEnumerator LookTargetAsync(PeopleSO data, Transform positionToMove) {
 		var x = OnSetCatTarget?.Invoke(catTarget.transform, Maps[currentIndexMap].cameraPosition);
-		cameraManager.SetFOV(x, 15);
+		if (Maps[currentIndexMap].valueZoomCamera != 0) {
+			GameManager.Instance.Camera.SetFOV(x, Maps[currentIndexMap].valueZoomCamera);
+		}
 		x.VirtualCamera.gameObject.SetActive(true);
 		OnCameraLookTarget?.Invoke(x.triggerNameAnimationState, CameraManager.StateVirtualCamera.Wait);
 		if (catTarget.TryGetComponent(out NavMeshAgent nav)) {
@@ -146,8 +149,8 @@ public class MapManager : MonoBehaviour {
 			catTarget.SetTargetToMove(positionToMove);
 			yield return new WaitUntil(() => {
 				Debug.DrawLine(catTarget.transform.position, positionToMove.position, Color.red);
-				bool isCame = Mathf.Abs(catTarget.transform.position.x - positionToMove.position.x) <= 2f &&
-				              Mathf.Abs(catTarget.transform.position.z - positionToMove.position.z) <= 2f;
+				bool isCame = Mathf.Abs(catTarget.transform.position.x - positionToMove.position.x) <= nav.stoppingDistance &&
+				              Mathf.Abs(catTarget.transform.position.z - positionToMove.position.z) <= nav.stoppingDistance;
 				if (isCame) {
 					IsMapBusy = false;
 					OnMapBusy?.Invoke(!IsMapBusy);
@@ -159,7 +162,9 @@ public class MapManager : MonoBehaviour {
 		catTarget.StartRandomAnimFinishTarget();
 		yield return new WaitForSeconds(2f);
 		OnCompletePath?.Invoke();
-		cameraManager.ResetFOV(x);
+		if (Maps[currentIndexMap].valueZoomCamera != 0) {
+			GameManager.Instance.Camera.ResetFOV(x);
+		}
 		//var vfx = Instantiate(data.vfxHide, catTarget.transform.position, Quaternion.identity);
 		//vfx.Play();
 		

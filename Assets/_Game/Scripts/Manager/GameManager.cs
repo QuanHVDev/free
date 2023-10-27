@@ -21,8 +21,9 @@ public class GameManager : SingletonBehaviour<GameManager> {
 
     [Header("Config Data")] 
     [SerializeField] private MapManager map;
-    
-    
+
+    public CameraManager Camera => camera;
+
     private void Start() {
         currentLevel = 0;
         if (map) {
