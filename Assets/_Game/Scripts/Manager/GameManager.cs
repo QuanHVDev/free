@@ -109,7 +109,9 @@ public class GameManager : SingletonBehaviour<GameManager> {
             camera.ChangeState(x, y);
         };
         currentMapManager.OnCompletePath += () => {
-            camera.GetElementCameraPrev().VirtualCamera.gameObject.SetActive(true);
+            var element = camera.GetElementCameraPrev();
+            camera.ChangeState(element.triggerNameAnimationState, CameraManager.StateVirtualCamera.Wait);
+            element.VirtualCamera.gameObject.SetActive(true);
         };
 
         currentMapManager.OnMapBusy += gamePlayUI.EnableRaycastTargetIconPeople;

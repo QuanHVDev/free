@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 
 public class MapManager : MonoBehaviour {
 	public Action OnFinishLevel, OnCompletePath;
-	public Action<string, CameraManager.StateVirtualCamera> OnCameraLookTarget;
+	public Action<CameraManager.NameOfAnimationCamera, CameraManager.StateVirtualCamera> OnCameraLookTarget;
 	public Func<Transform, Transform, CameraManager.ElementCamera> OnSetCatTarget;
 	public Action<bool> OnMapBusy;
 
@@ -134,10 +134,12 @@ public class MapManager : MonoBehaviour {
 		}
 	}
 
+	[SerializeField] private CameraManager cameraManager;
 	private IEnumerator LookTargetAsync(PeopleSO data, Transform positionToMove) {
 		var x = OnSetCatTarget?.Invoke(catTarget.transform, Maps[currentIndexMap].cameraPosition);
+		cameraManager.SetFOV(x, 15);
 		x.VirtualCamera.gameObject.SetActive(true);
-		OnCameraLookTarget?.Invoke(x.triggerNameAnimationState.ToString(), CameraManager.StateVirtualCamera.Wait);
+		OnCameraLookTarget?.Invoke(x.triggerNameAnimationState, CameraManager.StateVirtualCamera.Wait);
 		if (catTarget.TryGetComponent(out NavMeshAgent nav)) {
 			IsMapBusy = true;
 			OnMapBusy?.Invoke(!IsMapBusy);
@@ -152,14 +154,16 @@ public class MapManager : MonoBehaviour {
 				}
 				return isCame;
 			});
+			
 		}
-
-		x.VirtualCamera.gameObject.SetActive(false);
+		catTarget.StartRandomAnimFinishTarget();
+		yield return new WaitForSeconds(2f);
+		OnCompletePath?.Invoke();
+		cameraManager.ResetFOV(x);
 		//var vfx = Instantiate(data.vfxHide, catTarget.transform.position, Quaternion.identity);
 		//vfx.Play();
-		//yield return new WaitForSeconds(0.1f);
-		catTarget.StartRandomAnimFinishTarget();
-		OnCompletePath?.Invoke();
+		
+		
 
 		//yield return new WaitForSeconds(0.5f);
 		//Destroy(vfx.gameObject);

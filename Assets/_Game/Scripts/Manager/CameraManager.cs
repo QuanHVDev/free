@@ -51,9 +51,11 @@ public class CameraManager : MonoBehaviour {
 				continue;
 			}
 
-			e.VirtualCamera.transform.SetParent(parent);
-			e.VirtualCamera.transform.localPosition = Vector3.zero;
-			e.VirtualCamera.transform.localRotation = Quaternion.Euler(Vector3.zero);
+			e.VirtualCamera.transform.position = parent.position;
+			e.VirtualCamera.transform.rotation = parent.rotation;
+			//e.VirtualCamera.transform.SetParent(parent);
+			//e.VirtualCamera.transform.localPosition = Vector3.zero;
+			//e.VirtualCamera.transform.localRotation = Quaternion.Euler(Vector3.zero);
 			return e;
 		}
 
@@ -61,9 +63,8 @@ public class CameraManager : MonoBehaviour {
 	}
 
 	public void MoveCameraToVirtualCamera(ElementCamera elementCamera) {
-		ChangeState(elementCamera.triggerNameAnimationState.ToString(), StateVirtualCamera.Move);
+		ChangeState(elementCamera.triggerNameAnimationState, StateVirtualCamera.Move);
 		elementCamera.VirtualCamera.gameObject.SetActive(true);
-		if(elementCameraPrev != null) elementCameraPrev.VirtualCamera.gameObject.SetActive(false);
 		elementCameraPrev = elementCamera;
 	}
 
@@ -73,9 +74,9 @@ public class CameraManager : MonoBehaviour {
 		StartCoroutine(WaitCameraMovePositionAsync());
 	}
 
-	public void ChangeState(string triggerName, StateVirtualCamera state) {
+	public void ChangeState(NameOfAnimationCamera triggerName, StateVirtualCamera state) {
 		this.state = state;
-		cameraAnim.Play(triggerName);
+		cameraAnim.Play(triggerName.ToString());
 	}
 
 	public enum StateVirtualCamera {
@@ -96,7 +97,7 @@ public class CameraManager : MonoBehaviour {
 			_drivenCamera.m_Instructions[i].m_VirtualCamera = virtualCameraElements[i].VirtualCamera;
 		}
 		
-		ChangeState(NameOfAnimationCamera.vCamera_ShowAllMap.ToString(), StateVirtualCamera.Move);
+		ChangeState(NameOfAnimationCamera.vCamera_ShowAllMap, StateVirtualCamera.Move);
 		yield return new WaitUntil(() => {
 			if (Mathf.Abs(cameraAnim.gameObject.transform.position.x -
 			              virtualCameraShowAll.transform.position.x) <= Mathf.Epsilon &&
@@ -125,6 +126,16 @@ public class CameraManager : MonoBehaviour {
 		}
 
 		return null;
+	}
+
+	private float prevValueFOV;
+	public void SetFOV(ElementCamera e, float value) {
+		prevValueFOV = e.VirtualCamera.m_Lens.FieldOfView;
+		e.VirtualCamera.m_Lens.FieldOfView = value;
+	}
+
+	public void ResetFOV(ElementCamera e) {
+		e.VirtualCamera.m_Lens.FieldOfView = prevValueFOV;
 	}
 
 	private void Update() {
