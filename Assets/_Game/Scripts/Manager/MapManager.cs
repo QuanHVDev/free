@@ -1,11 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
 
 public class MapManager : MonoBehaviour {
 	public Action OnFinishLevel, OnCompletePath;
@@ -125,7 +123,7 @@ public class MapManager : MonoBehaviour {
 			foreach (var house in e.peoples) {
 				if (house.people == peopleSO) {
 					catTarget = Instantiate(peopleSO.prefab, Maps[currentIndexMap].catSpawnPosition); 
-					yield return LookTargetAsync(peopleSO, e.target);
+					yield return SetCameraLookTargetAsync(peopleSO, e.target);
 					house.isComeHome = true;
 					if (CheckDoneAllHome()) {
 						OnFinishLevel?.Invoke();
@@ -136,7 +134,7 @@ public class MapManager : MonoBehaviour {
 		}
 	}
 
-	private IEnumerator LookTargetAsync(PeopleSO data, Transform positionToMove) {
+	private IEnumerator SetCameraLookTargetAsync(PeopleSO data, Transform positionToMove) {
 		var x = OnSetCatTarget?.Invoke(catTarget.transform, Maps[currentIndexMap].cameraPosition);
 		if (Maps[currentIndexMap].valueZoomCamera != 0) {
 			GameManager.Instance.Camera.SetFOV(x, Maps[currentIndexMap].valueZoomCamera);
@@ -153,22 +151,42 @@ public class MapManager : MonoBehaviour {
 				              Mathf.Abs(catTarget.transform.position.z - positionToMove.position.z) <= nav.stoppingDistance;
 				if (isCame) {
 					IsMapBusy = false;
-					OnMapBusy?.Invoke(!IsMapBusy);
+					
 				}
 				return isCame;
 			});
 			
 		}
+		
 		catTarget.StartRandomAnimFinishTarget();
+		var targetDir = Maps[currentIndexMap].cameraPosition.position - catTarget.transform.position;
+		targetDir = new Vector3(targetDir.x, 0, targetDir.z);
+		
+		var angleToTarget = Vector3.Angle(catTarget.transform.forward, targetDir);
+		float originAngle = 0;
+		Vector3 vector;
+		catTarget.transform.rotation.ToAngleAxis(out originAngle, out vector);
+		
+		// Cho xoay thử, nếu xoay xong mà góc bé hơn thì đã xoay đúng chiều, nếu sai thì xoay ngược lại (+- 0.01)
+		catTarget.transform.DORotate(new Vector3(0, originAngle*vector.y-0.01f, 0), 0).OnComplete(() => {
+			var angleCheck = Vector3.Angle(catTarget.transform.forward, targetDir);
+			if (angleCheck < angleToTarget) {
+				catTarget.transform.DORotate(new Vector3(0, originAngle*vector.y-angleToTarget, 0), 1);
+			}
+			else {
+				catTarget.transform.DORotate(new Vector3(0, originAngle*vector.y+angleToTarget, 0), 1);
+			}
+		});
+		
 		yield return new WaitForSeconds(2f);
 		OnCompletePath?.Invoke();
+		OnMapBusy?.Invoke(!IsMapBusy);
 		if (Maps[currentIndexMap].valueZoomCamera != 0) {
 			GameManager.Instance.Camera.ResetFOV(x);
 		}
+		
 		//var vfx = Instantiate(data.vfxHide, catTarget.transform.position, Quaternion.identity);
 		//vfx.Play();
-		
-		
 
 		//yield return new WaitForSeconds(0.5f);
 		//Destroy(vfx.gameObject);

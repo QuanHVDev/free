@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.Serialization;
 
 public class GameManager : SingletonBehaviour<GameManager> {
     [SerializeField] private GamePlayUI gamePlayUI;
@@ -100,6 +97,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
             if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
                 currentMapManager.RemoveCurrentNavmeshData();
                 indexMapManager++;
+                Debug.Log($"{currentLevel} - {dataLevelsSO.CountLevel()} - {indexMapManager}");
                 if (currentLevel >= dataLevelsSO.CountLevel()) indexMapManager = 0;
             }
         };

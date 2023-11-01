@@ -28,12 +28,18 @@ public class PrefabPeople : MonoBehaviour {
 		if(x != null && x.Length > 0) yield return new WaitForSeconds(x[0].clip.length);
 		
 		float nextTimePlayAnim = Time.time - 0.01f;
+		float timeEndAnim = Time.time + 15f;
 		yield return new WaitWhile(() => {
 			
 			if (nextTimePlayAnim < Time.time) {
 				nextTimePlayAnim = Time.time + Random.Range(3, 7f);
 				string anim = Random.Range(0, 2) == 1 ? IDLE : HAPPY;
 				ChangeState(anim);
+			}
+
+			if (timeEndAnim < Time.time) {
+				ChangeState(IDLE);
+				return false;
 			}
 
 			return true;
