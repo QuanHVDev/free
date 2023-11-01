@@ -17,10 +17,8 @@ public class PrefabPeople : MonoBehaviour {
 	}
 
 	public void StartRandomAnimFinishTarget() {
-		coroutine = StartCoroutine(StartRandomAnimFinishTargetSync());
+		StartCoroutine(StartRandomAnimFinishTargetSync());
 	}
-
-	private Coroutine coroutine;
 
 	private IEnumerator StartRandomAnimFinishTargetSync() {
 		ChangeState(HAPPY);
@@ -45,12 +43,6 @@ public class PrefabPeople : MonoBehaviour {
 			return true;
 		});
 	}
-
-	public void DoneLevel() {
-		StopCoroutine(coroutine);
-		
-	}
-	
 
 	public void SetTargetToMove(Transform trans) {
 		if (TryGetComponent(out NavMeshAgent nav)) {
