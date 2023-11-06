@@ -114,6 +114,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
         };
 
         currentMapManager.OnMapBusy += gamePlayUI.EnableRaycastTargetIconPeople;
+        currentMapManager.OnCorrect += gamePlayUI.SetSmoothBar;
     }
 
     private int currentLevel;

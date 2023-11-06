@@ -7,6 +7,7 @@ using UnityEngine.AI;
 
 public class MapManager : MonoBehaviour {
 	public Action OnFinishLevel, OnCompletePath;
+	public Action<float> OnCorrect;
 	public Action<CameraManager.NameOfAnimationCamera, CameraManager.StateVirtualCamera> OnCameraLookTarget;
 	public Func<Transform, Transform, CameraManager.ElementCamera> OnSetCatTarget;
 	public Action<bool> OnMapBusy;
@@ -53,10 +54,22 @@ public class MapManager : MonoBehaviour {
 
 	public void InitData() {
 		Maps = new List<ElementMap>();
-		maps.ForEach((item) =>
-		{
-			Maps.Add(new ElementMap(item));
-		});
+		foreach (var elementMap in maps) {
+			Maps.Add(new ElementMap(elementMap));
+		}
+		
+		int countCat = 0;
+		foreach (var map in Maps[currentIndexMap].element) {
+			foreach (var elementPeople in map.peoples) {
+				if (!elementPeople.isComeHome) {
+					countCat++;
+				}
+			}
+		}
+
+		countCatMoved = 0;
+		SetMaxCatNeedMove(countCat);
+		OnCorrect?.Invoke(countCatMoved * 1.0f / maxCatNeedMove);
 	}
 	
 	
@@ -118,10 +131,18 @@ public class MapManager : MonoBehaviour {
 		StartCoroutine(SetCorrectTargetAsync(peopleSO));
 	}
 
+	private int maxCatNeedMove = 0, countCatMoved = 0;
+
+	private void SetMaxCatNeedMove(int value) {
+		maxCatNeedMove = value;
+	}
+
 	private IEnumerator SetCorrectTargetAsync(PeopleSO peopleSO) {
 		foreach (var e in Maps[currentIndexMap].element) {
 			foreach (var house in e.peoples) {
 				if (house.people == peopleSO) {
+					countCatMoved++;
+					OnCorrect?.Invoke(countCatMoved * 1.0f / maxCatNeedMove);
 					catTarget = Instantiate(peopleSO.prefab, Maps[currentIndexMap].catSpawnPosition); 
 					yield return SetCameraLookTargetAsync(peopleSO, e.target);
 					house.isComeHome = true;

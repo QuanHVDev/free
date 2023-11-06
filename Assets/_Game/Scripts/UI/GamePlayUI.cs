@@ -12,6 +12,7 @@ public class GamePlayUI : MonoBehaviour
 	[SerializeField] private TryAgainUI tryAgainUI;
 	[SerializeField] private MessageManagerUI messageManagerUI;
 	[SerializeField] private WinUI winUI;
+	[SerializeField] private ProcessBar processBar;
 
 	private void Start() {
 		iconHealthManagerUI.OnOverHealth += IconHealthManagerUI_OnOverHealth;
@@ -52,5 +53,9 @@ public class GamePlayUI : MonoBehaviour
 	
 	public void EnableRaycastTargetIconPeople(bool enable) {
 		iconPeopleManagerUI.EnableRaycastTargetIconPeople(enable);
+	}
+
+	public void SetSmoothBar(float newPercent) {
+		processBar.SetSmooth(newPercent);
 	}
 }
