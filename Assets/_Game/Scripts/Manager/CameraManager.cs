@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 public class CameraManager : MonoBehaviour {
 
@@ -29,11 +31,6 @@ public class CameraManager : MonoBehaviour {
 		public bool IsOnlyLookTarget = false;
 	}
 
-	[SerializeField] private LayerMask mapLayer;
-	[SerializeField] private Vector3 OriginPosition;
-	[SerializeField] private float leftLimit = -12, rightLimit = 12, botLimit = -10, topLimit = 10;
-
-	private Vector2 firstPosition;
 	private ElementCamera elementCameraPrev;
 
 	private void Start() {
@@ -53,9 +50,6 @@ public class CameraManager : MonoBehaviour {
 
 			e.VirtualCamera.transform.position = parent.position;
 			e.VirtualCamera.transform.rotation = parent.rotation;
-			//e.VirtualCamera.transform.SetParent(parent);
-			//e.VirtualCamera.transform.localPosition = Vector3.zero;
-			//e.VirtualCamera.transform.localRotation = Quaternion.Euler(Vector3.zero);
 			return e;
 		}
 
@@ -66,6 +60,7 @@ public class CameraManager : MonoBehaviour {
 		ChangeState(elementCamera.triggerNameAnimationState, StateVirtualCamera.Move);
 		elementCamera.VirtualCamera.gameObject.SetActive(true);
 		elementCameraPrev = elementCamera;
+		originRotation = elementCameraPrev.VirtualCamera.transform.rotation.eulerAngles;
 	}
 
 	[ContextMenu("ReturnVirtualCameraToOrigin")]
@@ -137,40 +132,48 @@ public class CameraManager : MonoBehaviour {
 	public void ResetFOV(ElementCamera e) {
 		e.VirtualCamera.m_Lens.FieldOfView = prevValueFOV;
 	}
-
+	
+	[SerializeField] private Vector3 originRotation;
+	[SerializeField] private Vector3 currentnRotation;
+	[SerializeField] private Vector3 originPosition;
+	private float leftLimit = -40, rightLimit = 40;
 	private void Update() {
+		if (Input.touchCount == 1 && !isTouchUI) {
+			
+			Touch t = Input.GetTouch(0);
+			if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+			{
+				isTouchUI = true;
+				return;
+			}
+
+			if (!isTouch) {
+				originPosition = t.position;
+				currentnRotation = elementCameraPrev.VirtualCamera.transform.rotation.eulerAngles;
+				isTouch = true;
+				return;
+			}
+
+			Vector3 currentRotation = t.position;
+			float delta = currentRotation.x - originPosition.x;
+			float targetRotateY = currentnRotation.y + delta * 0.1f;
+			targetRotateY = Mathf.Clamp(targetRotateY, originRotation.y + leftLimit, originRotation.y + rightLimit);
+
+			Vector3 target = new Vector3(originRotation.x, targetRotateY, originRotation.z);
+			
+			Quaternion targetQuaternion = Quaternion.Euler(target.x, target.y, target.z);
+			elementCameraPrev.VirtualCamera.transform.rotation =
+				Quaternion.Slerp(elementCameraPrev.VirtualCamera.transform.rotation, targetQuaternion, 10 * Time.deltaTime);
+
+		}
+		else if(Input.touchCount == 0){
+			isTouch = false;
+			isTouchUI = false;
+		}
 	}
 
-	// private void Update() {
-	// 	if (Input.touchCount == 1) {
-	// 		if (state == StateMouse.inUI) return;
-	// 		Touch t = Input.GetTouch(0);
-	// 		if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId) && state != StateMouse.move) {
-	// 			Debug.Log("in UI" + t.phase);
-	// 			state = StateMouse.inUI;
-	// 			return;
-	// 		}
-	//
-	// 		Debug.Log("in Object" + t.phase);
-	// 		if (t.phase == TouchPhase.Began) {
-	// 			state = StateMouse.move;
-	// 		}
-	//
-	// 		Ray ray = Camera.main.ScreenPointToRay(t.position);
-	// 		if (Physics.Raycast(ray, out RaycastHit hit, 999f, mapLayer) && firstPosition == Vector2.zero) {
-	// 			firstPosition = t.position;
-	// 			return;
-	// 		}
-	//
-	// 		MoveCameraWith(t.position - firstPosition);
-	// 		firstPosition = t.position;
-	// 	}
-	// 	else {
-	// 		firstPosition = Vector2.zero;
-	// 		state = StateMouse.wait;
-	// 	}
-	// }
-	//
+	private bool isTouch = false, isTouchUI = false;
+
 	//
 	// private void MoveCameraWith(Vector2 deltaPosition) {
 	// 	transform.position -= new Vector3(deltaPosition.x, 0, deltaPosition.y) * Time.deltaTime;
