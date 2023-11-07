@@ -46,20 +46,17 @@ public class MapManager : MonoBehaviour {
 	private NavMeshDataInstance dataNavInstance;
 	private PrefabPeople catTarget;
 
-	public List<ElementMap> Maps { get; private set; }
+	public ElementMap MapInfo { get; private set; }
 
 	private void Start() {
 		dataNavInstance = NavMesh.AddNavMeshData(dataNav);
 	}
 
 	public void InitData() {
-		Maps = new List<ElementMap>();
-		foreach (var elementMap in maps) {
-			Maps.Add(new ElementMap(elementMap));
-		}
+		MapInfo = new ElementMap(maps[currentIndexMap]);
 		
 		int countCat = 0;
-		foreach (var map in Maps[currentIndexMap].element) {
+		foreach (var map in MapInfo.element) {
 			foreach (var elementPeople in map.peoples) {
 				if (!elementPeople.isComeHome) {
 					countCat++;
@@ -138,12 +135,12 @@ public class MapManager : MonoBehaviour {
 	}
 
 	private IEnumerator SetCorrectTargetAsync(PeopleSO peopleSO) {
-		foreach (var e in Maps[currentIndexMap].element) {
+		foreach (var e in MapInfo.element) {
 			foreach (var house in e.peoples) {
 				if (house.people == peopleSO) {
 					countCatMoved++;
 					OnCorrect?.Invoke(countCatMoved * 1.0f / maxCatNeedMove);
-					catTarget = Instantiate(peopleSO.prefab, Maps[currentIndexMap].catSpawnPosition); 
+					catTarget = Instantiate(peopleSO.prefab, MapInfo.catSpawnPosition); 
 					yield return SetCameraLookTargetAsync(peopleSO, e.target);
 					house.isComeHome = true;
 					if (CheckDoneAllHome()) {
@@ -156,9 +153,9 @@ public class MapManager : MonoBehaviour {
 	}
 
 	private IEnumerator SetCameraLookTargetAsync(PeopleSO data, Transform positionToMove) {
-		var x = OnSetCatTarget?.Invoke(catTarget.transform, Maps[currentIndexMap].cameraPosition);
-		if (Maps[currentIndexMap].valueZoomCamera != 0) {
-			GameManager.Instance.Camera.SetFOV(x, Maps[currentIndexMap].valueZoomCamera);
+		var x = OnSetCatTarget?.Invoke(catTarget.transform, MapInfo.cameraPosition);
+		if (MapInfo.valueZoomCamera != 0) {
+			GameManager.Instance.Camera.SetFOV(x, MapInfo.valueZoomCamera);
 		}
 		x.VirtualCamera.gameObject.SetActive(true);
 		OnCameraLookTarget?.Invoke(x.triggerNameAnimationState, CameraManager.StateVirtualCamera.Wait);
@@ -180,7 +177,7 @@ public class MapManager : MonoBehaviour {
 		}
 		
 		catTarget.StartRandomAnimFinishTarget();
-		var targetDir = Maps[currentIndexMap].cameraPosition.position - catTarget.transform.position;
+		var targetDir = MapInfo.cameraPosition.position - catTarget.transform.position;
 		targetDir = new Vector3(targetDir.x, 0, targetDir.z);
 		
 		var angleToTarget = Vector3.Angle(catTarget.transform.forward, targetDir);
@@ -202,7 +199,7 @@ public class MapManager : MonoBehaviour {
 		yield return new WaitForSeconds(2f);
 		OnCompletePath?.Invoke();
 		OnMapBusy?.Invoke(!IsMapBusy);
-		if (Maps[currentIndexMap].valueZoomCamera != 0) {
+		if (MapInfo.valueZoomCamera != 0) {
 			GameManager.Instance.Camera.ResetFOV(x);
 		}
 		
@@ -214,7 +211,7 @@ public class MapManager : MonoBehaviour {
 	}
 
 	private bool CheckDoneAllHome() {
-		foreach (var e in Maps[currentIndexMap].element) {
+		foreach (var e in MapInfo.element) {
 			foreach (var house in e.peoples) {
 				if (!house.isComeHome) {
 					return false;
@@ -226,11 +223,11 @@ public class MapManager : MonoBehaviour {
 	}
 
 	public List<Map> GetHomes() {
-		return Maps[currentIndexMap].element;
+		return MapInfo.element;
 	}
 
 	public List<ElementMessage> GetMessagesForHint() {
-		return Maps[currentIndexMap].messagesForHint;
+		return MapInfo.messagesForHint;
 	}
 
 	public int GetCountMaps() {
@@ -238,7 +235,7 @@ public class MapManager : MonoBehaviour {
 	}
 
 	public Transform GetCurrentCameraPosition() {
-		return Maps[currentIndexMap].cameraPosition;
+		return MapInfo.cameraPosition;
 	}
 
 	public void RemoveCurrentNavmeshData() {

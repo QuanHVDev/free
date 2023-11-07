@@ -26,16 +26,22 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 			IconPeople icon = GetObjectPooledAvailable();
 			icon.Init(targets, peoplesSO[index]);
 			
-			icon.OnCorrectTarget += OnPeopleCorrectHome;
 			icon.OnCorrectTarget += (x) => {
+				OnPeopleCorrectHome?.Invoke(x);
 				for (int j = 0; j < amountPeople; j++) {
 					pooledObjects[j].RemoveTarget(icon.currentTarget);
 					pooledObjects[j].RemoveHome(icon.currentTarget);
 				}
+				
+				GameManager.Instance.GetCurrentMapManager().SetCorrectTarget(x);
 			};
-			icon.OnCorrectTarget += GameManager.Instance.GetCurrentMapManager().SetCorrectTarget;
-			icon.OnIncorrect += GameManager.Instance.Incorrent;
-			icon.OnIncorrect += SFX.Instance.PlayIncorrect;
+			
+			icon.OnIncorrect += ()=>
+			{
+				GameManager.Instance.Incorrent();
+				SFX.Instance.PlayIncorrect();
+			};
+			
 			icon.gameObject.SetActive(true);
 			if (map.peoples[index].isComeHome) {
 				iconDoneHome.Add(icon);
