@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 public class GameManager : SingletonBehaviour<GameManager> {
     [SerializeField] private GamePlayUI gamePlayUI;
@@ -15,13 +18,17 @@ public class GameManager : SingletonBehaviour<GameManager> {
     // health
     private int maxHealth = 3;
     private int currentHealth;
+    private UserDataController udc;
 
     [Header("Config Data")] 
     [SerializeField] private MapManager map;
 
     public CameraManager Camera => camera;
 
-    private void Start() {
+    private void Start()
+    {
+        udc = UserDataController.Instance;
+        
         currentLevel = 0;
         if (map) {
             currentMapManager = map;
@@ -38,6 +45,27 @@ public class GameManager : SingletonBehaviour<GameManager> {
         }
         else {
             SpawnLevel();
+        }
+        
+        SetUpTutorial();
+    }
+
+    private void SetUpTutorial()
+    {
+        var process = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+        if (!process.IsShowSwipe && !process.IsShowHint)
+        {
+            gamePlayUI.TurnOffTutorialUI();
+        }
+        else
+        {
+            if (process.IsShowHint)
+            {
+                Transform s = gamePlayUI.GetIconPeopleManagerUI().Icons[1].transform;
+                var list = gamePlayUI.GetIconPeopleManagerUI().Icons[1].Targets;
+                Transform e = list[Random.Range(0, list.Count)].transform;
+                gamePlayUI.SetHint(s, e);
+            }
         }
     }
 
@@ -116,11 +144,21 @@ public class GameManager : SingletonBehaviour<GameManager> {
             var element = camera.GetElementCameraPrev();
             camera.ChangeState(element.triggerNameAnimationState, CameraManager.StateVirtualCamera.Wait);
             element.VirtualCamera.gameObject.SetActive(true);
+            if (isCheckShowSwipe)
+            {
+                var process = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+                if (process.IsShowSwipe)
+                {
+                    gamePlayUI.ShowUISwipe(true);
+                }
+            }
         };
 
         currentMapManager.OnMapBusy += gamePlayUI.EnableRaycastTargetIconPeople;
         currentMapManager.OnCorrect += gamePlayUI.SetSmoothBar;
     }
+
+    private bool isCheckShowSwipe = false;
 
     private int currentLevel;
 

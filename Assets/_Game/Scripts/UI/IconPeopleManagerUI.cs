@@ -71,4 +71,6 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 			icon.EnableRaycastTargetIconPeople(enable);
 		}
 	}
+
+	public List<IconPeople> Icons => pooledObjects;
 }

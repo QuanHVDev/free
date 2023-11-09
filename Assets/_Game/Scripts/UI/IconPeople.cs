@@ -23,10 +23,10 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 	private Vector2 originAnchor;
 	private bool isSelected = false;
 	private PeopleSO data;
-	private List<IconHome> targets;
+	public List<IconHome> Targets { get; private set; }
 
 	public void Init(List<IconHome> targets, PeopleSO data) {
-		this.targets = targets;
+		this.Targets = targets;
 		this.data = data;
 		imgAvatar.sprite = data.avatar;
 		txtName.text = data.name;
@@ -77,7 +77,7 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 	public void ComeHome(bool isSetUp = false) {
 		if(!isSetUp) SFX.Instance.PlayCorrect();
 		if (currentTarget == null) {
-			currentTarget = targets[0];
+			currentTarget = Targets[0];
 		}
 		
 		rect.SetParent(currentTarget.transform);
@@ -100,7 +100,7 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 	}
 
 	private IconHome CheckAllTarget() {
-		foreach (var icon in targets) {
+		foreach (var icon in Targets) {
 			float x = Vector2.Distance(transform.position, icon.transform.position);
 			if (x < delta) return icon;
 		}
@@ -123,13 +123,13 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 
 	public void SetAllHomes(List<IconHome> iconHomes) {
 		this.iconHomes = new List<IconHome>(iconHomes);
-		foreach (var target in targets) {
+		foreach (var target in Targets) {
 			this.iconHomes.Remove(target);
 		}
 	}
 
 	public void RemoveTarget(IconHome target) {
-		targets.Remove(target);
+		Targets.Remove(target);
 	}
 
 	public void RemoveAllAction() {

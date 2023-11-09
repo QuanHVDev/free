@@ -12,6 +12,7 @@ public class GamePlayUI : MonoBehaviour
 	[SerializeField] private TryAgainUI tryAgainUI;
 	[SerializeField] private MessageManagerUI messageManagerUI;
 	[SerializeField] private WinUI winUI;
+	[FormerlySerializedAs("swipeUI")] [SerializeField] private TutorialUI tutorialUI;
 	[SerializeField] private ProcessBar processBar;
 
 	private void Start() {
@@ -57,5 +58,21 @@ public class GamePlayUI : MonoBehaviour
 
 	public void SetSmoothBar(float newPercent) {
 		processBar.SetSmooth(newPercent);
+	}
+
+	public void ShowUISwipe(bool enable)
+	{
+		tutorialUI.ShowSwipe(enable);
+	}
+
+	public void SetHint(Transform start, Transform end)
+	{
+		tutorialUI.SetupHint(start, end);
+		tutorialUI.ShowHint();
+	}
+
+	public void TurnOffTutorialUI()
+	{
+		tutorialUI.gameObject.SetActive(false);
 	}
 }
