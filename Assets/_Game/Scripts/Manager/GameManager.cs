@@ -28,8 +28,9 @@ public class GameManager : SingletonBehaviour<GameManager> {
     private void Start()
     {
         udc = UserDataController.Instance;
+        var pro = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+        indexMapManager = pro.currentLevel;
         
-        currentLevel = 0;
         if (map) {
             currentMapManager = map;
             currentMapManager.InitData();
@@ -138,12 +139,14 @@ public class GameManager : SingletonBehaviour<GameManager> {
         currentMapManager.OnFinishLevel += gamePlayUI.ShowUIWin;
         currentMapManager.OnFinishLevel += () => {
             currentMapManager.currentIndexMap++;
-            currentLevel++;
             if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
                 currentMapManager.RemoveCurrentNavmeshData();
                 indexMapManager++;
-                Debug.Log($"{currentLevel} - {dataLevelsSO.CountLevel()} - {indexMapManager}");
-                if (currentLevel >= dataLevelsSO.CountLevel()) indexMapManager = 0;
+                Debug.Log($"steps:{dataLevelsSO.CountSteps()} - lvls: {dataLevelsSO.CountLevel()} - currentLvl: {indexMapManager}");
+                if (indexMapManager >= dataLevelsSO.CountLevel()) indexMapManager = 0;
+                var pro = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+                pro.currentLevel = indexMapManager;
+                udc.SetData(UserDataKeys.USER_PROGRESSION, pro);
             }
         };
 
@@ -163,7 +166,6 @@ public class GameManager : SingletonBehaviour<GameManager> {
         currentMapManager.OnCorrect += gamePlayUI.SetSmoothBar;
     }
 
-    private int currentLevel;
 
     private void LoadHealth() {
         currentHealth = maxHealth;

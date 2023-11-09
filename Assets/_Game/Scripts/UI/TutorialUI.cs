@@ -26,8 +26,8 @@ public class TutorialUI : MonoBehaviour
         txtSwipe.gameObject.SetActive(false);
         btnClick.gameObject.SetActive(false);
         hint.gameObject.SetActive(false);
-        if (iconFake != null && iconFake.Count > 0) {
-            foreach (var icon in iconFake) {
+        if (iconsFake != null && iconsFake.Count > 0) {
+            foreach (var icon in iconsFake) {
                 icon.gameObject.SetActive(false);
             }
         }
@@ -47,12 +47,12 @@ public class TutorialUI : MonoBehaviour
     {
         btnClick.gameObject.SetActive(true);
         hint.gameObject.SetActive(true);
-        iconFake = new List<Transform>();
+        iconsFake = new List<Transform>();
 
         var s1 = SpawnFakeObject(startPositionHint);
         var s2 = SpawnFakeObject(endPositionHint);
-        iconFake.Add(s1);
-        iconFake.Add(s2);
+        iconsFake.Add(s1);
+        iconsFake.Add(s2);
         
         hint.SetSiblingIndex(transform.childCount-1);
         hint.DOMove(endPositionHint.position, 1f).SetLoops(-1);
@@ -91,5 +91,5 @@ public class TutorialUI : MonoBehaviour
 
     private Transform startPositionHint;
     private Transform endPositionHint;
-    private List<Transform> iconFake;
+    private List<Transform> iconsFake;
 }
