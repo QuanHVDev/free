@@ -26,6 +26,11 @@ public class TutorialUI : MonoBehaviour
         txtSwipe.gameObject.SetActive(false);
         btnClick.gameObject.SetActive(false);
         hint.gameObject.SetActive(false);
+        if (iconFake != null && iconFake.Count > 0) {
+            foreach (var icon in iconFake) {
+                icon.gameObject.SetActive(false);
+            }
+        }
     }
 
     public void ShowSwipe(bool enable)
@@ -42,7 +47,39 @@ public class TutorialUI : MonoBehaviour
     {
         btnClick.gameObject.SetActive(true);
         hint.gameObject.SetActive(true);
+        iconFake = new List<Transform>();
+
+        var s1 = SpawnFakeObject(startPositionHint);
+        var s2 = SpawnFakeObject(endPositionHint);
+        iconFake.Add(s1);
+        iconFake.Add(s2);
+        
+        hint.SetSiblingIndex(transform.childCount-1);
         hint.DOMove(endPositionHint.position, 1f).SetLoops(-1);
+    }
+
+    private Transform SpawnFakeObject(Transform target)
+    {
+        var s = Instantiate(target, transform);
+        RectTransform sRect = s.GetComponent<RectTransform>();
+        sRect.anchorMin = new Vector2(0.5f, 0.5f);
+        sRect.anchorMax = new Vector2(0.5f, 0.5f);
+        sRect.sizeDelta = target.GetComponent<RectTransform>().sizeDelta;
+        sRect.position = target.position;
+        
+        RemoveRaycast(s);
+        foreach (Transform child in s) {
+            RemoveRaycast(child);
+        }
+        return s;
+    }
+
+    private void RemoveRaycast(Transform target)
+    {
+        if (target.TryGetComponent(out Image img))
+        {
+            img.raycastTarget = false;
+        }
     }
 
     public void SetupHint(Transform start, Transform end)
@@ -54,4 +91,5 @@ public class TutorialUI : MonoBehaviour
 
     private Transform startPositionHint;
     private Transform endPositionHint;
+    private List<Transform> iconFake;
 }

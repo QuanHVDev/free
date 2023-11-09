@@ -75,7 +75,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
     IEnumerator SetupAsync()
     {
         yield return new WaitForSeconds(0.1f);
-        Transform s = gamePlayUI.GetIconPeopleManagerUI().Icons[1].ImgAvatar.transform;
+        Transform s = gamePlayUI.GetIconPeopleManagerUI().Icons[1].transform;
         var list = gamePlayUI.GetIconPeopleManagerUI().Icons[1].Targets;
         Transform e = list[Random.Range(0, list.Count)].transform;
         gamePlayUI.SetHint(s, e);
