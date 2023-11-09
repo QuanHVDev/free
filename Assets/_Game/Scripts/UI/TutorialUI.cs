@@ -15,7 +15,6 @@ public class TutorialUI : MonoBehaviour
 
     public void Start()
     {
-        TurnOffAll();
         btnClick.onClick.AddListener(() =>
         {
             TurnOffAll();
@@ -34,13 +33,16 @@ public class TutorialUI : MonoBehaviour
         txtSwipe.gameObject.SetActive(enable);
         if (enable)
         {
+            btnClick.gameObject.SetActive(enable);
             txtSwipe.DOFade(0, 1f).SetLoops(-1);
         }
     }
 
     public void ShowHint()
     {
-        hint.DOMove(endPositionHint.position, 1f);
+        btnClick.gameObject.SetActive(true);
+        hint.gameObject.SetActive(true);
+        hint.DOMove(endPositionHint.position, 1f).SetLoops(-1);
     }
 
     public void SetupHint(Transform start, Transform end)

@@ -144,4 +144,6 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 	public void EnableRaycastTargetIconPeople(bool enable) {
 		icon.raycastTarget = enable;
 	}
+
+	public Image ImgAvatar => imgAvatar;
 }

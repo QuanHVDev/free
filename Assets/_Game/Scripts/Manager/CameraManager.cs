@@ -56,11 +56,24 @@ public class CameraManager : MonoBehaviour {
 		return null;
 	}
 
-	public void MoveCameraToVirtualCamera(ElementCamera elementCamera) {
+	public void MoveCameraToVirtualCamera(ElementCamera elementCamera, Action OnCompele = null) {
 		ChangeState(elementCamera.triggerNameAnimationState, StateVirtualCamera.Move);
 		elementCamera.VirtualCamera.gameObject.SetActive(true);
 		elementCameraPrev = elementCamera;
 		originRotation = elementCameraPrev.VirtualCamera.transform.rotation.eulerAngles;
+
+		if (OnCompele != null)
+		{
+			StartCoroutine(CheckTut(OnCompele));
+		}
+		
+	}
+
+	IEnumerator CheckTut(Action OnDoSomething)
+	{
+		yield return new WaitUntil(() => _drivenCamera.IsBlending);
+		yield return new WaitWhile(() => _drivenCamera.IsBlending);
+		OnDoSomething?.Invoke();
 	}
 
 	[ContextMenu("ReturnVirtualCameraToOrigin")]

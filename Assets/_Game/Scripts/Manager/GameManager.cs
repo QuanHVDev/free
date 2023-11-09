@@ -35,7 +35,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
             currentMapManager.InitData();
             SetUpActionCurrentMapManager();
             var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
-            camera.MoveCameraToVirtualCamera(element);
+            camera.MoveCameraToVirtualCamera(element, SetUpTutorial);
             gamePlayUI.GetIconHomeManagerUI().Add(currentMapManager, gamePlayUI);
             gamePlayUI.GetIconPeopleManagerUI()
                 .SetAllHomesForIcon(gamePlayUI.GetIconHomeManagerUI().GetCurrentIconForMap());
@@ -46,8 +46,6 @@ public class GameManager : SingletonBehaviour<GameManager> {
         else {
             SpawnLevel();
         }
-        
-        SetUpTutorial();
     }
 
     private void SetUpTutorial()
@@ -61,12 +59,26 @@ public class GameManager : SingletonBehaviour<GameManager> {
         {
             if (process.IsShowHint)
             {
-                Transform s = gamePlayUI.GetIconPeopleManagerUI().Icons[1].transform;
-                var list = gamePlayUI.GetIconPeopleManagerUI().Icons[1].Targets;
-                Transform e = list[Random.Range(0, list.Count)].transform;
-                gamePlayUI.SetHint(s, e);
+                StartCoroutine(SetupAsync());
+                process.IsShowHint = false;
+                udc.SetData(UserDataKeys.USER_PROGRESSION, process);
+            }
+            else if(process.IsShowSwipe)
+            {
+                process.IsShowSwipe = false;
+                gamePlayUI.ShowUISwipe(true);
+                udc.SetData(UserDataKeys.USER_PROGRESSION, process);
             }
         }
+    }
+
+    IEnumerator SetupAsync()
+    {
+        yield return new WaitForSeconds(0.1f);
+        Transform s = gamePlayUI.GetIconPeopleManagerUI().Icons[1].ImgAvatar.transform;
+        var list = gamePlayUI.GetIconPeopleManagerUI().Icons[1].Targets;
+        Transform e = list[Random.Range(0, list.Count)].transform;
+        gamePlayUI.SetHint(s, e);
     }
 
     public void SpawnLevel() {
@@ -119,7 +131,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
         
         
         var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
-        camera.MoveCameraToVirtualCamera(element);
+        camera.MoveCameraToVirtualCamera(element, SetUpTutorial);
     }
 
     private void SetUpActionCurrentMapManager() {
@@ -144,21 +156,12 @@ public class GameManager : SingletonBehaviour<GameManager> {
             var element = camera.GetElementCameraPrev();
             camera.ChangeState(element.triggerNameAnimationState, CameraManager.StateVirtualCamera.Wait);
             element.VirtualCamera.gameObject.SetActive(true);
-            if (isCheckShowSwipe)
-            {
-                var process = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
-                if (process.IsShowSwipe)
-                {
-                    gamePlayUI.ShowUISwipe(true);
-                }
-            }
+            SetUpTutorial();
         };
 
         currentMapManager.OnMapBusy += gamePlayUI.EnableRaycastTargetIconPeople;
         currentMapManager.OnCorrect += gamePlayUI.SetSmoothBar;
     }
-
-    private bool isCheckShowSwipe = false;
 
     private int currentLevel;
 
@@ -174,5 +177,11 @@ public class GameManager : SingletonBehaviour<GameManager> {
 
     public MapManager GetCurrentMapManager() {
         return currentMapManager;
+    }
+
+    [ContextMenu("DeleteData")]
+    public void DeleteData()
+    {
+        PlayerPrefs.DeleteAll();
     }
 }
