@@ -24,4 +24,13 @@ public class SFX : SingletonBehaviourDontDestroy<SFX> {
     public void PlayIncorrect() {
         PlayOneShoot(incorrectClip);
     }
+
+    public void PlaySoundButton()
+    {
+    }
+
+    public void PlayCurrencyCounting()
+    {
+        
+    }
 }
