@@ -47,6 +47,8 @@ public class GameManager : SingletonBehaviour<GameManager> {
         else {
             SpawnLevel();
         }
+        
+        gamePlayUI.UpdateTitle(indexMapManager, currentMapManager.currentIndexMap);
     }
 
     private void SetUpTutorial()
@@ -103,7 +105,8 @@ public class GameManager : SingletonBehaviour<GameManager> {
         gamePlayUI.GetIconHomeManagerUI().Add(currentMapManager, gamePlayUI);
         gamePlayUI.GetIconPeopleManagerUI().SetAllHomesForIcon(gamePlayUI.GetIconHomeManagerUI().GetCurrentIconForMap());
         gamePlayUI.GetMessageManagerUI().Init(currentMapManager.GetMessagesForHint());
-        
+        gamePlayUI.UpdateTitle(indexMapManager, currentMapManager.currentIndexMap);
+
         LoadHealth();
     }
 

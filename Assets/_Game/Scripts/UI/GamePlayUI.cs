@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -12,8 +13,9 @@ public class GamePlayUI : MonoBehaviour
 	[SerializeField] private TryAgainUI tryAgainUI;
 	[SerializeField] private MessageManagerUI messageManagerUI;
 	[SerializeField] private WinUI winUI;
-	[FormerlySerializedAs("swipeUI")] [SerializeField] private TutorialUI tutorialUI;
+	[SerializeField] private TutorialUI tutorialUI;
 	[SerializeField] private ProcessBar processBar;
+	[SerializeField] private TMP_Text txtLevel;
 
 	private void Start() {
 		iconHealthManagerUI.OnOverHealth += IconHealthManagerUI_OnOverHealth;
@@ -74,5 +76,10 @@ public class GamePlayUI : MonoBehaviour
 	public void TurnOffTutorialUI()
 	{
 		tutorialUI.gameObject.SetActive(false);
+	}
+
+	public void UpdateTitle(int level, int step)
+	{
+		txtLevel.text = $"{level + 1} - {step}";
 	}
 }
