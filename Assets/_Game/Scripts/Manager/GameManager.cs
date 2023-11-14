@@ -125,15 +125,10 @@ public class GameManager : SingletonBehaviour<GameManager> {
     private void LoadLevel(int index) {
         if (!currentMapManager || currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
             currentMapManager = Instantiate(dataLevelsSO.MapManagers[index], spawnMap);
-            currentMapManager.InitData();
             SetUpActionCurrentMapManager();
         }
-        else
-        {
-            currentMapManager.InitData();
-        }
         
-        
+        currentMapManager.InitData();
         var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
         camera.MoveCameraToVirtualCamera(element, SetUpTutorial);
     }
