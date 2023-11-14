@@ -80,6 +80,6 @@ public class GamePlayUI : MonoBehaviour
 
 	public void UpdateTitle(int level, int step)
 	{
-		txtLevel.text = $"{level + 1} - {step}";
+		txtLevel.text = $"Level {level + 1}-{step+1}";
 	}
 }

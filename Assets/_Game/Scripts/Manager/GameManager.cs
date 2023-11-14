@@ -189,4 +189,13 @@ public class GameManager : SingletonBehaviour<GameManager> {
     {
         PlayerPrefs.DeleteAll();
     }
+
+    [ContextMenu("SetData")]
+    public void SetData()
+    {
+        var pro = UserDataController.Instance.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+        pro.currentLevel = indexMapManager;
+        UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION, pro);
+    }
+
 }
