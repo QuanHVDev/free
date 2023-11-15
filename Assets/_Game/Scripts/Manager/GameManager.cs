@@ -107,6 +107,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
         if (currentMapManager) {
             gamePlayUI.GetIconHomeManagerUI().FinishMap();
             gamePlayUI.GetIconPeopleManagerUI().FinishMap();
+            currentMapManager.DeleteAllCats();
             if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
                 camera.ReturnVirtualCameraToOrigin();
                 yield return new WaitUntil(() => {

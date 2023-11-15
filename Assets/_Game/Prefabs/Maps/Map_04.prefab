@@ -6384,7 +6384,7 @@ GameObject:
   m_Layer: 0
   m_Name: point (2)
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -10124,13 +10124,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41b4cc7b8fc03264aa8b31a0975c9a5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentIndexMap: 0
+  currentIndexMap: 3
   maps:
   - element:
-    - target: {fileID: 4994091032795631570}
-      peoples:
-      - people: {fileID: 11400000, guid: d2bd1a46e5c5efa4ab91653849a58190, type: 2}
-        isComeHome: 0
     - target: {fileID: 1934139218910342152}
       peoples:
       - people: {fileID: 11400000, guid: 682029bec39f6f541ab5165a004f9001, type: 2}
@@ -10139,13 +10135,19 @@ MonoBehaviour:
       peoples:
       - people: {fileID: 11400000, guid: be93cff63db6f7742b613d3f5e44ed2d, type: 2}
         isComeHome: 0
+    - target: {fileID: 4994091032795631570}
+      peoples:
+      - people: {fileID: 11400000, guid: d2bd1a46e5c5efa4ab91653849a58190, type: 2}
+        isComeHome: 0
     messagesForHint:
-    - peoples:
-      - {fileID: 11400000, guid: 682029bec39f6f541ab5165a004f9001, type: 2}
-      message: Luna is in the cashier between Jim and Simba
     - peoples:
       - {fileID: 11400000, guid: d2bd1a46e5c5efa4ab91653849a58190, type: 2}
       message: Jim wants to see the Christmas tree
+    - peoples:
+      - {fileID: 11400000, guid: 682029bec39f6f541ab5165a004f9001, type: 2}
+      - {fileID: 11400000, guid: be93cff63db6f7742b613d3f5e44ed2d, type: 2}
+      - {fileID: 11400000, guid: d2bd1a46e5c5efa4ab91653849a58190, type: 2}
+      message: Luna is in the cashier between Jim and Simba
     cameraPosition: {fileID: 8887404253637460136}
     catSpawnPosition: {fileID: 8006870736461924565}
     valueZoomCamera: 50
@@ -10164,13 +10166,13 @@ MonoBehaviour:
         isComeHome: 0
     messagesForHint:
     - peoples:
-      - {fileID: 11400000, guid: cb966acf287856d478fa40a231e243b4, type: 2}
-      message: Leo has some chrismas' gift
-    - peoples:
       - {fileID: 11400000, guid: 9e072c28218b2fa4aac9b48d84b279a8, type: 2}
       - {fileID: 11400000, guid: cb966acf287856d478fa40a231e243b4, type: 2}
       - {fileID: 11400000, guid: eca70c936fe91d5458d3a38c22e11a3b, type: 2}
       message: Bom stays on the big room opposite with Bella and Leo
+    - peoples:
+      - {fileID: 11400000, guid: cb966acf287856d478fa40a231e243b4, type: 2}
+      message: Leo has some chrismas' gift
     cameraPosition: {fileID: 8842316350063717449}
     catSpawnPosition: {fileID: 8474927985111583623}
     valueZoomCamera: 0
@@ -10210,15 +10212,9 @@ MonoBehaviour:
       - {fileID: 11400000, guid: a2230be47f8a258478f336faef165b80, type: 2}
       - {fileID: 11400000, guid: 43ac628ea5e46d64ba13caa5ab434597, type: 2}
       message: Tommy is on the cabinet behind Rocky
-    - peoples:
-      - {fileID: 11400000, guid: ec57323cd7811d04ea1913d0330a9f53, type: 2}
-      message: Chloe is watching TV
-    - peoples:
-      - {fileID: 11400000, guid: 43ac628ea5e46d64ba13caa5ab434597, type: 2}
-      message: Rocky is staff bar
     cameraPosition: {fileID: 7779507560726833387}
     catSpawnPosition: {fileID: 8474927985111583623}
-    valueZoomCamera: 50
+    valueZoomCamera: 40
   - element:
     - target: {fileID: 5670828178554755315}
       peoples:
@@ -10238,13 +10234,11 @@ MonoBehaviour:
       message: 'The gentle cat feels hungry, a little fish may be a good choice '
     - peoples:
       - {fileID: 11400000, guid: eca70c936fe91d5458d3a38c22e11a3b, type: 2}
+      - {fileID: 11400000, guid: d2bd1a46e5c5efa4ab91653849a58190, type: 2}
       message: The froggy cat needs to go home opposite Jim
-    - peoples:
-      - {fileID: 11400000, guid: a2230be47f8a258478f336faef165b80, type: 2}
-      message: Tommy runs into cave
     cameraPosition: {fileID: 4796121315244796887}
     catSpawnPosition: {fileID: 2200156037379464583}
-    valueZoomCamera: 0
+    valueZoomCamera: 20
   dataNav: {fileID: 23800000, guid: d6386e78d96d4a64da77f125a8d7c11d, type: 2}
 --- !u!1 &1112208028497029598
 GameObject:
@@ -11699,7 +11693,7 @@ GameObject:
   m_Layer: 0
   m_Name: point
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -11712,7 +11706,7 @@ Transform:
   m_GameObject: {fileID: 1363575574251500476}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.95, y: 0.411, z: 140.64}
+  m_LocalPosition: {x: -11.63, y: 0.411, z: 137.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13308,7 +13302,7 @@ GameObject:
   m_Layer: 0
   m_Name: point (1)
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1

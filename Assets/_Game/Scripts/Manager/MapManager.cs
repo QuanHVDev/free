@@ -45,6 +45,7 @@ public class MapManager : MonoBehaviour {
 	[SerializeField] private NavMeshData dataNav;
 	private NavMeshDataInstance dataNavInstance;
 	private PrefabPeople catTarget;
+	private PeopleSO catSO;
 
 	public ElementMap MapInfo { get; private set; }
 
@@ -54,6 +55,7 @@ public class MapManager : MonoBehaviour {
 
 	public void InitData() {
 		MapInfo = new ElementMap(maps[currentIndexMap]);
+		cats = new List<Transform>();
 		
 		int countCat = 0;
 		foreach (var map in MapInfo.element) {
@@ -141,6 +143,8 @@ public class MapManager : MonoBehaviour {
 					countCatMoved++;
 					OnCorrect?.Invoke(countCatMoved * 1.0f / maxCatNeedMove);
 					catTarget = Instantiate(peopleSO.prefab, MapInfo.catSpawnPosition); 
+					cats.Add(catTarget.transform);
+					catSO = peopleSO;
 					yield return SetCameraLookTargetAsync(peopleSO, e.target);
 					house.isComeHome = true;
 					if (CheckDoneAllHome()) {
@@ -203,11 +207,7 @@ public class MapManager : MonoBehaviour {
 			GameManager.Instance.Camera.ResetFOV(x);
 		}
 		
-		//var vfx = Instantiate(data.vfxHide, catTarget.transform.position, Quaternion.identity);
-		//vfx.Play();
-
-		//yield return new WaitForSeconds(0.5f);
-		//Destroy(vfx.gameObject);
+		
 	}
 
 	private bool CheckDoneAllHome() {
@@ -240,5 +240,38 @@ public class MapManager : MonoBehaviour {
 
 	public void RemoveCurrentNavmeshData() {
 		NavMesh.RemoveNavMeshData(dataNavInstance);
+	}
+
+	private List<Transform> cats;
+
+	public void DeleteAllCats()
+	{
+		StartCoroutine(DeleteAllCatsAsync());
+	}
+
+	private IEnumerator DeleteAllCatsAsync()
+	{
+		if (cats == null || cats.Count == 0) yield return null;
+
+		List<ParticleSystem> vfxs = new List<ParticleSystem>();
+		List<Transform> catsClone = new List<Transform>(cats);
+		foreach (Transform transform in catsClone)
+		{
+			var vfx = Instantiate(catSO.vfxHide, transform.position, Quaternion.identity);
+			vfx.Play();
+			vfxs.Add(vfx);
+		}
+		
+		foreach (Transform trans in catsClone)
+		{
+			Destroy(trans.gameObject);
+		}
+		
+		yield return new WaitForSeconds(0.3f);
+		foreach (ParticleSystem vfx in vfxs)
+		{
+			Destroy(vfx.gameObject);
+		}
+		
 	}
 }
