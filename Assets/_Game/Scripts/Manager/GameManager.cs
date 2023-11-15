@@ -88,6 +88,21 @@ public class GameManager : SingletonBehaviour<GameManager> {
         StartCoroutine(SpawnLevelAsync());
     }
 
+    public void ResumeCamera(Action OnComplete = null)
+    {
+        StartCoroutine(ResumeCameraAsync(OnComplete));
+    }
+
+    private IEnumerator ResumeCameraAsync(Action OnComplete = null)
+    {
+        camera.ReturnVirtualCameraToOrigin();
+        yield return new WaitUntil(() => {
+            return camera.state == CameraManager.StateVirtualCamera.Finish;
+        });
+        
+        OnComplete?.Invoke();
+    }
+
     private IEnumerator SpawnLevelAsync() {
         if (currentMapManager) {
             gamePlayUI.GetIconHomeManagerUI().FinishMap();
@@ -108,6 +123,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
         gamePlayUI.UpdateTitle(indexMapManager, currentMapManager.currentIndexMap);
 
         LoadHealth();
+        yield return null;
     }
 
     //public void SpawnLevel() {
