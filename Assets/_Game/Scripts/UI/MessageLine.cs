@@ -23,7 +23,7 @@ public class MessageLine : MonoBehaviour {
     }
 
     public void Init(MapManager.ElementMessage elementMessage) {
-        tmp.text = elementMessage.message;
+        tmp.text = "- " + elementMessage.message;
         this.peopleSO = elementMessage.peoples;
     }
 
