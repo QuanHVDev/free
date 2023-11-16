@@ -17,6 +17,8 @@ public class TutorialUI : MonoBehaviour
     {
         btnClick.onClick.AddListener(() =>
         {
+            OnComplete?.Invoke();
+            OnComplete = null;
             TurnOffAll();
         });
     }
@@ -26,8 +28,10 @@ public class TutorialUI : MonoBehaviour
         txtSwipe.gameObject.SetActive(false);
         btnClick.gameObject.SetActive(false);
         hint.gameObject.SetActive(false);
-        if (iconsFake != null && iconsFake.Count > 0) {
-            foreach (var icon in iconsFake) {
+        if (iconsFake != null && iconsFake.Count > 0)
+        {
+            foreach (var icon in iconsFake)
+            {
                 icon.gameObject.SetActive(false);
             }
         }
@@ -53,9 +57,20 @@ public class TutorialUI : MonoBehaviour
         var s2 = SpawnFakeObject(endPositionHint);
         iconsFake.Add(s1);
         iconsFake.Add(s2);
+
+        hint.SetSiblingIndex(transform.childCount - 1);
+        ResetSequence();
+        mySequence.Append(hint.DOMove(endPositionHint.position, 1f));
+    }
+
+    private void ResetSequence()
+    {
+        if (mySequence != null)
+        {
+            mySequence.Kill();
+        }
         
-        hint.SetSiblingIndex(transform.childCount-1);
-        hint.DOMove(endPositionHint.position, 1f).SetLoops(-1);
+        mySequence = DOTween.Sequence();
     }
 
     private Transform SpawnFakeObject(Transform target)
@@ -66,11 +81,13 @@ public class TutorialUI : MonoBehaviour
         sRect.anchorMax = new Vector2(0.5f, 0.5f);
         sRect.sizeDelta = target.GetComponent<RectTransform>().sizeDelta;
         sRect.position = target.position;
-        
+
         RemoveRaycast(s);
-        foreach (Transform child in s) {
+        foreach (Transform child in s)
+        {
             RemoveRaycast(child);
         }
+
         return s;
     }
 
@@ -87,6 +104,26 @@ public class TutorialUI : MonoBehaviour
         startPositionHint = start;
         endPositionHint = end;
         hint.position = startPositionHint.position;
+    }
+
+    private Action OnComplete;
+    private Sequence mySequence;
+
+    public void HintObject(Transform target, Action OnComplete)
+    {
+        btnClick.gameObject.SetActive(true);
+        var x = SpawnFakeObject(target);
+        x.gameObject.SetActive(true);
+        hint.SetSiblingIndex(transform.childCount - 1);
+        hint.gameObject.SetActive(true);
+        
+        ResetSequence();
+        mySequence.Append(hint.DOMove(x.position, 0f));
+        this.OnComplete = () =>
+        {
+            OnComplete?.Invoke();
+            x.gameObject.SetActive(false);
+        };
     }
 
     private Transform startPositionHint;

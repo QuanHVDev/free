@@ -65,6 +65,17 @@ public class GameManager : SingletonBehaviour<GameManager> {
                 StartCoroutine(SetupAsync());
                 process.IsShowHint = false;
                 udc.SetData(UserDataKeys.USER_PROGRESSION, process);
+            }else if (process.IsShowSkip)
+            {
+                Time.timeScale = 0.7f;
+                gamePlayUI.ShowHintObj(gamePlayUI.BtnSkip.transform, () =>
+                {
+                    Time.timeScale = 1f;
+                    DoSkip();
+                    gamePlayUI.ShowButtonSkip(false);
+                });
+                process.IsShowSkip = false;
+                udc.SetData(UserDataKeys.USER_PROGRESSION, process);
             }
             else if(process.IsShowSwipe)
             {
@@ -108,12 +119,12 @@ public class GameManager : SingletonBehaviour<GameManager> {
             gamePlayUI.GetIconHomeManagerUI().FinishMap();
             gamePlayUI.GetIconPeopleManagerUI().FinishMap();
             currentMapManager.DeleteAllCats();
-            if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
-                camera.ReturnVirtualCameraToOrigin();
-                yield return new WaitUntil(() => {
-                    return camera.state == CameraManager.StateVirtualCamera.Finish;
+            if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps())
+            {
+                yield return ResumeCameraAsync(() =>
+                {
+                    Destroy(currentMapManager.gameObject);
                 });
-                Destroy(currentMapManager.gameObject);
             }
         }
 
@@ -169,12 +180,18 @@ public class GameManager : SingletonBehaviour<GameManager> {
         currentMapManager.OnCameraLookTarget += (x, y)=> {
             camera.GetElementCameraPrev().VirtualCamera.gameObject.SetActive(false);
             camera.ChangeState(x, y);
+            if (currentMapManager.CountCatMoved < currentMapManager.MaxCatNeedMove)
+            {
+                gamePlayUI.ShowButtonSkip(true);
+            }
+            SetUpTutorial();
         };
         currentMapManager.OnCompletePath += () => {
             var element = camera.GetElementCameraPrev();
             camera.ChangeState(element.triggerNameAnimationState, CameraManager.StateVirtualCamera.Wait);
             element.VirtualCamera.gameObject.SetActive(true);
             SetUpTutorial();
+            gamePlayUI.ShowButtonSkip(false);
         };
 
         currentMapManager.OnMapBusy += gamePlayUI.EnableRaycastTargetIconPeople;
@@ -209,5 +226,15 @@ public class GameManager : SingletonBehaviour<GameManager> {
         pro.currentLevel = indexMapManager;
         UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION, pro);
     }
+    
+    public bool IsSkip { get; private set; }
+    public void ResetSkip()
+    {
+        IsSkip = false;
+    }
 
+    public void DoSkip()
+    {
+        IsSkip = true;
+    }
 }

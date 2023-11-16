@@ -44,6 +44,7 @@ public interface IUserData
 
 public class ProcessData : IUserData
 {
+    public bool IsShowSkip = true;
     public bool IsShowSwipe = true;
     public bool IsShowHint = true;
     public int currentLevel = 0;

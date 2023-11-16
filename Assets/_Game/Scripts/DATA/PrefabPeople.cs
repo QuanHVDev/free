@@ -11,8 +11,11 @@ public class PrefabPeople : MonoBehaviour {
 	public const string RUN = "Armature|Cat_03_Run";
 
 	[SerializeField] private Animator animator;
-
-	private void ChangeState(string newState) {
+	public NavMeshAgent nav { get; private set; }
+	private string newState;
+	private void ChangeState(string newState)
+	{
+		this.newState = newState;
 		animator.Play(newState);
 	}
 
@@ -45,7 +48,9 @@ public class PrefabPeople : MonoBehaviour {
 	}
 
 	public void SetTargetToMove(Transform trans) {
-		if (TryGetComponent(out NavMeshAgent nav)) {
+		if (TryGetComponent(out NavMeshAgent nav))
+		{
+			this.nav = nav;
 			nav.SetDestination(trans.position);
 			ChangeState(RUN);
 		}

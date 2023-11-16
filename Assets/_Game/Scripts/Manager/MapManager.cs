@@ -44,7 +44,6 @@ public class MapManager : MonoBehaviour {
 	[SerializeField] private List<ElementMap> maps;
 	[SerializeField] private NavMeshData dataNav;
 	private NavMeshDataInstance dataNavInstance;
-	private PrefabPeople catTarget;
 	private PeopleSO catSO;
 
 	public ElementMap MapInfo { get; private set; }
@@ -66,9 +65,9 @@ public class MapManager : MonoBehaviour {
 			}
 		}
 
-		countCatMoved = 0;
+		CountCatMoved = 0;
 		SetMaxCatNeedMove(countCat);
-		OnCorrect?.Invoke(countCatMoved * 1.0f / maxCatNeedMove);
+		OnCorrect?.Invoke(CountCatMoved * 1.0f / MaxCatNeedMove);
 	}
 	
 	
@@ -130,22 +129,24 @@ public class MapManager : MonoBehaviour {
 		StartCoroutine(SetCorrectTargetAsync(peopleSO));
 	}
 
-	private int maxCatNeedMove = 0, countCatMoved = 0;
+	public int MaxCatNeedMove { get; private set; } = 0;
+	public int CountCatMoved { get; private set; } = 0;
 
 	private void SetMaxCatNeedMove(int value) {
-		maxCatNeedMove = value;
+		MaxCatNeedMove = value;
 	}
 
 	private IEnumerator SetCorrectTargetAsync(PeopleSO peopleSO) {
 		foreach (var e in MapInfo.element) {
 			foreach (var house in e.peoples) {
 				if (house.people == peopleSO) {
-					countCatMoved++;
-					OnCorrect?.Invoke(countCatMoved * 1.0f / maxCatNeedMove);
-					catTarget = Instantiate(peopleSO.prefab, MapInfo.catSpawnPosition); 
+					CountCatMoved++;
+					OnCorrect?.Invoke(CountCatMoved * 1.0f / MaxCatNeedMove);
+					PrefabPeople catTarget = Instantiate(peopleSO.prefab, MapInfo.catSpawnPosition);
+					catTarget.name = peopleSO.name;
 					cats.Add(catTarget.transform);
 					catSO = peopleSO;
-					yield return SetCameraLookTargetAsync(peopleSO, e.target);
+					yield return SetCameraLookTargetAsync(catTarget, e.target);
 					house.isComeHome = true;
 					if (CheckDoneAllHome()) {
 						OnFinishLevel?.Invoke();
@@ -156,58 +157,77 @@ public class MapManager : MonoBehaviour {
 		}
 	}
 
-	private IEnumerator SetCameraLookTargetAsync(PeopleSO data, Transform positionToMove) {
-		var x = OnSetCatTarget?.Invoke(catTarget.transform, MapInfo.cameraPosition);
+	private IEnumerator SetCameraLookTargetAsync(PrefabPeople cat, Transform positionToMove) {
+		var x = OnSetCatTarget?.Invoke(cat.transform, MapInfo.cameraPosition);
 		if (MapInfo.valueZoomCamera != 0) {
 			GameManager.Instance.Camera.SetFOV(x, MapInfo.valueZoomCamera);
 		}
 		x.VirtualCamera.gameObject.SetActive(true);
 		OnCameraLookTarget?.Invoke(x.triggerNameAnimationState, CameraManager.StateVirtualCamera.Wait);
-		if (catTarget.TryGetComponent(out NavMeshAgent nav)) {
-			IsMapBusy = true;
-			OnMapBusy?.Invoke(!IsMapBusy);
-			catTarget.SetTargetToMove(positionToMove);
-			yield return new WaitUntil(() => {
-				Debug.DrawLine(catTarget.transform.position, positionToMove.position, Color.red);
-				bool isCame = Mathf.Abs(catTarget.transform.position.x - positionToMove.position.x) <= nav.stoppingDistance &&
-				              Mathf.Abs(catTarget.transform.position.z - positionToMove.position.z) <= nav.stoppingDistance;
-				if (isCame) {
-					IsMapBusy = false;
-					
-				}
-				return isCame;
-			});
-			
-		}
-		
-		catTarget.StartRandomAnimFinishTarget();
-		var targetDir = MapInfo.cameraPosition.position - catTarget.transform.position;
-		targetDir = new Vector3(targetDir.x, 0, targetDir.z);
-		
-		var angleToTarget = Vector3.Angle(catTarget.transform.forward, targetDir);
-		float originAngle = 0;
-		Vector3 vector;
-		catTarget.transform.rotation.ToAngleAxis(out originAngle, out vector);
-		
-		// Cho xoay thử, nếu xoay xong mà góc bé hơn thì đã xoay đúng chiều, nếu sai thì xoay ngược lại (+- 0.01)
-		catTarget.transform.DORotate(new Vector3(0, originAngle*vector.y-0.01f, 0), 0).OnComplete(() => {
-			var angleCheck = Vector3.Angle(catTarget.transform.forward, targetDir);
-			if (angleCheck < angleToTarget) {
-				catTarget.transform.DORotate(new Vector3(0, originAngle*vector.y-angleToTarget, 0), 1);
-			}
-			else {
-				catTarget.transform.DORotate(new Vector3(0, originAngle*vector.y+angleToTarget, 0), 1);
-			}
+		IsMapBusy = true;
+		OnMapBusy?.Invoke(!IsMapBusy);
+		cat.SetTargetToMove(positionToMove);
+		StartCoroutine(WaitCatMoveToTarget(cat, positionToMove));
+		yield return new WaitUntil(() =>
+		{
+			return GameManager.Instance.IsSkip || !IsMapBusy;
 		});
-		
-		yield return new WaitForSeconds(2f);
+
+		if (!GameManager.Instance.IsSkip)
+		{
+			yield return WaitCatMoveToTarget(cat, positionToMove);
+			yield return new WaitForSeconds(2f);
+		}
+
+		GameManager.Instance.ResetSkip();
+		IsMapBusy = false;
 		OnCompletePath?.Invoke();
 		OnMapBusy?.Invoke(!IsMapBusy);
 		if (MapInfo.valueZoomCamera != 0) {
 			GameManager.Instance.Camera.ResetFOV(x);
 		}
+	}
+
+	private bool IsCatRunning = false;
+	private IEnumerator WaitCatMoveToTarget(PrefabPeople cat, Transform positionToMove)
+	{
+		yield return new WaitUntil(() => {
+			Debug.DrawLine(cat.transform.position, positionToMove.position, Color.red);
+			bool isCame = Mathf.Abs(cat.transform.position.x - positionToMove.position.x) <= cat.nav.stoppingDistance &&
+			              Mathf.Abs(cat.transform.position.z - positionToMove.position.z) <= cat.nav.stoppingDistance;
+			if (isCame)
+			{
+				IsMapBusy = false;
+			}
+			return isCame;
+		});
+
+		yield return CatMovedTarget(cat);
+	}
+
+	private IEnumerator CatMovedTarget(PrefabPeople cat)
+	{
+		cat.StartRandomAnimFinishTarget();
+		var targetDir = MapInfo.cameraPosition.position - cat.transform.position;
+		targetDir = new Vector3(targetDir.x, 0, targetDir.z);
 		
+		var angleToTarget = Vector3.Angle(cat.transform.forward, targetDir);
+		float originAngle = 0;
+		Vector3 vector;
+		cat.transform.rotation.ToAngleAxis(out originAngle, out vector);
 		
+		// Cho xoay thử, nếu xoay xong mà góc bé hơn thì đã xoay đúng chiều, nếu sai thì xoay ngược lại (+- 0.01)
+		cat.transform.DORotate(new Vector3(0, originAngle*vector.y-0.01f, 0), 0).OnComplete(() => {
+			var angleCheck = Vector3.Angle(cat.transform.forward, targetDir);
+			if (angleCheck < angleToTarget) {
+				cat.transform.DORotate(new Vector3(0, originAngle*vector.y-angleToTarget, 0), 1);
+			}
+			else {
+				cat.transform.DORotate(new Vector3(0, originAngle*vector.y+angleToTarget, 0), 1);
+			}
+		});
+
+		yield return null;
 	}
 
 	private bool CheckDoneAllHome() {
