@@ -151,27 +151,33 @@ public class CameraManager : MonoBehaviour {
 	[SerializeField] private Vector3 originPosition;
 	private float leftLimit = -40, rightLimit = 40;
 	private void Update() {
-		if (Input.touchCount == 1 && !isTouchUI) {
+		if (Input.touchCount == 1) {
 			
 			Touch t = Input.GetTouch(0);
-			if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+
+			if (GameManager.Instance.IsTouchUI == GameManager.StateTouch.free)
 			{
-				isTouchUI = true;
-				return;
-			}
+				if (!isTouch) {
+					originPosition = t.position;
+					currentnRotation = elementCameraPrev.VirtualCamera.transform.rotation.eulerAngles;
+					isTouch = true;
+					return;
+				}
 
-			if (!isTouch) {
-				originPosition = t.position;
-				currentnRotation = elementCameraPrev.VirtualCamera.transform.rotation.eulerAngles;
-				isTouch = true;
-				return;
+				if (Vector3.Distance(originPosition,t.position) > Mathf.Epsilon) {
+					GameManager.Instance.IsTouchUI = GameManager.StateTouch.touchRotate;
+				}
 			}
-
+			else
+			{
+				isTouch = false;
+			}
+			
+			if(GameManager.Instance.IsTouchUI != GameManager.StateTouch.touchRotate) return;
 			Vector3 currentRotation = t.position;
 			float delta = currentRotation.x - originPosition.x;
-			float targetRotateY = currentnRotation.y + delta * 0.1f;
+			float targetRotateY = currentnRotation.y - delta * 0.04f;
 			targetRotateY = Mathf.Clamp(targetRotateY, originRotation.y + leftLimit, originRotation.y + rightLimit);
-
 			Vector3 target = new Vector3(originRotation.x, targetRotateY, originRotation.z);
 			
 			Quaternion targetQuaternion = Quaternion.Euler(target.x, target.y, target.z);
@@ -181,25 +187,8 @@ public class CameraManager : MonoBehaviour {
 		}
 		else if(Input.touchCount == 0){
 			isTouch = false;
-			isTouchUI = false;
 		}
 	}
 
-	private bool isTouch = false, isTouchUI = false;
-
-	//
-	// private void MoveCameraWith(Vector2 deltaPosition) {
-	// 	transform.position -= new Vector3(deltaPosition.x, 0, deltaPosition.y) * Time.deltaTime;
-	// 	state = StateMouse.move;
-	//
-	// 	transform.position = new Vector3(
-	// 		Mathf.Clamp(transform.position.x, leftLimit, rightLimit),
-	// 		0,
-	// 		Mathf.Clamp(transform.position.z, botLimit, topLimit)
-	// 	);
-	// }
-	//
-	// public void ResetToOriginPosition() {
-	// 	transform.position = OriginPosition;
-	// }
+	private bool isTouch = false;
 }

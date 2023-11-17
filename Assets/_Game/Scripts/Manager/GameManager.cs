@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
@@ -27,6 +29,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
 
     private void Start()
     {
+        Input.multiTouchEnabled = false;
         udc = UserDataController.Instance;
         var pro = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
         indexMapManager = pro.currentLevel;
@@ -49,6 +52,61 @@ public class GameManager : SingletonBehaviour<GameManager> {
         }
         
         gamePlayUI.UpdateTitle(indexMapManager, currentMapManager.currentIndexMap);
+    }
+
+    private Touch touch;
+    private Ray ray;
+    private RaycastHit hit;
+    
+    [SerializeField] private LayerMask mouseColliderLayerMark;
+    public StateTouch IsTouchUI = StateTouch.free;
+
+    public enum StateTouch
+    {
+        free,
+        touchUI,
+        touchRotate,
+        touchObject
+    }
+    
+    private void Update()
+    {
+        Debug.Log(IsTouchUI);
+        if (Input.touchCount == 1)
+        {
+            if (Input.GetMouseButtonUp(0))
+            {
+                IsTouchUI = StateTouch.free;
+                Debug.Log("GetMouseButtonUp");
+                return;
+            }
+            
+            if (IsTouchUI != StateTouch.free) return;
+            
+            if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+            {
+                IsTouchUI = StateTouch.touchUI;
+            }
+
+            if (currentMapManager && !currentMapManager.IsMapBusy)
+            {
+                Debug.Log(" ray");
+                touch = Input.GetTouch(0);
+                ray = UnityEngine.Camera.main.ScreenPointToRay(touch.position);
+                if (Physics.Raycast(ray, out hit, 999f, mouseColliderLayerMark))
+                {
+                    if (hit.transform.TryGetComponent(out Condition condition))
+                    {
+                        IsTouchUI = StateTouch.touchObject;
+                        condition.ClickObject();
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log(" UI not RAY");
+            }
+        }
     }
 
     private void SetUpTutorial()

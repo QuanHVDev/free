@@ -20,9 +20,9 @@ public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome>
 			if (e.peoples.Count > 1) {
 				var obj = Instantiate(parentHomeHor, transform);
 				currentLevelIconHome.Add(obj);
-				obj.SetHomeModel(e.target.transform);
+				obj.SetHomeModel(e.target);
 				parent = obj.transform;
-				parent.position = Camera.main.WorldToScreenPoint(e.target.transform.position);
+				parent.position = Camera.main.WorldToScreenPoint(e.target.position);
 				parent.gameObject.SetActive(true);
 			}
 
@@ -31,8 +31,8 @@ public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome>
 				IconHome icon = GetObjectPooledAvailable();
 				icon.transform.SetParent(parent);
 
-				icon.transform.position = Camera.main.WorldToScreenPoint(e.target.transform.position);
-				icon.SetHomeModel(e.target.transform);
+				icon.transform.position = Camera.main.WorldToScreenPoint(e.target.position);
+				icon.SetHomeModel(e.target);
 				icon.gameObject.SetActive(true);
 				targets.Add(icon);
 				if(e.peoples.Count < 2) currentLevelIconHome.Add(icon);

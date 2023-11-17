@@ -102,7 +102,16 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 	private IconHome CheckAllTarget() {
 		foreach (var icon in Targets) {
 			float x = Vector2.Distance(transform.position, icon.transform.position);
-			if (x < delta) return icon;
+			if (x < delta)
+			{
+				if (icon.Condition && !icon.Condition.IsCanShow)
+				{
+					continue;
+				}
+				
+				return icon;
+			}
+				
 		}
 
 		return null;
