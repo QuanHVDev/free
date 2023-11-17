@@ -77,7 +77,6 @@ public class GameManager : SingletonBehaviour<GameManager> {
             if (Input.GetMouseButtonUp(0))
             {
                 IsTouchUI = StateTouch.free;
-                Debug.Log("GetMouseButtonUp");
                 return;
             }
             
@@ -101,10 +100,6 @@ public class GameManager : SingletonBehaviour<GameManager> {
                         condition.ClickObject();
                     }
                 }
-            }
-            else
-            {
-                Debug.Log(" UI not RAY");
             }
         }
     }

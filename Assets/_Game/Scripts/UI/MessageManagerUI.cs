@@ -4,11 +4,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
-public class MessageManagerUI : PoolingManagerBase<MessageManagerUI, MessageLine> {
+public class MessageManagerUI : PoolingManagerBase<MessageManagerUI, MessageLine>
+{
+    [SerializeField] private Color colorToCorrect;
     public void Init(List<MapManager.ElementMessage> messagesForHint) {
         for (int i = 0; i < messagesForHint.Count; i++) {
             MessageLine messageLine = GetObjectPooledAvailable();
-            messageLine.Init(messagesForHint[i]);
+            messageLine.Init(messagesForHint[i], colorToCorrect);
             messageLine.Show();
         }
     }

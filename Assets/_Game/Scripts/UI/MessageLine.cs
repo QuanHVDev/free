@@ -8,13 +8,19 @@ public class MessageLine : MonoBehaviour {
     [SerializeField] private TMP_Text tmp;
 
     public List<PeopleSO> peopleSO { get; private set; }
+    private Color colorToCorrect;
     public bool isFading { get; private set; }
     public void Hide() {
         isFading = true;
-        tmp.DOFade(0, 0.5f).OnComplete(()=> {
-            gameObject.SetActive(false);
-            isFading = false;
+        tmp.DOColor(colorToCorrect, 0.7f).OnComplete(() =>
+        {
+            tmp.DOFade(0, 0.7f).OnComplete(() =>
+            {
+                gameObject.SetActive(false);
+                isFading = false;
+            });
         });
+
     }
 
     public void Show() {
@@ -22,8 +28,9 @@ public class MessageLine : MonoBehaviour {
         gameObject.SetActive(true);
     }
 
-    public void Init(MapManager.ElementMessage elementMessage) {
+    public void Init(MapManager.ElementMessage elementMessage, Color colorToCorrect) {
         tmp.text = "- " + elementMessage.message;
+        this.colorToCorrect = colorToCorrect;
         this.peopleSO = elementMessage.peoples;
     }
 
