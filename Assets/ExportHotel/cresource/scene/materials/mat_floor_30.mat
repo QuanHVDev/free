@@ -2,20 +2,28 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: mat_floor_30
-  m_Shader: {fileID: 4800000, guid: b93ffe9f59f46414dae823e6af4d9c42, type: 3}
-  m_ShaderKeywords: TCP2_SHADOW_LIGHT_COLOR TCP2_UV_NORMALS_FULL
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _GLOSSYREFLECTIONS_OFF
+  m_InvalidKeywords:
+  - TCP2_RIM_LIGHTING_LIGHTMASK
+  - TCP2_SHADOW_LIGHT_COLOR
+  - TCP2_UV_NORMALS_FULL
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -23,7 +31,39 @@ Material:
         m_Texture: {fileID: 2800000, guid: 15fd2d6b32bb97945b9ad712fcc3fbdc, type: 3}
         m_Scale: {x: 4, y: 6}
         m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 15fd2d6b32bb97945b9ad712fcc3fbdc, type: 3}
+        m_Scale: {x: 0.1, y: 0.1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -31,6 +71,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 0
@@ -46,13 +87,14 @@ Material:
     - _EmissionChannel: 4
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
-    - _Glossiness: 0
+    - _Glossiness: 0.218
     - _GlossyReflections: 0
     - _IndirectIntensity: 1
     - _IndirectIntensityOutline: 0
     - _MatCapMaskChannel: 0
     - _MatCapType: 0
-    - _Metallic: 0
+    - _Metallic: 0.441
+    - _Mode: 0
     - _NormalsSource: 0
     - _NormalsUVType: 0
     - _OcclusionStrength: 1
@@ -81,10 +123,11 @@ Material:
     - _SpecularMapType: 0
     - _SpecularRoughness: 0.5
     - _SpecularToonSize: 0.25
-    - _SpecularToonSmoothness: 0.05
+    - _SpecularToonSmoothness: 0.882
     - _SpecularType: 0
     - _SrcBlend: 1
     - _Surface: 0
+    - _UVSec: 0
     - _UseAlphaTest: 0
     - _UseEmission: 0
     - _UseMatCap: 0

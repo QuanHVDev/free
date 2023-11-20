@@ -1,12 +1,21 @@
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ClickCondition : Condition
 {
-    public override void ClickObject()
+    protected override void OnMouseDown()
     {
-        base.ClickObject();
+        if (!CheckPrevCondition()) return;
         IsCanShow = true;
+        DoneCorrect();
+    }
+
+    protected override void DoneCorrect()
+    {
+        EnableObjectsToHide(false);
+        EnableObjectsToShow(true);
     }
 }

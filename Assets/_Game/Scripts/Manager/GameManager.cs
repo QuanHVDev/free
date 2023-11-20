@@ -71,7 +71,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
     
     private void Update()
     {
-        Debug.Log(IsTouchUI);
+        //Debug.Log(IsTouchUI);
         if (Input.touchCount == 1)
         {
             if (Input.GetMouseButtonUp(0))
@@ -89,25 +89,39 @@ public class GameManager : SingletonBehaviour<GameManager> {
 
             if (currentMapManager && !currentMapManager.IsMapBusy)
             {
-                Debug.Log(" ray");
+               // Debug.Log(" ray");
                 touch = Input.GetTouch(0);
                 ray = UnityEngine.Camera.main.ScreenPointToRay(touch.position);
                 if (Physics.Raycast(ray, out hit, 999f, mouseColliderLayerMark))
                 {
-                    if (hit.transform.TryGetComponent(out Condition condition))
+                    if (hit.transform.TryGetComponent(out Condition condition) && !condition.IsCanShow)
                     {
+                        //Debug.Log(" ray to" + hit.transform.name);
                         IsTouchUI = StateTouch.touchObject;
-                        condition.ClickObject();
                     }
                 }
+
+                mousePosition = touch.position;
+                mousePosition.z = 100;
+                mousePosition = UnityEngine.Camera.main.ScreenToWorldPoint(mousePosition);
             }
         }
     }
 
+    private void LateUpdate()
+    {
+        Debug.DrawRay(
+            UnityEngine.Camera.main.transform.position, 
+            mousePosition - UnityEngine.Camera.main.transform.position,
+            Color.blue);
+    }
+
+    private Vector3 mousePosition;
+
     private void SetUpTutorial()
     {
         var process = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
-        if (!process.IsShowSwipe && !process.IsShowHint)
+        if (!process.IsShowSwipe && !process.IsShowHint && !process.IsShowSkip)
         {
             gamePlayUI.TurnOffTutorialUI();
         }
@@ -190,18 +204,6 @@ public class GameManager : SingletonBehaviour<GameManager> {
         LoadHealth();
         yield return null;
     }
-
-    //public void SpawnLevel() {
-        
-        //camera.ResetToOriginPosition();
-        // var inv = UserDataController.Instance.GetData<Inventory>(UserDataKeys.USER_INVENTORY, out _);
-        // if (inv.currentLevel >= data.lvls.Count) {
-        //     gamePlayUI.LoadContent(inv.currentLevel);
-        // }
-        // else {
-        //     gamePlayUI.LoadContent(currentLevel);
-        // }
-    //}
     
     private void LoadLevel(int index) {
         if (!currentMapManager || currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
@@ -215,8 +217,9 @@ public class GameManager : SingletonBehaviour<GameManager> {
     }
 
     private void SetUpActionCurrentMapManager() {
-        currentMapManager.OnFinishLevel += gamePlayUI.ShowUIWin;
-        currentMapManager.OnFinishLevel += () => {
+        currentMapManager.OnFinishLevel += () =>
+        {
+            gamePlayUI.ShowUIWin();
             currentMapManager.currentIndexMap++;
             if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
                 currentMapManager.RemoveCurrentNavmeshData();

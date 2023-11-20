@@ -24,7 +24,7 @@ public class MessageLine : MonoBehaviour {
     }
 
     public void Show() {
-        tmp.color = new Color(tmp.color.r, tmp.color.g, tmp.color.b);
+        tmp.color = Color.black;
         gameObject.SetActive(true);
     }
 
