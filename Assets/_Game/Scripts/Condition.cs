@@ -11,9 +11,10 @@ public class Condition : MonoBehaviour
     [SerializeField] protected List<GameObject> objsToHide;
     [SerializeField] protected List<GameObject> objsToShow;
     [SerializeField] protected List<Condition> prevConditionList;
+    [SerializeField] protected List<Animator> animators;
     [SerializeField] protected LayerMask mouseColliderLayerMark;
 
-    protected bool CheckPrevCondition()
+    protected bool IsCheckPrevCondition()
     {
         if (prevConditionList == null) return true;
         foreach (var condition in prevConditionList)
@@ -52,7 +53,7 @@ public class Condition : MonoBehaviour
 
     protected virtual void OnMouseDrag()
     {
-        if (!CheckPrevCondition()) return;
+        if (!IsCheckPrevCondition()) return;
     }
 
     protected virtual void OnMouseUp()
@@ -80,16 +81,26 @@ public class Condition : MonoBehaviour
             }
         }
     }
-
-    public void SetIsCanShow()
+    
+    protected IEnumerator EnableAnimationsAsync(bool isPlay)
     {
-        if (!CheckPrevCondition()) return;
-        IsCanShow = true;
-        DoneCorrect();
+        if (animators != null && animators.Count > 0)
+        {
+            foreach (var a in animators)
+            {
+                a.SetBool("condition", isPlay);
+                yield return new WaitForSeconds(a.runtimeAnimatorController.animationClips[0].length);
+            }
+        }
+
+        yield return null;
     }
-
-    protected virtual void DoneCorrect()
+    
+    protected IEnumerator DoneCorrectAsync()
     {
-        
+        EnableObjectsToHide(false);
+        EnableObjectsToShow(true);
+        yield return EnableAnimationsAsync(true);
+        IsCanShow = true;
     }
 }

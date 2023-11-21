@@ -6,9 +6,18 @@ using UnityEngine.EventSystems;
 
 public class WaitCondition : Condition
 {
-    protected override void DoneCorrect()
+    private void Start()
     {
-        EnableObjectsToHide(false);
-        EnableObjectsToShow(true);
+        StartCoroutine(CheckingPrevCondition());
+    }
+
+    private IEnumerator CheckingPrevCondition()
+    {
+        yield return new WaitUntil(() =>
+        {
+            return IsCheckPrevCondition();
+        });
+
+        yield return DoneCorrectAsync();
     }
 }

@@ -16,6 +16,8 @@ public class GameManager : SingletonBehaviour<GameManager> {
     [SerializeField] private CameraManager camera;
     
     private MapManager currentMapManager;
+    public MapManager CurrentMapManager => currentMapManager;
+    public int IndexMapManager => indexMapManager;
     
     // health
     private int maxHealth = 3;
@@ -48,11 +50,13 @@ public class GameManager : SingletonBehaviour<GameManager> {
             LoadHealth();
         }
         else {
-            SpawnLevel();
+            SpawnLevel(pro.currentLevel, pro.currentStep);
         }
-        
-        gamePlayUI.UpdateTitle(indexMapManager, currentMapManager.currentIndexMap);
+
+        gamePlayUI.UpdateTitle();
+        gamePlayUI.InitListLevel(dataLevelsSO);
     }
+
 
     private Touch touch;
     private Ray ray;
@@ -162,8 +166,31 @@ public class GameManager : SingletonBehaviour<GameManager> {
         gamePlayUI.SetHint(s, e);
     }
 
-    public void SpawnLevel() {
-        StartCoroutine(SpawnLevelAsync());
+    public void NextLevel()
+    {
+        var pro = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+        pro.currentLevel = indexMapManager;
+        pro.currentStep = currentMapManager.currentIndexStep;
+        udc.SetData(UserDataKeys.USER_PROGRESSION, pro);
+        SpawnLevel(pro.currentLevel, pro.currentStep);
+    }
+
+    public void SpawnLevel(int level , int step)
+    {
+        StartCoroutine(SpawnLevelAsync(level, step));
+    }
+
+    private IEnumerator SpawnLevelAsync(int level = -1, int step = -1)
+    {
+        if (currentMapManager)
+        {
+            yield return RemovePreMapAsync(level != indexMapManager);
+        }
+        
+        LoadLevel(level, step);
+        LoadLevelUI();
+        LoadHealth();
+        yield return null;
     }
 
     public void ResumeCamera(Action OnComplete = null)
@@ -181,37 +208,37 @@ public class GameManager : SingletonBehaviour<GameManager> {
         OnComplete?.Invoke();
     }
 
-    private IEnumerator SpawnLevelAsync() {
-        if (currentMapManager) {
-            gamePlayUI.GetIconHomeManagerUI().FinishMap();
-            gamePlayUI.GetIconPeopleManagerUI().FinishMap();
-            currentMapManager.DeleteAllCats();
-            if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps())
+    private IEnumerator RemovePreMapAsync(bool isForceDestroyMap)
+    {
+        gamePlayUI.GetIconHomeManagerUI().FinishMap();
+        gamePlayUI.GetIconPeopleManagerUI().FinishMap();
+        currentMapManager.DeleteAllCats();
+        if (currentMapManager.currentIndexStep >= currentMapManager.GetCountMaps() || isForceDestroyMap)
+        {
+            yield return ResumeCameraAsync(() =>
             {
-                yield return ResumeCameraAsync(() =>
-                {
-                    Destroy(currentMapManager.gameObject);
-                });
-            }
+                Destroy(currentMapManager.gameObject);
+            });
         }
+    }
 
-        LoadLevel(indexMapManager);
+
+    private void LoadLevelUI()
+    {
         gamePlayUI.GetIconHomeManagerUI().Add(currentMapManager, gamePlayUI);
         gamePlayUI.GetIconPeopleManagerUI().SetAllHomesForIcon(gamePlayUI.GetIconHomeManagerUI().GetCurrentIconForMap());
         gamePlayUI.GetMessageManagerUI().Init(currentMapManager.GetMessagesForHint());
-        gamePlayUI.UpdateTitle(indexMapManager, currentMapManager.currentIndexMap);
-
-        LoadHealth();
-        yield return null;
+        gamePlayUI.UpdateTitle();
     }
-    
-    private void LoadLevel(int index) {
-        if (!currentMapManager || currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
-            currentMapManager = Instantiate(dataLevelsSO.MapManagers[index], spawnMap);
+
+    private void LoadLevel(int level, int step = -1) {
+        if (indexMapManager != level || !currentMapManager || currentMapManager.currentIndexStep >= currentMapManager.GetCountMaps()) {
+            indexMapManager = level;
+            currentMapManager = Instantiate(dataLevelsSO.MapManagers[indexMapManager], spawnMap);
             SetUpActionCurrentMapManager();
         }
         
-        currentMapManager.InitData();
+        currentMapManager.InitData(step);
         var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
         camera.MoveCameraToVirtualCamera(element, SetUpTutorial);
     }
@@ -220,8 +247,8 @@ public class GameManager : SingletonBehaviour<GameManager> {
         currentMapManager.OnFinishLevel += () =>
         {
             gamePlayUI.ShowUIWin();
-            currentMapManager.currentIndexMap++;
-            if (currentMapManager.currentIndexMap >= currentMapManager.GetCountMaps()) {
+            currentMapManager.currentIndexStep++;
+            if (currentMapManager.currentIndexStep >= currentMapManager.GetCountMaps()) {
                 currentMapManager.RemoveCurrentNavmeshData();
                 indexMapManager++;
                 Debug.Log($"steps:{dataLevelsSO.CountSteps()} - lvls: {dataLevelsSO.CountLevel()} - currentLvl: {indexMapManager}");

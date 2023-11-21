@@ -21,7 +21,7 @@ public class TryAgainUI : BaseUIElement {
 		Hide();
 		GameManager.Instance.ResumeCamera(() =>
 		{
-			GameManager.Instance.SpawnLevel();
+			GameManager.Instance.NextLevel();
 		});
 	}
 }

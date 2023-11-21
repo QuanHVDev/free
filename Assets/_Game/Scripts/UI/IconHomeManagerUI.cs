@@ -59,8 +59,11 @@ public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome>
 	}
 
 	private void FixedUpdate() {
-		foreach (var icon in currentLevelIconHome) {
-			icon.transform.position = Camera.main.WorldToScreenPoint(icon.homeModel.position);
+		if (currentLevelIconHome != null)
+		{
+			foreach (var icon in currentLevelIconHome) {
+				icon.transform.position = Camera.main.WorldToScreenPoint(icon.homeModel.position);
+			}
 		}
 	}
 

@@ -24,6 +24,7 @@ public abstract class BaseUIElement : MonoBehaviour {
 			mainFrame.DOScale(1, time).SetEase(Ease.OutBack).SetUpdate(true);
 		}
 	}
+	
 	public virtual void Hide()
 	{
 		if (bg) {

@@ -18,6 +18,8 @@ public class GamePlayUI : MonoBehaviour
 	[SerializeField] private ProcessBar processBar;
 	[SerializeField] private TMP_Text txtLevel;
 	[SerializeField] private Button btnSkip;
+	[SerializeField] private Button btnLevel;
+	[SerializeField] private ListLevelUI listLevelUI;
 	public Button BtnSkip => btnSkip;
 
 	private void Start() {
@@ -33,10 +35,15 @@ public class GamePlayUI : MonoBehaviour
 			btnSkip.gameObject.SetActive(false);
 		});
 		
+		btnLevel.onClick.AddListener(() =>
+		{
+			listLevelUI.Show();
+		});
+		
 		tryAgainUI.gameObject.SetActive(false);
 		winUI.gameObject.SetActive(false);
 		btnSkip.gameObject.SetActive(false);
-		
+		listLevelUI.gameObject.SetActive(false);
 	}
 
 	private void IconHealthManagerUI_OnOverHealth() {
@@ -93,13 +100,18 @@ public class GamePlayUI : MonoBehaviour
 		tutorialUI.gameObject.SetActive(false);
 	}
 
-	public void UpdateTitle(int level, int step)
+	public void UpdateTitle()
 	{
-		txtLevel.text = $"Level {level + 1}-{step+1}";
+		txtLevel.text = $"Level {GameManager.Instance.IndexMapManager + 1}-{GameManager.Instance.CurrentMapManager.currentIndexStep + 1}";
 	}
 
 	public void ShowButtonSkip(bool enable)
 	{
 		btnSkip.gameObject.SetActive(enable);
+	}
+
+	public void InitListLevel(DataLevelsSO data)
+	{
+		listLevelUI.Init(data);
 	}
 }

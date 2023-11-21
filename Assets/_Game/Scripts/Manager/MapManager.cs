@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 public class MapManager : MonoBehaviour {
 	public Action OnFinishLevel, OnCompletePath;
@@ -12,7 +13,7 @@ public class MapManager : MonoBehaviour {
 	public Func<Transform, Transform, CameraManager.ElementCamera> OnSetCatTarget;
 	public Action<bool> OnMapBusy;
 
-	public int currentIndexMap = 0;
+	[FormerlySerializedAs("currentIndexMap")] public int currentIndexStep = 0;
 	public bool IsMapBusy { get; private set; } = false;
 
 	[Serializable]
@@ -52,8 +53,12 @@ public class MapManager : MonoBehaviour {
 		dataNavInstance = NavMesh.AddNavMeshData(dataNav);
 	}
 
-	public void InitData() {
-		MapInfo = new ElementMap(maps[currentIndexMap]);
+	public void InitData(int step = -1) {
+		if (step != -1) {
+			currentIndexStep = step;
+		}
+		
+		MapInfo = new ElementMap(maps[currentIndexStep]);
 		cats = new List<Transform>();
 		
 		int countCat = 0;
@@ -191,14 +196,19 @@ public class MapManager : MonoBehaviour {
 	private bool IsCatRunning = false;
 	private IEnumerator WaitCatMoveToTarget(PrefabPeople cat, Transform positionToMove)
 	{
-		yield return new WaitUntil(() => {
-			Debug.DrawLine(cat.transform.position, positionToMove.position, Color.red);
-			bool isCame = Mathf.Abs(cat.transform.position.x - positionToMove.position.x) <= cat.nav.stoppingDistance &&
-			              Mathf.Abs(cat.transform.position.z - positionToMove.position.z) <= cat.nav.stoppingDistance;
-			if (isCame)
-			{
+		yield return new WaitUntil(() =>
+		{
+			bool isCame = true;
+			if (cat) {
+				Debug.DrawLine(cat.transform.position, positionToMove.position, Color.red);
+				isCame = Mathf.Abs(cat.transform.position.x - positionToMove.position.x) <= cat.nav.stoppingDistance &&
+				              Mathf.Abs(cat.transform.position.z - positionToMove.position.z) <= cat.nav.stoppingDistance;
+			}
+			
+			if (isCame) {
 				IsMapBusy = false;
 			}
+			
 			return isCame;
 		});
 

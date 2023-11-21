@@ -13,7 +13,7 @@ public class WinUI : BaseUIElement {
 	private void Start() {
 		btnNextLevel.onClick.AddListener(() => {
 			OnHideLine?.Invoke();
-			GameManager.Instance.SpawnLevel();
+			GameManager.Instance.NextLevel();
 			Hide();
 		});
 	}

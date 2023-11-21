@@ -48,5 +48,6 @@ public class ProcessData : IUserData
     public bool IsShowSwipe = true;
     public bool IsShowHint = true;
     public int currentLevel = 0;
+    public int currentStep = 0;
 }
 
