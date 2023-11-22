@@ -13,7 +13,7 @@ public class MapManager : MonoBehaviour {
 	public Func<Transform, Transform, CameraManager.ElementCamera> OnSetCatTarget;
 	public Action<bool> OnMapBusy;
 
-	[FormerlySerializedAs("currentIndexMap")] public int currentIndexStep = 0;
+	public int currentIndexStep = 0;
 	public bool IsMapBusy { get; private set; } = false;
 
 	[Serializable]

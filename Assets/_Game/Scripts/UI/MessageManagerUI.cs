@@ -1,13 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 public class MessageManagerUI : PoolingManagerBase<MessageManagerUI, MessageLine>
 {
     [SerializeField] private Color colorToCorrect;
-    public void Init(List<MapManager.ElementMessage> messagesForHint) {
+    public void Init(List<MapManager.ElementMessage> messagesForHint)
+    {
+        HideAllLine();
         for (int i = 0; i < messagesForHint.Count; i++) {
             MessageLine messageLine = GetObjectPooledAvailable();
             messageLine.Init(messagesForHint[i], colorToCorrect);

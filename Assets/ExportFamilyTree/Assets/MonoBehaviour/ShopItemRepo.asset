@@ -1,0 +1,448 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b694ec35c8f52ac0e4759b4bf7449b, type: 3}
+  m_Name: ShopItemRepo
+  m_EditorClassIdentifier:
+  _shopItems:
+  - _itemId: com.familytree.noadspack
+    _itemType: 10
+    _paymentType: 50
+    _reward:
+      _noAds: 1
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 1250
+      _townCurrency: 80
+      _solveCurrency: 10
+      _eraserCurrency: 10
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards:
+    - _name: android
+      _platform: 11
+      _gameItem:
+        _noAds: 1
+        _isUnlockStories: 0
+        _isUnlockExistingStories: 0
+        _hardCurrency: 500
+        _townCurrency: 30
+        _solveCurrency: 6
+        _eraserCurrency: 6
+        _skinIds: []
+        _isOwnExistingSkins: 0
+        _dailyChallengePass: 0
+    _displayName: No Ads Pack
+    _highlightText: Most Popular
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: c3a62f5dc2a1ce04381d02a80370a725, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.starterpack
+    _itemType: 10
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 250
+      _townCurrency: 10
+      _solveCurrency: 3
+      _eraserCurrency: 3
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName: Starter Pack
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: 440cefde1ab0c244aa42874db81d4fef, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.masterpack
+    _itemType: 10
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 500
+      _townCurrency: 20
+      _solveCurrency: 6
+      _eraserCurrency: 6
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName: Master Pack
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: 7fc69cb159f286e47acb9960d15dba43, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.superpack
+    _itemType: 10
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 1250
+      _townCurrency: 30
+      _solveCurrency: 10
+      _eraserCurrency: 10
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName: Super Pack
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: c3a62f5dc2a1ce04381d02a80370a725, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.ultimatepack
+    _itemType: 10
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 10000
+      _townCurrency: 200
+      _solveCurrency: 60
+      _eraserCurrency: 60
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName: Ultimate Pack
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: 717264aa33582b141bf4427baf73f0c0, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.legendarypack
+    _itemType: 10
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 20000
+      _townCurrency: 400
+      _solveCurrency: 120
+      _eraserCurrency: 120
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName: Legendary Pack
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: e92c04c32085d2e429b3cc7082ede2d2, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: coin_ads
+    _itemType: 20
+    _paymentType: 40
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 100
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: 4f0c5c854b45c0a4fb59ed11e3a097a5, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.coin1
+    _itemType: 20
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 250
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: 440cefde1ab0c244aa42874db81d4fef, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.coin2
+    _itemType: 20
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 750
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: 7fc69cb159f286e47acb9960d15dba43, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.coin3
+    _itemType: 20
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 2500
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: c3a62f5dc2a1ce04381d02a80370a725, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.coin4
+    _itemType: 20
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 5000
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: 717264aa33582b141bf4427baf73f0c0, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.coin5
+    _itemType: 20
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 10000
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: e92c04c32085d2e429b3cc7082ede2d2, type: 2}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.unlockallstories
+    _itemType: 900
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 1
+      _isUnlockExistingStories: 0
+      _hardCurrency: 0
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 0}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.tlo1
+    _itemType: 30
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 1
+      _isUnlockExistingStories: 0
+      _hardCurrency: 250
+      _townCurrency: 10
+      _solveCurrency: 2
+      _eraserCurrency: 2
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName: WELCOME PACK
+    _highlightText: 350% more content
+    _overrideHardCurrencySprite: {fileID: 21300000, guid: 440cefde1ab0c244aa42874db81d4fef, type: 2}
+    _tloLocalSecondStart: 21600
+    _tloLocalSecondDuration: 64800
+  - _itemId: com.familytree.starterpack_099
+    _itemType: 900
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 0
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 0}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.starterpack_199
+    _itemType: 900
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 0
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 0}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.starterpack_299
+    _itemType: 900
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 0
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 0}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.tlo_399
+    _itemType: 900
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 0
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 0}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.tlo_999
+    _itemType: 900
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 0
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 0}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.tlo_2999
+    _itemType: 900
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 0
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 0}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
+  - _itemId: com.familytree.dailychallengepass
+    _itemType: 900
+    _paymentType: 50
+    _reward:
+      _noAds: 0
+      _isUnlockStories: 0
+      _isUnlockExistingStories: 0
+      _hardCurrency: 0
+      _townCurrency: 0
+      _solveCurrency: 0
+      _eraserCurrency: 0
+      _skinIds: []
+      _isOwnExistingSkins: 0
+      _dailyChallengePass: 0
+    _platformRewards: []
+    _displayName:
+    _highlightText:
+    _overrideHardCurrencySprite: {fileID: 0}
+    _tloLocalSecondStart: 0
+    _tloLocalSecondDuration: 0
