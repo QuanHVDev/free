@@ -8,7 +8,6 @@ public class MainUIManager : SingletonBehaviour<MainUIManager>
     private MainUI mainUI;
     public void Init()
     {
-        var inv = UserDataController.Instance.GetData<InventoryData>(UserDataKeys.USER_INVENTORY, out _);
         mainUI = UIRoot.Ins.Get<MainUI>();
         ChangeValueDiamond(0);
     }
