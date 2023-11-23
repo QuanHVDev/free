@@ -148,6 +148,9 @@ public class MapManager : MonoBehaviour {
 					CountCatMoved++;
 					OnCorrect?.Invoke(CountCatMoved * 1.0f / MaxCatNeedMove);
 					PrefabPeople catTarget = Instantiate(peopleSO.prefab, MapInfo.catSpawnPosition);
+					yield return new WaitForSeconds(0.2f);
+					
+					catTarget.gameObject.SetActive(true);
 					catTarget.name = peopleSO.name;
 					cats.Add(catTarget.transform);
 					catSO = peopleSO;

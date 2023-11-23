@@ -35,6 +35,7 @@ public class UserDataController : SingletonBehaviourDontDestroy<UserDataControll
 public class UserDataKeys
 {
     public const string USER_PROGRESSION = "data.user_prog";
+    public const string USER_INVENTORY = "data.user_inv";
 }
 
 public interface IUserData
@@ -49,5 +50,10 @@ public class ProcessData : IUserData
     public bool IsShowHint = true;
     public int currentLevel = 0;
     public int currentStep = 0;
+}
+
+public class InventoryData : IUserData
+{
+    public int diamond = 0;
 }
 

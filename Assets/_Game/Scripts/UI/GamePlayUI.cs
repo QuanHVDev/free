@@ -16,6 +16,7 @@ public class GamePlayUI : MonoBehaviour
 	[SerializeField] private TMP_Text txtLevel;
 	[SerializeField] private Button btnSkip;
 	[SerializeField] private Button btnLevel;
+	[SerializeField] private Button btnHome;
 	[SerializeField] private ListLevelUI listLevelUI;
 	public Button BtnSkip => btnSkip;
 
@@ -35,6 +36,12 @@ public class GamePlayUI : MonoBehaviour
 		btnLevel.onClick.AddListener(() =>
 		{
 			listLevelUI.Show();
+		});
+		
+		btnHome.onClick.AddListener(() =>
+		{
+			GameManager.Instance.CurrentMapManager.RemoveCurrentNavmeshData();
+			LoadSceneUIManager.Instance.LoadMainMenu();
 		});
 		
 		tryAgainUI.gameObject.SetActive(false);
@@ -65,7 +72,7 @@ public class GamePlayUI : MonoBehaviour
 
 	public void ShowUIWin() {
 		// show trong 0.6s đợi message fade
-		winUI.Show(0.75f, 0.6f);
+		winUI.Show();
 	}
 	
 	public void EnableRaycastTargetIconPeople(bool enable) {

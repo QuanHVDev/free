@@ -232,6 +232,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
     private void LoadLevel(int level, int step = -1) {
         if (indexMapManager != level || !currentMapManager || currentMapManager.currentIndexStep >= currentMapManager.GetCountMaps()) {
             indexMapManager = level;
+            currentMapManager?.RemoveCurrentNavmeshData();
             currentMapManager = Instantiate(dataLevelsSO.MapManagers[indexMapManager], spawnMap);
             SetUpActionCurrentMapManager();
         }
