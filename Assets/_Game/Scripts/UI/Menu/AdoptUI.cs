@@ -11,7 +11,15 @@ public class AdoptUI : MonoBehaviour
 
     public void Init(List<TagCat> tags)
     {
-        
+        if (tags.Count >= townCatReqs.Count)
+        {
+            Debug.LogError("MAX COUNT TAGs => return;");
+            return;
+        }
+        for (int i = 0; i < tags.Count; i++)
+        {
+            
+        }
     }
     
 }

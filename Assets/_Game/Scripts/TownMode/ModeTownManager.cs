@@ -82,6 +82,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                             CameraMainMenu.Instance.InModeTown();
                             townManager.Init();
                             this.currentTownManager = townManager;
+                            OnInModeTown?.Invoke();
                         }
                     }
 
@@ -106,9 +107,10 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         state = StateMode.Free;
         currentTownManager.Out();
         CameraMainMenu.Instance.OutModeTown();
+        OnOutModeTown?.Invoke();
     }
 
-    
+    public Action OnOutModeTown, OnInModeTown;
     public Action<int, int> OnAfterDoMoveIsland, OnBeforeDoMoveIsland;
     public void BackToBeforeTown()
     {

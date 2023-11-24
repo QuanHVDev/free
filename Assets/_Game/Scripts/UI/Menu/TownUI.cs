@@ -16,6 +16,8 @@ public class TownUI : BaseUIElement
     [SerializeField] private Button btnRightArrow;
     [SerializeField] private Transform townDetails;
 
+    [SerializeField] private CanvasGroup adoptGroup;
+
     public void Init()
     {
         btnExit.onClick.AddListener(ModeTownManager.Instance.OutModeTown);
@@ -24,6 +26,19 @@ public class TownUI : BaseUIElement
         
         ModeTownManager.Instance.OnBeforeDoMoveIsland += ModeTownManager_OnBeforeDoMoveIsland;
         ModeTownManager.Instance.OnAfterDoMoveIsland += ModeTownManager_OnAfterDoMoveIsland;
+        ModeTownManager.Instance.OnInModeTown += ModeTownManager_OnInModeTown;
+        ModeTownManager.Instance.OnOutModeTown += ModeTownManager_OnOutModeTown;
+
+    }
+
+    private void ModeTownManager_OnOutModeTown()
+    {
+        adoptGroup.blocksRaycasts = false;
+    }
+
+    private void ModeTownManager_OnInModeTown()
+    {
+        adoptGroup.blocksRaycasts = true;
     }
 
     private void ModeTownManager_OnAfterDoMoveIsland(int currentLevel, int maxLevel)
