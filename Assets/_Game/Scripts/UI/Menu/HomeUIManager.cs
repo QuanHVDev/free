@@ -12,7 +12,7 @@ public class HomeUIManager : SingletonBehaviour<HomeUIManager>
         var pro = UserDataController.Instance.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
         homeUI = UIRoot.Ins.Get<HomeUI>();
         homeUI.Init();
-        homeUI.SetTextLevel($"{pro.currentLevel}-{pro.currentStep}");
+        homeUI.SetTextLevel($"{pro.currentLevel+1}-{pro.currentStep+1}");
     }
 
     public void PlayLevel()

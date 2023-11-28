@@ -168,9 +168,6 @@ public class GameManager : SingletonBehaviour<GameManager> {
     public void NextLevel()
     {
         var pro = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
-        pro.currentLevel = indexMapManager;
-        pro.currentStep = currentMapManager.currentIndexStep;
-        udc.SetData(UserDataKeys.USER_PROGRESSION, pro);
         SpawnLevel(pro.currentLevel, pro.currentStep);
     }
 
@@ -248,15 +245,20 @@ public class GameManager : SingletonBehaviour<GameManager> {
         {
             gamePlayUI.ShowUIWin();
             currentMapManager.currentIndexStep++;
+
+            var pro = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+            pro.currentStep = currentMapManager.currentIndexStep;
+            
             if (currentMapManager.currentIndexStep >= currentMapManager.GetCountMaps()) {
                 currentMapManager.RemoveCurrentNavmeshData();
                 indexMapManager++;
                 Debug.Log($"steps:{dataLevelsSO.CountSteps()} - lvls: {dataLevelsSO.CountLevel()} - currentLvl: {indexMapManager}");
                 if (indexMapManager >= dataLevelsSO.CountLevel()) indexMapManager = 0;
-                var pro = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
-                pro.currentLevel = indexMapManager;
-                udc.SetData(UserDataKeys.USER_PROGRESSION, pro);
+                pro.currentStep = 0;
             }
+            
+            pro.currentLevel = indexMapManager;
+            udc.SetData(UserDataKeys.USER_PROGRESSION, pro);
         };
 
         currentMapManager.OnSetCatTarget += camera.GetLookTargetCamera;

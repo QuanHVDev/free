@@ -54,6 +54,7 @@ public class MapManager : MonoBehaviour {
 	}
 
 	public void InitData(int step = -1) {
+		Debug.Log("=>step:"+step);
 		if (step != -1) {
 			currentIndexStep = step;
 		}
