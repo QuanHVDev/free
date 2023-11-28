@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
@@ -61,7 +62,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
     private RaycastHit hit;
     
     [SerializeField] private LayerMask mouseColliderLayerMark;
-    public StateTouch IsTouchUI = StateTouch.free;
+    public StateTouch TouchUIState = StateTouch.free;
 
     public enum StateTouch
     {
@@ -73,20 +74,20 @@ public class GameManager : SingletonBehaviour<GameManager> {
     
     private void Update()
     {
-        //Debug.Log(IsTouchUI);
+        //Debug.Log(TouchUIState);
         if (Input.touchCount == 1)
         {
             if (Input.GetMouseButtonUp(0))
             {
-                IsTouchUI = StateTouch.free;
+                TouchUIState = StateTouch.free;
                 return;
             }
             
-            if (IsTouchUI != StateTouch.free) return;
+            if (TouchUIState != StateTouch.free) return;
             
             if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
             {
-                IsTouchUI = StateTouch.touchUI;
+                TouchUIState = StateTouch.touchUI;
             }
 
             if (currentMapManager && !currentMapManager.IsMapBusy)
@@ -99,7 +100,7 @@ public class GameManager : SingletonBehaviour<GameManager> {
                     if (hit.transform.TryGetComponent(out Condition condition) && !condition.IsCanShow)
                     {
                         //Debug.Log(" ray to" + hit.transform.name);
-                        IsTouchUI = StateTouch.touchObject;
+                        TouchUIState = StateTouch.touchObject;
                     }
                 }
 

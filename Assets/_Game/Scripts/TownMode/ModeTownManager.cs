@@ -4,21 +4,23 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class ModeTownManager : SingletonBehaviour<ModeTownManager>
 {
-    [SerializeField] private List<TownManager> townManagerDatas;
+    [SerializeField] private List<SingleTownManager> townManagerDatas;
     [SerializeField] private List<Transform> transformSpawnTownManagers;
     [SerializeField] private LayerMask houseLayerMask;
-    [SerializeField] private LayerMask townLayerMask;
+    [SerializeField] private LayerMask townLayerMask;    
+    [SerializeField] private LayerMask backUIAdoptLayerMask;
+
 
     private GameManager.StateTouch touchState;
     private StateMode state;
     private int currentSelectTown;
-    private TownManager[] _townManagersSpawned;
-    private TownManager currentTownManager;
-    private TownUI townUI;
+    private SingleTownManager[] _townManagersSpawned;
+    private SingleTownManager currentSingleTownManager;
+    private ModeTownUI modeTownUI;
 
     private enum StateMode
     {
@@ -28,9 +30,13 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
 
     public void Init()
     {
-        townUI = UIRoot.Ins.Get<TownUI>();
-        townUI.Init();
-        _townManagersSpawned = new TownManager[townManagerDatas.Count];
+        Input.multiTouchEnabled = false;
+        
+        modeTownUI = UIRoot.Ins.Get<ModeTownUI>();
+        modeTownUI.Init();
+        modeTownUI.InitSelectionCat(new List<PeopleSO>());
+        
+        _townManagersSpawned = new SingleTownManager[townManagerDatas.Count];
         currentSelectTown = 0;
         
         OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
@@ -76,12 +82,12 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                 case StateMode.Free:
                     if (Physics.Raycast(ray, out hit, 999f, townLayerMask))
                     {
-                        if (hit.transform.TryGetComponent(out TownManager townManager))
+                        if (hit.transform.TryGetComponent(out SingleTownManager townManager))
                         {
                             state = StateMode.Busy;
                             CameraMainMenu.Instance.InModeTown();
                             townManager.Init();
-                            this.currentTownManager = townManager;
+                            this.currentSingleTownManager = townManager;
                             OnInModeTown?.Invoke();
                         }
                     }
@@ -96,6 +102,10 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                             house.Interact();
                         }
                     }
+                    else if (Physics.Raycast(ray, out hit, 999f, backUIAdoptLayerMask))
+                    {
+                        modeTownUI.HideAdoptUI();
+                    }
 
                     break;
             }
@@ -105,7 +115,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     public void OutModeTown()
     {
         state = StateMode.Free;
-        currentTownManager.Out();
+        currentSingleTownManager.Out();
         CameraMainMenu.Instance.OutModeTown();
         OnOutModeTown?.Invoke();
     }
@@ -132,5 +142,46 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                 OnAfterDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
         });
         SpawnTown();
+    }
+
+    private int amountCat = 3;
+    public void AddCatTown()
+    {
+        List<PeopleSO> peoples = new List<PeopleSO>();
+        
+        var data = new List<PeopleSO>(GameSettings.Ins.CatsDataSO.ListData);
+        for (int i = 0; i < amountCat; i++)
+        {
+            var dataRandom = data[Random.Range(0, data.Count)];
+            data.Remove(dataRandom);
+            peoples.Add(dataRandom);
+        }
+
+        modeTownUI.InitAddCat(peoples);
+    }
+
+    public void SelectOption(PeopleSO data, bool isAds)
+    {
+        if (isAds)
+        {
+            Debug.Log("TODO: SHOWADS");
+        }
+        
+        modeTownUI.AddSelectionCat(data);
+        modeTownUI.HideGetCatUI();
+    }
+
+    public IconCatSelected SetSelection(PeopleSO data)
+    {
+        modeTownUI.EnableVerticalScroll(false);
+        return modeTownUI.SetSelected(data, ()=>
+        {
+            modeTownUI.EnableVerticalScroll(true);
+        });
+    }
+
+    public void ShowRequestHouse(List<TagCat> tagCats, House house)
+    {
+        modeTownUI.ShowRequestHouse(tagCats, house);
     }
 }

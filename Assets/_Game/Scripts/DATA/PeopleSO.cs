@@ -1,9 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "GAME/People", fileName = "PeopleSO")]
-public class PeopleSO : ScriptableObject {
+[Serializable]
+public class PeopleSO : ScriptableObject
+{
+    public string id;
     public Sprite avatar;
     public string name;
     public string speciality;

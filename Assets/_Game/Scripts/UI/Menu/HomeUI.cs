@@ -13,6 +13,11 @@ public class HomeUI : BaseUIElement
     private void Start()
     {
         btnPlay.onClick.AddListener(LoadSceneUIManager.Instance.LoadPlayGame);
+        ModeTownManager.Instance.OnInModeTown += Hide;
+        ModeTownManager.Instance.OnOutModeTown += ()=>
+        {
+            Show();
+        };
     }
 
     public override void OnAwake()
@@ -22,7 +27,7 @@ public class HomeUI : BaseUIElement
 
     public void Init()
     {
-        btnPlay.onClick.AddListener(HomeUIManager.Instance.PlayLevel);
+        Show();
     }
 
     public void SetTextLevel(string txt)

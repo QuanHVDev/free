@@ -10,22 +10,31 @@ using UnityEngine.UI;
 public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 	public Action OnIncorrect;
 	public Action<PeopleSO> OnCorrectTarget;
-	[SerializeField] private Image icon;
-	[SerializeField] private Image iconBG;
-	[SerializeField] private Image imgAvatar;
-	[SerializeField] private TMP_Text txtName;
-	[SerializeField] private LayoutElement layoutElement;
-	[SerializeField] private RectTransform rect;
+	
+	[SerializeField] protected Image iconBG;
+	[SerializeField] protected Image imgAvatar;
+	[SerializeField] protected TMP_Text txtName;
+	
+	protected Image icon;
+	protected LayoutElement layoutElement;
+	protected RectTransform rect;
+	protected PeopleSO data;
 
 	private float delta = 50;
 	private Vector2 offset = new Vector2(0, 100);
 	private Vector2 originLocalPosition;
 	private Vector2 originAnchor;
-	private bool isSelected = false;
-	private PeopleSO data;
+	protected bool isSelected = false;
 	public List<IconHome> Targets { get; private set; }
 
-	public void Init(List<IconHome> targets, PeopleSO data) {
+	protected virtual void Awake()
+	{
+		icon = gameObject.GetComponent<Image>();
+		layoutElement = gameObject.GetComponent<LayoutElement>();
+		rect = gameObject.GetComponent<RectTransform>();
+	}
+
+	public virtual void Init(List<IconHome> targets, PeopleSO data) {
 		this.Targets = targets;
 		this.data = data;
 		imgAvatar.sprite = data.avatar;
@@ -33,20 +42,20 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 		DoFadeIcon(1, 0);
 	}
 
-	private void Update() {
+	protected void Update() {
 		if (!isSelected) return;
 		transform.position = Input.GetTouch(0).position + offset;
 	}
 
 
-	public void OnPointerDown(PointerEventData eventData) {
+	public virtual void OnPointerDown(PointerEventData eventData) {
 		isSelected = true;
 		EnableIgnoreLayout(true);
 		originLocalPosition = rect.localPosition;
 		originAnchor = rect.anchoredPosition;
 	}
 
-	private void ComeBar() {
+	protected void ComeBar() {
 		rect.localPosition = originLocalPosition;
 		rect.anchoredPosition = originAnchor;
 		EnableIgnoreLayout(false);
@@ -58,7 +67,7 @@ public class IconPeople : MonoBehaviour, IPointerDownHandler, IPointerUpHandler 
 
 	public IconHome currentTarget { get; private set; }
 
-	public void OnPointerUp(PointerEventData eventData) {
+	public virtual void OnPointerUp(PointerEventData eventData) {
 		isSelected = false;
 
 		currentTarget = CheckAllTarget();

@@ -71,7 +71,7 @@ public class UIRoot : MonoBehaviour
 public abstract class BaseUIElement : MonoBehaviour
 {
     [SerializeField] Image bg;
-    [SerializeField] Transform mainFrame;
+    [SerializeField] protected Transform mainFrame;
 
     public UIRoot Root { get; set; }
     public abstract void OnAwake();

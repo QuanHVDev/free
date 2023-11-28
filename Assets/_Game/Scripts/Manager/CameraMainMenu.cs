@@ -10,8 +10,6 @@ public class CameraMainMenu : SingletonBehaviour<CameraMainMenu>
     
     [SerializeField] private Camera camMain;
     [SerializeField] private Camera camMainUI;
-    [SerializeField] private Camera camHomeUI;
-    [SerializeField] private Camera camTownUI;
 
     private Animator animatorCameraMain;
 
@@ -19,21 +17,15 @@ public class CameraMainMenu : SingletonBehaviour<CameraMainMenu>
     {
         animatorCameraMain = camMain.GetComponent<Animator>();
         camMainUI.gameObject.SetActive(true);
-        camHomeUI.gameObject.SetActive(true);
-        camTownUI.gameObject.SetActive(false);
     }
 
     public void InModeTown()
     {
         animatorCameraMain.Play(NAMEANIM_LOOK_TARGET);
-        camHomeUI.gameObject.SetActive(false);
-        camTownUI.gameObject.SetActive(true);
     }
 
     public void OutModeTown()
     {
         animatorCameraMain.Play(NAMEANIM_SHOW_ALL);
-        camHomeUI.gameObject.SetActive(true);
-        camTownUI.gameObject.SetActive(false);
     }
 }

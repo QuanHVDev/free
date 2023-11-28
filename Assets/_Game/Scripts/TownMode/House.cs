@@ -30,7 +30,7 @@ public class House : MonoBehaviour
     
     public void Interact()
     {
-        Debug.Log($"{gameObject.name} interact!");
+        ModeTownManager.Instance.ShowRequestHouse(TagCats, this);
     }
 
     public void Hide()
@@ -48,4 +48,5 @@ public enum TagCat
     Female,
     Doctor,
     Farmer,
+    None,
 }

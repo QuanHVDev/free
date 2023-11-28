@@ -147,48 +147,50 @@ public class CameraManager : MonoBehaviour {
 	}
 	
 	[SerializeField] private Vector3 originRotation;
-	[SerializeField] private Vector3 currentnRotation;
+	[SerializeField] private Vector3 currentRotation;
 	[SerializeField] private Vector3 originPosition;
+	[SerializeField] private Vector3 currentPosition;
 	private float leftLimit = -40, rightLimit = 40;
 	private void Update() {
 		if (Input.touchCount == 1) {
 			
 			Touch t = Input.GetTouch(0);
 
-			if (GameManager.Instance.IsTouchUI == GameManager.StateTouch.free)
+			if (GameManager.Instance.TouchUIState == GameManager.StateTouch.free)
 			{
 				if (!isTouch) {
-					originPosition = t.position;
-					currentnRotation = elementCameraPrev.VirtualCamera.transform.rotation.eulerAngles;
+					this.originPosition = t.position;
+					this.currentRotation = elementCameraPrev.VirtualCamera.transform.rotation.eulerAngles;
 					isTouch = true;
 					return;
 				}
 
 				if (Vector3.Distance(originPosition,t.position) > Mathf.Epsilon) {
-					GameManager.Instance.IsTouchUI = GameManager.StateTouch.touchRotate;
+					GameManager.Instance.TouchUIState = GameManager.StateTouch.touchRotate;
+					Debug.Log("Start");
 				}
 			}
-			else
-			{
-				isTouch = false;
-			}
+
+			if (GameManager.Instance.TouchUIState != GameManager.StateTouch.touchRotate) return;
 			
-			if(GameManager.Instance.IsTouchUI != GameManager.StateTouch.touchRotate) return;
-			Vector3 currentRotation = t.position;
-			float delta = currentRotation.x - originPosition.x;
-			float targetRotateY = currentnRotation.y - delta * 0.04f;
+			currentPosition = t.position;
+			delta = currentPosition.x - originPosition.x;
+			targetRotateY = currentRotation.y - delta * 0.04f;
 			targetRotateY = Mathf.Clamp(targetRotateY, originRotation.y + leftLimit, originRotation.y + rightLimit);
-			Vector3 target = new Vector3(originRotation.x, targetRotateY, originRotation.z);
+			target = new Vector3(originRotation.x, targetRotateY, originRotation.z);
 			
 			Quaternion targetQuaternion = Quaternion.Euler(target.x, target.y, target.z);
 			elementCameraPrev.VirtualCamera.transform.rotation =
 				Quaternion.Slerp(elementCameraPrev.VirtualCamera.transform.rotation, targetQuaternion, 10 * Time.deltaTime);
-
+			Debug.Log("running");
 		}
 		else if(Input.touchCount == 0){
 			isTouch = false;
+			GameManager.Instance.TouchUIState = GameManager.StateTouch.free;
 		}
 	}
 
+	private Vector3 target;
+	private float delta, targetRotateY;
 	private bool isTouch = false;
 }

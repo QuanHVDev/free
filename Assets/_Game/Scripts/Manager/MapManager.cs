@@ -220,6 +220,7 @@ public class MapManager : MonoBehaviour {
 
 	private IEnumerator CatMovedTarget(PrefabPeople cat)
 	{
+		if (!cat) yield break;
 		cat.StartRandomAnimFinishTarget();
 		var targetDir = MapInfo.cameraPosition.position - cat.transform.position;
 		targetDir = new Vector3(targetDir.x, 0, targetDir.z);
