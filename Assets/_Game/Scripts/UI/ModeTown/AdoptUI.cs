@@ -8,11 +8,14 @@ public class AdoptUI : BaseUIElement
 {
     [SerializeField] private IconAdopt iconRequest;
     [SerializeField] private Transform contentRequest;
+    [SerializeField] private IconCatSelectedInAdopt selectedIconSelectedInAdopt;
+    [SerializeField] private Transform contentSelectedInAdopt;
     [SerializeField] private RectTransform boxRectTrans;
     
     private readonly float leftAnchor = 100f, midAnchor = 0, rightAnchor = -100f;
-    private List<IconAdopt> icons;
-    public List<IconAdopt> Icons => icons;
+    private List<IconAdopt> requestIcons;
+    private List<IconCatSelectedInAdopt> selectedIcons;
+    public List<IconAdopt> RequestIcons => requestIcons;
 
     public override void OnAwake()
     {
@@ -22,15 +25,23 @@ public class AdoptUI : BaseUIElement
     private void Start()
     {
         iconRequest.gameObject.SetActive(false);
+        selectedIconSelectedInAdopt.gameObject.SetActive(false);
     }
 
     public void ShowRequest(List<TagCat> tags, House houseTransform)
     {
         ResetAllIcon();
+        ResetFilledAdopt();
         foreach (var tag in tags)
         {
+            // Spawn Request
             var obj = GetIcon();
             obj.Init(tag);
+            
+            // Spawn Selected
+            var iconSelected = GetSelectedIconInAdopt();
+            iconSelected.ActiveAllObject(false);
+            iconSelected.gameObject.SetActive(true);
         }
 
         var targetPosition = Camera.main.WorldToScreenPoint(houseTransform.transform.position);
@@ -50,13 +61,13 @@ public class AdoptUI : BaseUIElement
 
     private void ResetAllIcon()
     {
-        if (icons == null)
+        if (requestIcons == null)
         {
-            icons = new List<IconAdopt>();
+            requestIcons = new List<IconAdopt>();
         }
         else
         {
-            foreach (var icon in icons)
+            foreach (var icon in requestIcons)
             {
                 icon.Reset();
             }
@@ -65,12 +76,12 @@ public class AdoptUI : BaseUIElement
 
     private IconAdopt GetIcon()
     {
-        if (icons == null)
+        if (requestIcons == null)
         {
-            icons = new List<IconAdopt>();
+            requestIcons = new List<IconAdopt>();
         }
         
-        foreach (var icon in icons)
+        foreach (var icon in requestIcons)
         {
             if (icon.Tag == TagCat.None)
             {
@@ -81,7 +92,7 @@ public class AdoptUI : BaseUIElement
 
         var obj = Instantiate(iconRequest, contentRequest);
         obj.gameObject.SetActive(true);
-        icons.Add(obj);
+        requestIcons.Add(obj);
         return obj;
     }
 
@@ -89,10 +100,53 @@ public class AdoptUI : BaseUIElement
     {
         if (icon.Tag == TagCat.Any) return true;
         foreach (var tag in tags) {
-            if (icons.Contains(icon) && tag == icon.Tag)
+            if (requestIcons.Contains(icon) && tag == icon.Tag)
                 return true;
         }
         
         return false;
+    }
+
+    public void FilledAdopt(int indexTag, PeopleSO data)
+    {
+        if (indexTag >= selectedIcons.Count || !selectedIcons[indexTag].gameObject.activeSelf)
+        {
+            Debug.Log($"NULL With IndexTag {indexTag}");
+            return;
+        }
+        
+        selectedIcons[indexTag].Init(data);
+        selectedIcons[indexTag].ActiveAllObject(true);
+        requestIcons[indexTag].ActiveTagText(false);
+    }
+
+    private IconCatSelectedInAdopt GetSelectedIconInAdopt()
+    {
+        if (selectedIcons == null) {
+            selectedIcons = new List<IconCatSelectedInAdopt>();
+        }
+
+        foreach (var selected in selectedIcons)
+        {
+            if (!selected.gameObject.activeSelf)
+            {
+                return selected;
+            }
+        }
+
+        var icon = Instantiate(selectedIconSelectedInAdopt, contentSelectedInAdopt);
+        icon.gameObject.SetActive(true);
+        selectedIcons.Add(icon);
+        return icon;
+    }
+
+    public void ResetFilledAdopt()
+    {
+        if (selectedIcons == null) return;
+        foreach (var icon in selectedIcons)
+        {
+            icon.ActiveAllObject(true);
+            icon.gameObject.SetActive(false);
+        }
     }
 }

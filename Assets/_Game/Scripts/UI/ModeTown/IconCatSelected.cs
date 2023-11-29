@@ -10,15 +10,15 @@ public class IconCatSelected : MonoBehaviour, IPointerUpHandler
 {
     public Action OnComplete;
     
-    [SerializeField] private Image iconBG;
-    [SerializeField] private Image imgAvatar;
-    [SerializeField] private TMP_Text txtName;
-    private PeopleSO data;
-    private bool isSelected;
-    private Vector2 offset = new Vector2(0, 100);
-    private IconCatSelection iconCatSelection;
+    [SerializeField] protected Image iconBG;
+    [SerializeField] protected Image imgAvatar;
+    [SerializeField] protected TMP_Text txtName;
+    protected PeopleSO data;
+    protected bool isSelected;
+    protected Vector2 offset = new Vector2(0, 100);
+    protected IconCatSelection iconCatSelection;
     public PeopleSO Data => data;
-    public void SetSelect(bool isSelect)
+    public virtual void SetSelect(bool isSelect)
     {
         if (isSelect) {
             transform.position = Input.GetTouch(0).position + offset;
@@ -31,12 +31,12 @@ public class IconCatSelected : MonoBehaviour, IPointerUpHandler
         gameObject.SetActive(isSelected);
     }
 
-    public void OnPointerUp(PointerEventData eventData)
+    public virtual void OnPointerUp(PointerEventData eventData)
     {
         SetSelect(false);
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (Input.touchCount == 0)
         {
@@ -61,7 +61,7 @@ public class IconCatSelected : MonoBehaviour, IPointerUpHandler
         this.iconCatSelection = iconCatSelection;
     }
 
-    public IconCatSelection GetIconSelectionPrev()
+    public virtual IconCatSelection GetIconSelectionPrev()
     {
         return iconCatSelection;
     }

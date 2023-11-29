@@ -11,7 +11,7 @@ public class SingleTownManager : MonoBehaviour
         for (int i = 0; i < houses.Count; i++)
         {
             houses[i].Init();
-            houses[i].SetQuery($"h{i}");
+            houses[i].SetQuery($"{i}");
         }
     }
 

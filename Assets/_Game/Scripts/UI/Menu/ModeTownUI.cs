@@ -195,18 +195,18 @@ public class ModeTownUI : BaseUIElement
 
     private readonly float distance = 100f;
     // ReSharper disable Unity.PerformanceAnalysis
-    public void CompleteMovingSelected()
+    private void CompleteMovingSelected()
     {
         if (adoptUI.gameObject.activeSelf) {
             IconAdopt iconMin = new IconAdopt();
             float min = float.MaxValue;
             int index = -1;
-            for (int i = 0; i < adoptUI.Icons.Count; i++)
+            for (int i = 0; i < adoptUI.RequestIcons.Count; i++)
             {
-                float value = Vector3.Distance(iconCatSelected.transform.position, adoptUI.Icons[i].transform.position);
-                if (value < distance && adoptUI.Icons[i].enabled && value < min)
+                float value = Vector3.Distance(iconCatSelected.transform.position, adoptUI.RequestIcons[i].transform.position);
+                if (value < distance && adoptUI.RequestIcons[i].enabled && value < min)
                 {
-                    iconMin = adoptUI.Icons[i];
+                    iconMin = adoptUI.RequestIcons[i];
                     min = value;
                     index = i;
                 }
@@ -239,5 +239,15 @@ public class ModeTownUI : BaseUIElement
     public void HideAdoptUI()
     {
         adoptUI.Hide();
+    }
+
+    public void ShowFilledAdopt(int indexTag, PeopleSO data)
+    {
+        adoptUI.FilledAdopt(indexTag, data);
+    }
+
+    public void ResetFilledAdopt()
+    {
+        adoptUI.ResetFilledAdopt();
     }
 }

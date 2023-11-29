@@ -128,6 +128,13 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                     {
                         if (hit.transform.TryGetComponent(out House house))
                         {
+                            currentIndexHouse = townManagersSpawned[currentSelectTown].Houses.IndexOf(house);
+                            if (currentIndexHouse < 0)
+                            {
+                                Debug.Log("Null house");
+                                return;
+                            }
+                            
                             touchState = GameManager.StateTouch.touchObject;
                             house.Interact();
                         }
@@ -217,6 +224,25 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     public void ShowRequestHouse(List<TagCat> tagCats, House house)
     {
         modeTownUI.ShowRequestHouse(tagCats, house);
+        var p = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+        foreach (var query in p.catSelectedDatas)
+        {
+            var arr = query.Split('|');
+            int indexTown = -1, indexHouse = -1, indexTag = -1;
+            var data = GameSettings.Ins.GetCatSO(arr[3]);
+            if (int.TryParse(arr[0], out indexTown) && int.TryParse(arr[1], out indexHouse) &&
+                int.TryParse(arr[2], out indexTag))
+            {
+                if (indexTown == currentSelectTown && indexHouse == currentIndexHouse && data)
+                {
+                    modeTownUI.ShowFilledAdopt(indexTag, data);
+                }
+            }
+            else
+            {
+                Debug.Log($"Convert NULL: {query}");
+            }
+        }
     }
 
     public bool SaveCorrect(int indexTag, PeopleSO dataCat)
@@ -233,14 +259,15 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         // town {index} | house {index} | Tag {index} | Cat {id}
         // t{X}h{Y}t{Z}c{Q}
 
-        string query = $"t{currentSelectTown}|" 
+        string query = $"{currentSelectTown}|" 
                        + $"{townManagersSpawned[currentSelectTown].Houses[currentIndexHouse].Query}|"
-                       + $"t{indexTag}|"
+                       + $"{indexTag}|"
                        + $"{dataCat.id}";
         
         Debug.Log($"query: {query}");
         processTown.catSelectedDatas.Add(query);
         UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
+        modeTownUI.ShowFilledAdopt(indexTag, dataCat);
         return true;
     }
 }

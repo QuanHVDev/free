@@ -35,6 +35,7 @@ public class GameSettings : ScriptableObject {
             }
         }
 
+        Debug.Log($"NULL Cat SO with {id}");
         return null;
     }
 }
