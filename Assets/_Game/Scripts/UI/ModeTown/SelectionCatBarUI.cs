@@ -8,4 +8,11 @@ public class SelectionCatBarUI : BaseUIElement
     {
         
     }
+
+    public void Init()
+    {
+        
+    }
+    
+    
 }

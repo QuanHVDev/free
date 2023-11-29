@@ -17,8 +17,8 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
 
     private GameManager.StateTouch touchState;
     private StateMode state;
-    private int currentSelectTown;
-    private SingleTownManager[] _townManagersSpawned;
+    private int currentSelectTown, currentIndexHouse;
+    private SingleTownManager[] townManagersSpawned;
     private SingleTownManager currentSingleTownManager;
     private ModeTownUI modeTownUI;
 
@@ -28,20 +28,50 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         Busy
     }
 
+    private void Start()
+    {
+        OnOutModeTown += () =>
+        {
+            currentIndexHouse = -1;
+        };
+
+        OnInModeTown += () =>
+        {
+
+        };
+    }
+
     public void Init()
     {
         Input.multiTouchEnabled = false;
         
         modeTownUI = UIRoot.Ins.Get<ModeTownUI>();
         modeTownUI.Init();
-        modeTownUI.InitSelectionCat(new List<PeopleSO>());
+        InitSelectionCat();
         
-        _townManagersSpawned = new SingleTownManager[townManagerDatas.Count];
+        townManagersSpawned = new SingleTownManager[townManagerDatas.Count];
         currentSelectTown = 0;
         
         OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
         OnAfterDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
         SpawnTown();
+    }
+
+    private void InitSelectionCat()
+    {
+        var processTown =
+            UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+
+        List<PeopleSO> data = new List<PeopleSO>();
+        foreach (var id in processTown.catSelectionDatas)
+        {
+            var catSO = GameSettings.Ins.GetCatSO(id);
+            if (catSO) data.Add(catSO);
+            else
+                Debug.Log($"NULL with id: {id}");
+        }
+        
+        modeTownUI.InitSelectionCat(data);
     }
 
     private void SpawnTown()
@@ -50,9 +80,9 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         int endIndex = Math.Clamp(currentSelectTown + 2, 0, townManagerDatas.Count - 1);
         for (int i = startIndex; i <= endIndex; i++)
         {
-            if (_townManagersSpawned[i] == null)
+            if (townManagersSpawned[i] == null)
             {
-                _townManagersSpawned[i] = Instantiate(townManagerDatas[i], transformSpawnTownManagers[i]);
+                townManagersSpawned[i] = Instantiate(townManagerDatas[i], transformSpawnTownManagers[i]);
             }
         }
     }
@@ -124,6 +154,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     public Action<int, int> OnAfterDoMoveIsland, OnBeforeDoMoveIsland;
     public void BackToBeforeTown()
     {
+        modeTownUI.HideAdoptUI();
         currentSelectTown = Mathf.Clamp(--currentSelectTown, 0, townManagerDatas.Count - 1);
         OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
         transform.DOMoveX(transform.position.x + 120, 1f).OnComplete(() =>
@@ -134,6 +165,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     }
     public void NextToAfterTown()
     {
+        modeTownUI.HideAdoptUI();
         currentSelectTown = Mathf.Clamp(++currentSelectTown, 0, townManagerDatas.Count - 1);
         OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
         transform.DOMoveX(transform.position.x - 120, 1f).OnComplete(() =>
@@ -167,6 +199,11 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
             Debug.Log("TODO: SHOWADS");
         }
         
+        var processTown =
+            UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+        processTown.catSelectionDatas.Add(data.id);
+        UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
+        
         modeTownUI.AddSelectionCat(data);
         modeTownUI.HideGetCatUI();
     }
@@ -174,14 +211,36 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     public IconCatSelected SetSelection(PeopleSO data)
     {
         modeTownUI.EnableVerticalScroll(false);
-        return modeTownUI.SetSelected(data, ()=>
-        {
-            modeTownUI.EnableVerticalScroll(true);
-        });
+        return modeTownUI.SetSelected(data);
     }
 
     public void ShowRequestHouse(List<TagCat> tagCats, House house)
     {
         modeTownUI.ShowRequestHouse(tagCats, house);
+    }
+
+    public bool SaveCorrect(int indexTag, PeopleSO dataCat)
+    {
+        var processTown =
+            UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+
+        if (!processTown.catSelectionDatas.Remove(dataCat.id))
+        {
+            Debug.Log($"NOT OWNER {dataCat.id}");
+            return false;
+        }
+
+        // town {index} | house {index} | Tag {index} | Cat {id}
+        // t{X}h{Y}t{Z}c{Q}
+
+        string query = $"t{currentSelectTown}|" 
+                       + $"{townManagersSpawned[currentSelectTown].Houses[currentIndexHouse].Query}|"
+                       + $"t{indexTag}|"
+                       + $"{dataCat.id}";
+        
+        Debug.Log($"query: {query}");
+        processTown.catSelectedDatas.Add(query);
+        UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
+        return true;
     }
 }

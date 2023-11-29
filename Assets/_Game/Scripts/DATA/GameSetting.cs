@@ -24,4 +24,17 @@ public class GameSettings : ScriptableObject {
     }
 
     public CatsDataSO CatsDataSO;
+
+    public PeopleSO GetCatSO(string id)
+    {
+        foreach (var data in CatsDataSO.ListData)
+        {
+            if (data.id == id)
+            {
+                return data;
+            }
+        }
+
+        return null;
+    }
 }

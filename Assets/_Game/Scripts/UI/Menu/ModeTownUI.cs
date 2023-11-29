@@ -25,6 +25,7 @@ public class ModeTownUI : BaseUIElement
         GetCatUI.Hide();
         adoptUI.gameObject.SetActive(false);
         iconCatSelected.SetSelect(false);
+        iconCatSelected.OnComplete = CompleteMovingSelected;
     }
 
     public void Init()
@@ -154,12 +155,18 @@ public class ModeTownUI : BaseUIElement
     private IconCatSelection GetCatSelectionObject(int index = -1)
     {
         if (catTownSelections == null) catTownSelections = new List<IconCatSelection>();
-        if (index >= catTownSelections.Count || index == -1)
+        if (index >= catTownSelections.Count ||index == -1)
         {
             var item = Instantiate(iconCatSelection, contentSelection);
             catTownSelections.Add(item);
             return item;
         }
+        
+        foreach (var icon in catTownSelections)
+        {
+            if (icon.Data == null)
+                return icon;
+        }    
 
         return catTownSelections[index];
     }
@@ -179,11 +186,46 @@ public class ModeTownUI : BaseUIElement
     [Header("Selected")] 
     [SerializeField] private IconCatSelected iconCatSelected;
 
-    public IconCatSelected SetSelected(PeopleSO data, Action OnComplete)
+    public IconCatSelected SetSelected(PeopleSO data)
     {
         iconCatSelected.Init(data);
-        iconCatSelected.OnComplete = OnComplete;
-        return iconCatSelected;
+        return iconCatSelected;        
+
+    }
+
+    private readonly float distance = 100f;
+    // ReSharper disable Unity.PerformanceAnalysis
+    public void CompleteMovingSelected()
+    {
+        if (adoptUI.gameObject.activeSelf) {
+            IconAdopt iconMin = new IconAdopt();
+            float min = float.MaxValue;
+            int index = -1;
+            for (int i = 0; i < adoptUI.Icons.Count; i++)
+            {
+                float value = Vector3.Distance(iconCatSelected.transform.position, adoptUI.Icons[i].transform.position);
+                if (value < distance && adoptUI.Icons[i].enabled && value < min)
+                {
+                    iconMin = adoptUI.Icons[i];
+                    min = value;
+                    index = i;
+                }
+            }
+
+            if (min < float.MaxValue && adoptUI.CheckCatWithTags(iconCatSelected.Data.Tags, iconMin))
+            {
+                if (ModeTownManager.Instance.SaveCorrect(index, iconCatSelected.Data))
+                {
+                    iconCatSelected.GetIconSelectionPrev().Reset();
+                }
+            }
+            else {
+                EnableVerticalScroll(true);
+            }
+        }
+        else {
+            EnableVerticalScroll(true);
+        }
     }
 
     [Header("Adopt")] 

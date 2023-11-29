@@ -17,8 +17,16 @@ public class IconCatSelected : MonoBehaviour, IPointerUpHandler
     private bool isSelected;
     private Vector2 offset = new Vector2(0, 100);
     private IconCatSelection iconCatSelection;
+    public PeopleSO Data => data;
     public void SetSelect(bool isSelect)
     {
+        if (isSelect) {
+            transform.position = Input.GetTouch(0).position + offset;
+        }
+        else {
+            OnComplete?.Invoke();
+        }
+        
         isSelected = isSelect;
         gameObject.SetActive(isSelected);
     }
@@ -34,7 +42,6 @@ public class IconCatSelected : MonoBehaviour, IPointerUpHandler
         {
             iconCatSelection.SetSelect(false);
             SetSelect(false);
-            OnComplete?.Invoke();
             return;
         }
         
@@ -52,5 +59,10 @@ public class IconCatSelected : MonoBehaviour, IPointerUpHandler
     public void PrevIcon(IconCatSelection iconCatSelection)
     {
         this.iconCatSelection = iconCatSelection;
+    }
+
+    public IconCatSelection GetIconSelectionPrev()
+    {
+        return iconCatSelection;
     }
 }

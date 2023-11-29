@@ -11,6 +11,7 @@ public class IconCatSelection : MonoBehaviour, IPointerUpHandler, IPointerDownHa
     private PeopleSO data;
     private bool isSelected;
     private Vector2 offset = new Vector2(0, 100);
+    public PeopleSO Data => data;
 
     public void Init(PeopleSO data)
     {
@@ -36,5 +37,11 @@ public class IconCatSelection : MonoBehaviour, IPointerUpHandler, IPointerDownHa
         var icon = ModeTownManager.Instance.SetSelection(data);
         icon.PrevIcon(this);
         SetSelect(true);
+    }
+
+    public void Reset()
+    {
+        this.data = null;
+        gameObject.SetActive(false);
     }
 }

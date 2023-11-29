@@ -7,7 +7,7 @@ using UnityEngine;
 public class House : MonoBehaviour
 {
     private const string STRING_NAMEANIM_NOTI = "IsVisible";
-    
+    private string query = "";
     [SerializeField] private List<TagCat> TagCats;
     [SerializeField] private Animator notiAnimator;
 
@@ -37,6 +37,12 @@ public class House : MonoBehaviour
     {
         EnableNoti(false);
     }
+
+    public void SetQuery(string query)
+    {
+        this.query = query;
+    }
+    public string Query => query;
 }
 
 

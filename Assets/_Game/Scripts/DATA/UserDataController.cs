@@ -35,6 +35,7 @@ public class UserDataController : SingletonBehaviourDontDestroy<UserDataControll
 public class UserDataKeys
 {
     public const string USER_PROGRESSION = "data.user_prog";
+    public const string USER_PROGRESSION_MODETOWN = "data.user_prog_mTown";
     public const string USER_INVENTORY = "data.user_inv";
 }
 
@@ -50,6 +51,12 @@ public class ProcessData : IUserData
     public bool IsShowHint = true;
     public int currentLevel = 0;
     public int currentStep = 0;
+}
+
+public class ProcessModeTown : IUserData
+{
+    public List<string> catSelectedDatas = new List<string>();
+    public List<string> catSelectionDatas = new List<string>();
 }
 
 public class InventoryData : IUserData

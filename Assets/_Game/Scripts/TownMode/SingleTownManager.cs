@@ -8,9 +8,10 @@ public class SingleTownManager : MonoBehaviour
     [SerializeField] private List<House> houses;
     public void Init()
     {
-        foreach (var house in houses)
+        for (int i = 0; i < houses.Count; i++)
         {
-            house.Init();
+            houses[i].Init();
+            houses[i].SetQuery($"h{i}");
         }
     }
 
@@ -21,4 +22,6 @@ public class SingleTownManager : MonoBehaviour
             house.Hide();
         }
     }
+    
+    public  List<House> Houses => houses;
 }

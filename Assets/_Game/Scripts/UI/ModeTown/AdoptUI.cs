@@ -12,7 +12,8 @@ public class AdoptUI : BaseUIElement
     
     private readonly float leftAnchor = 100f, midAnchor = 0, rightAnchor = -100f;
     private List<IconAdopt> icons;
-    
+    public List<IconAdopt> Icons => icons;
+
     public override void OnAwake()
     {
         
@@ -45,7 +46,6 @@ public class AdoptUI : BaseUIElement
         
         mainFrame.transform.position = targetPosition;
         boxRectTrans.localPosition = new Vector3(targetAnchor, boxRectTrans.localPosition.y, boxRectTrans.localPosition.z);
-
     }
 
     private void ResetAllIcon()
@@ -84,5 +84,15 @@ public class AdoptUI : BaseUIElement
         icons.Add(obj);
         return obj;
     }
-    
+
+    public bool CheckCatWithTags(List<TagCat> tags, IconAdopt icon)
+    {
+        if (icon.Tag == TagCat.Any) return true;
+        foreach (var tag in tags) {
+            if (icons.Contains(icon) && tag == icon.Tag)
+                return true;
+        }
+        
+        return false;
+    }
 }
