@@ -107,7 +107,7 @@ public class AdoptUI : BaseUIElement
         return false;
     }
 
-    public void FilledAdopt(int indexTag, PeopleSO data)
+    public void FilledAdopt(int indexTag, PeopleSO data, bool isCanUndo)
     {
         if (indexTag >= selectedIcons.Count || !selectedIcons[indexTag].gameObject.activeSelf)
         {
@@ -118,6 +118,7 @@ public class AdoptUI : BaseUIElement
         selectedIcons[indexTag].Init(data);
         selectedIcons[indexTag].ActiveAllObject(true);
         requestIcons[indexTag].ActiveTagText(false);
+        if(isCanUndo) selectedIcons[indexTag].ActiveUndoButton(indexTag);
     }
 
     private IconCatSelectedInAdopt GetSelectedIconInAdopt()

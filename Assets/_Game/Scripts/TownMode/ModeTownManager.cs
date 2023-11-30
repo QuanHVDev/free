@@ -286,8 +286,8 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
 
     public void ShowRequestHouse(List<TagCat> tagCats, House house)
     {
-        modeTownUI.ShowRequestHouse(tagCats, house);
         var p = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+        modeTownUI.ShowRequestHouse(tagCats, house);
         foreach (var query in p.catSelectedDatas)
         {
             var arr = query.Split('|');
@@ -298,7 +298,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
             {
                 if (indexTown == currentSelectTown && indexHouse == currentIndexHouse && data)
                 {
-                    modeTownUI.ShowFilledAdopt(indexTag, data);
+                    modeTownUI.ShowFilledAdopt(indexTag, data, p.indexProcessingTown == currentSelectTown);
                 }
             }
             else
@@ -329,7 +329,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         
         Debug.Log($"query: {query}");
         processTown.catSelectedDatas.Add(query);
-        modeTownUI.ShowFilledAdopt(indexTag, dataCat);
+        modeTownUI.ShowFilledAdopt(indexTag, dataCat, processTown.indexProcessingTown == currentSelectTown);
         UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
 
         if (!IsActiveNotiHouseinCurrentTownWithText(currentIndexHouse))
@@ -368,5 +368,18 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         }
         
         return countProcessNeed <= 0;
+    }
+
+    public void UndoCatSelected(int indexTag, PeopleSO data)
+    {
+        var p = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+        if (p.indexProcessingTown != currentSelectTown)
+        {
+            Debug.Log($"Not undo with {currentSelectTown}");
+            return;
+        }
+        
+        Debug.Log($"Undo: {currentSelectTown}|{currentIndexHouse}|{indexTag}|{data.id}");
+        p.catSelectedDatas.Remove("");
     }
 }

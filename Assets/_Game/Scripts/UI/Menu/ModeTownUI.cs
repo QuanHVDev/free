@@ -242,9 +242,9 @@ public class ModeTownUI : BaseUIElement
         adoptUI.Hide();
     }
 
-    public void ShowFilledAdopt(int indexTag, PeopleSO data)
+    public void ShowFilledAdopt(int indexTag, PeopleSO data, bool isCanUndo)
     {
-        adoptUI.FilledAdopt(indexTag, data);
+        adoptUI.FilledAdopt(indexTag, data, isCanUndo);
     }
 
     public void ResetFilledAdopt()
