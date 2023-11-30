@@ -55,6 +55,8 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         
         OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
         OnAfterDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
+        modeTownUI.SetTextTownName(townLevels.Data[currentSelectTown].nameTown);
+
         SpawnTown();
     }
 
@@ -122,8 +124,8 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                             OnInModeTown?.Invoke();
                         }
                     }
-
                     break;
+                
                 case StateMode.Busy:
                     if (Physics.Raycast(ray, out hit, 999f, houseLayerMask))
                     {
@@ -195,6 +197,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
         transform.DOMoveX(transform.position.x + 120, 1f).OnComplete(() =>
         {
+            modeTownUI.SetTextTownName(townLevels.Data[currentSelectTown].nameTown);
             OnAfterDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
             ShowNotiHouse();
         });
@@ -212,6 +215,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
         transform.DOMoveX(transform.position.x - 120, 1f).OnComplete(() =>
         {
+            modeTownUI.SetTextTownName(townLevels.Data[currentSelectTown].nameTown);
             if (currentSelectTown < townLevels.Data.Count)
                 OnAfterDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
             ShowNotiHouse();

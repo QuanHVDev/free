@@ -10,7 +10,8 @@ public class ModeTownUI : BaseUIElement
     public override void OnAwake()
     {
     }
-
+    
+    [SerializeField] private TMP_Text txtNameTown;
     [SerializeField] private Button btnExit;
     [SerializeField] private Button btnLeftArrow;
     [SerializeField] private Button btnRightArrow;
@@ -249,5 +250,10 @@ public class ModeTownUI : BaseUIElement
     public void ResetFilledAdopt()
     {
         adoptUI.ResetFilledAdopt();
+    }
+
+    public void SetTextTownName(string name)
+    {
+        txtNameTown.text = name;
     }
 }
