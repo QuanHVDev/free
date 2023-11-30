@@ -115,13 +115,18 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                 case StateMode.Free:
                     if (Physics.Raycast(ray, out hit, 999f, townLayerMask))
                     {
+                        var processTownFree = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
                         if (hit.transform.TryGetComponent(out SingleTownManager townManager))
                         {
                             state = StateMode.Busy;
                             CameraMainMenu.Instance.InModeTown();
                             this.currentSingleTownManager = townManager;
-                            ShowNotiHouse();
+                            
                             OnInModeTown?.Invoke();
+                            if (currentSelectTown == processTownFree.indexProcessingTown)
+                            {
+                                ShowNotiHouse();
+                            }
                         }
                     }
                     break;
@@ -129,6 +134,12 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                 case StateMode.Busy:
                     if (Physics.Raycast(ray, out hit, 999f, houseLayerMask))
                     {
+                        var processTownBusy = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+                        if (currentSelectTown > processTownBusy.indexProcessingTown)
+                        {
+                            return;
+                        }
+                        
                         if (hit.transform.TryGetComponent(out House house))
                         {
                             currentIndexHouse = townManagersSpawned[currentSelectTown].GetHouses().IndexOf(house);
@@ -199,7 +210,11 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         {
             modeTownUI.SetTextTownName(townLevels.Data[currentSelectTown].nameTown);
             OnAfterDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
-            ShowNotiHouse();
+            var processTown = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+            if (currentSelectTown == processTown.indexProcessingTown)
+            {
+                ShowNotiHouse();
+            }
         });
         
         SpawnTown();
@@ -218,7 +233,11 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
             modeTownUI.SetTextTownName(townLevels.Data[currentSelectTown].nameTown);
             if (currentSelectTown < townLevels.Data.Count)
                 OnAfterDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
-            ShowNotiHouse();
+            var processTown = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+            if (currentSelectTown == processTown.indexProcessingTown)
+            {
+                ShowNotiHouse();
+            }
         });
         SpawnTown();
     }
@@ -306,13 +325,44 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         
         Debug.Log($"query: {query}");
         processTown.catSelectedDatas.Add(query);
-        UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
         modeTownUI.ShowFilledAdopt(indexTag, dataCat);
+        UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
+
         if (!IsActiveNotiHouseinCurrentTownWithText(currentIndexHouse))
         {
             currentSingleTownManager.GetHouses()[currentIndexHouse].EnableNoti(false);
             modeTownUI.HideAdoptUI();
+            if (IsCompleteProcessTown(processTown.indexProcessingTown))
+            {
+                processTown.indexProcessingTown++;
+                UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
+                NextToAfterTown();
+                ShowNotiHouse();
+            }
         }
+        
         return true;
+    }
+
+
+    private bool IsCompleteProcessTown(int index)
+    {
+        int countProcessNeed = 0;
+        foreach (var house in townLevels.Data[index].SingleTownManager.GetHouses())
+        {
+            countProcessNeed += house.CountTagCats();
+        }
+
+        var processTown =
+            UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+        foreach (var query in processTown.catSelectedDatas)
+        {
+            if (query.StartsWith($"{index}|"))
+            {
+                countProcessNeed--;
+            }
+        }
+        
+        return countProcessNeed <= 0;
     }
 }

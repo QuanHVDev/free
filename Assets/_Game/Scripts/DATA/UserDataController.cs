@@ -57,6 +57,7 @@ public class ProcessModeTown : IUserData
 {
     public List<string> catSelectedDatas = new List<string>();
     public List<string> catSelectionDatas = new List<string>();
+    public int indexProcessingTown = 0;
 }
 
 public class InventoryData : IUserData
