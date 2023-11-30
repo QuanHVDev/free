@@ -8,7 +8,6 @@ using Random = UnityEngine.Random;
 
 public class ModeTownManager : SingletonBehaviour<ModeTownManager>
 {
-    [SerializeField] private List<SingleTownManager> townManagerDatas;
     [SerializeField] private List<Transform> transformSpawnTownManagers;
     [SerializeField] private LayerMask houseLayerMask;
     [SerializeField] private LayerMask townLayerMask;    
@@ -21,6 +20,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     private SingleTownManager[] townManagersSpawned;
     private SingleTownManager currentSingleTownManager;
     private ModeTownUI modeTownUI;
+    private TownLevelsSO townLevels;
 
     private enum StateMode
     {
@@ -48,12 +48,13 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         modeTownUI = UIRoot.Ins.Get<ModeTownUI>();
         modeTownUI.Init();
         InitSelectionCat();
+        townLevels = GameSettings.Ins.TownsDataSO;
         
-        townManagersSpawned = new SingleTownManager[townManagerDatas.Count];
+        townManagersSpawned = new SingleTownManager[townLevels.Data.Count];
         currentSelectTown = 0;
         
-        OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
-        OnAfterDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
+        OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
+        OnAfterDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
         SpawnTown();
     }
 
@@ -76,13 +77,13 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
 
     private void SpawnTown()
     {
-        int startIndex = Math.Clamp(currentSelectTown - 2, 0, townManagerDatas.Count - 1);
-        int endIndex = Math.Clamp(currentSelectTown + 2, 0, townManagerDatas.Count - 1);
+        int startIndex = Math.Clamp(currentSelectTown - 2, 0, townLevels.Data.Count - 1);
+        int endIndex = Math.Clamp(currentSelectTown + 2, 0, townLevels.Data.Count - 1);
         for (int i = startIndex; i <= endIndex; i++)
         {
             if (townManagersSpawned[i] == null)
             {
-                townManagersSpawned[i] = Instantiate(townManagerDatas[i], transformSpawnTownManagers[i]);
+                townManagersSpawned[i] = Instantiate(townLevels.Data[i].SingleTownManager, transformSpawnTownManagers[i]);
             }
         }
     }
@@ -118,6 +119,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                             CameraMainMenu.Instance.InModeTown();
                             townManager.Init();
                             this.currentSingleTownManager = townManager;
+                            ShowNotiHouse();
                             OnInModeTown?.Invoke();
                         }
                     }
@@ -128,7 +130,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                     {
                         if (hit.transform.TryGetComponent(out House house))
                         {
-                            currentIndexHouse = townManagersSpawned[currentSelectTown].Houses.IndexOf(house);
+                            currentIndexHouse = townManagersSpawned[currentSelectTown].GetHouses().IndexOf(house);
                             if (currentIndexHouse < 0)
                             {
                                 Debug.Log("Null house");
@@ -148,6 +150,60 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
             }
         }
     }
+    
+    public void ShowNotiHouse()
+    {
+        var p = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+        
+        //Tìm data của Town đang select
+        List<string> dataTown = new List<string>();
+        foreach (var query in p.catSelectedDatas)
+        {
+            query.StartsWith(currentSelectTown.ToString());
+            dataTown.Add(query);
+        }
+        
+        // duyệt từng house có trong Town, nếu house nào đã đủ mèo thì sẽ tắt noti
+        List<int> dataSearched = new List<int>();
+        foreach (var query in dataTown)
+        {
+            var arr = query.Split('|');
+            int indexHouse = -1;
+            
+            if (!int.TryParse(arr[1], out indexHouse) ) {
+                Debug.Log("Convert fail");
+                continue;
+            }
+
+            if (dataSearched.Contains(indexHouse))
+            {
+                continue;
+            }
+            
+            dataSearched.Add(indexHouse);
+            int count = currentSingleTownManager.GetHouses()[indexHouse].CountTagCats();
+            string text = $"{currentSelectTown}|{indexHouse}";
+            foreach (var data in dataTown)
+            {
+                if (data.StartsWith(text))
+                {
+                    count--;
+                }
+            }
+
+            Debug.Log($"{currentSingleTownManager} - house:{indexHouse} - count:{count}");
+            currentSingleTownManager.GetHouses()[indexHouse].EnableNoti(count > 0);
+        }
+
+        // những house không có trong data thì sẽ chưa được duyệt nên bật noti lên
+        for (int i = 0; i < currentSingleTownManager.GetHouses().Count; i++)
+        {
+            if (!dataSearched.Contains(i))
+            {
+                currentSingleTownManager.GetHouses()[i].EnableNoti(true);
+            }
+        }
+    }
 
     public void OutModeTown()
     {
@@ -162,23 +218,34 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     public void BackToBeforeTown()
     {
         modeTownUI.HideAdoptUI();
-        currentSelectTown = Mathf.Clamp(--currentSelectTown, 0, townManagerDatas.Count - 1);
-        OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
+        
+        currentSelectTown = Mathf.Clamp(--currentSelectTown, 0, townLevels.Data.Count - 1);
+        this.currentSingleTownManager.Out();
+        this.currentSingleTownManager = townManagersSpawned[currentSelectTown];
+        
+        OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
         transform.DOMoveX(transform.position.x + 120, 1f).OnComplete(() =>
         {
-            OnAfterDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
+            OnAfterDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
+            ShowNotiHouse();
         });
+        
         SpawnTown();
     }
     public void NextToAfterTown()
     {
         modeTownUI.HideAdoptUI();
-        currentSelectTown = Mathf.Clamp(++currentSelectTown, 0, townManagerDatas.Count - 1);
-        OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
+        
+        currentSelectTown = Mathf.Clamp(++currentSelectTown, 0, townLevels.Data.Count - 1);
+        this.currentSingleTownManager.Out();
+        this.currentSingleTownManager = townManagersSpawned[currentSelectTown];
+        
+        OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
         transform.DOMoveX(transform.position.x - 120, 1f).OnComplete(() =>
         {
-            if (currentSelectTown < townManagerDatas.Count)
-                OnAfterDoMoveIsland?.Invoke(currentSelectTown, townManagerDatas.Count - 1);
+            if (currentSelectTown < townLevels.Data.Count)
+                OnAfterDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
+            ShowNotiHouse();
         });
         SpawnTown();
     }
@@ -260,7 +327,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         // t{X}h{Y}t{Z}c{Q}
 
         string query = $"{currentSelectTown}|" 
-                       + $"{townManagersSpawned[currentSelectTown].Houses[currentIndexHouse].Query}|"
+                       + $"{townManagersSpawned[currentSelectTown].GetHouses()[currentIndexHouse].Query}|"
                        + $"{indexTag}|"
                        + $"{dataCat.id}";
         

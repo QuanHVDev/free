@@ -11,12 +11,7 @@ public class House : MonoBehaviour
     [SerializeField] private List<TagCat> TagCats;
     [SerializeField] private Animator notiAnimator;
 
-    public void Init()
-    {
-        EnableNoti(true);
-    }
-
-    private async void EnableNoti(bool enable)
+    public async void EnableNoti(bool enable)
     {
         if (enable) notiAnimator.transform.parent.gameObject.SetActive(enable);
         if (TagCats != null && TagCats.Count > 0)
@@ -33,16 +28,13 @@ public class House : MonoBehaviour
         ModeTownManager.Instance.ShowRequestHouse(TagCats, this);
     }
 
-    public void Hide()
-    {
-        EnableNoti(false);
-    }
-
     public void SetQuery(string query)
     {
         this.query = query;
     }
     public string Query => query;
+
+    public int CountTagCats() => TagCats.Count;
 }
 
 

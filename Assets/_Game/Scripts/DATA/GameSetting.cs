@@ -24,6 +24,7 @@ public class GameSettings : ScriptableObject {
     }
 
     public CatsDataSO CatsDataSO;
+    public TownLevelsSO TownsDataSO;
 
     public PeopleSO GetCatSO(string id)
     {

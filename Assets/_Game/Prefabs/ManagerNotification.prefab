@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6838133072149515686}
   - component: {fileID: 5023188995429474000}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ob_bocadillo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,14 +25,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2464193237389594636}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.92387956, z: 0, w: 0.38268343}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4223088827495748259}
   m_Father: {fileID: 391873595814890251}
-  m_LocalEulerAnglesHint: {x: 180, y: 45, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!95 &5023188995429474000
 Animator:
   serializedVersion: 5
@@ -63,7 +63,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 391873595814890251}
-  m_Layer: 0
+  - component: {fileID: 8651728137386058102}
+  m_Layer: 9
   m_Name: ManagerNotification
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -80,12 +81,25 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.1564345, z: 0, w: 0.98768836}
   m_LocalPosition: {x: -8.82, y: 4.36, z: -9.38}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6838133072149515686}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -18.000006, z: -0}
+  m_LocalEulerAnglesHint: {x: 0, y: 18, z: 0}
+--- !u!114 &8651728137386058102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2678170302233821580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7960b84b7bfc22d4c8e6314a4fd6bc15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mode: 1
 --- !u!1 &4919021016564973285
 GameObject:
   m_ObjectHideFlags: 0
@@ -95,7 +109,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4223088827495748259}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: point_bocadillo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,7 +143,7 @@ GameObject:
   - component: {fileID: 2530377117083130958}
   - component: {fileID: 1594246942679891873}
   - component: {fileID: 7988537881005493232}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: bocadillo
   m_TagString: Untagged
   m_Icon: {fileID: 0}

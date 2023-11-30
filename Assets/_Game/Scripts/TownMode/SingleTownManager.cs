@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[Serializable]
 public class SingleTownManager : MonoBehaviour
 {
     [SerializeField] private List<House> houses;
@@ -10,7 +10,6 @@ public class SingleTownManager : MonoBehaviour
     {
         for (int i = 0; i < houses.Count; i++)
         {
-            houses[i].Init();
             houses[i].SetQuery($"{i}");
         }
     }
@@ -19,9 +18,9 @@ public class SingleTownManager : MonoBehaviour
     {
         foreach (var house in houses)
         {
-            house.Hide();
+            house.EnableNoti(false);
         }
     }
     
-    public  List<House> Houses => houses;
+    public  List<House> GetHouses() => houses;
 }
