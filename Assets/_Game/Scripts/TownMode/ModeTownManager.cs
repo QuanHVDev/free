@@ -51,7 +51,11 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         townLevels = GameSettings.Ins.TownsDataSO;
         
         townManagersSpawned = new SingleTownManager[townLevels.Data.Count];
-        currentSelectTown = 0;
+        
+        var processTown =
+            UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+        currentSelectTown = processTown.indexProcessingTown;
+        transform.DOMoveX(transform.position.x - currentSelectTown * 120, 1f);
         
         OnBeforeDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
         OnAfterDoMoveIsland?.Invoke(currentSelectTown, townLevels.Data.Count - 1);
