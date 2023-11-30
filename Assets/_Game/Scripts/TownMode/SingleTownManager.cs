@@ -6,13 +6,6 @@ using UnityEngine;
 public class SingleTownManager : MonoBehaviour
 {
     [SerializeField] private List<House> houses;
-    public void Init()
-    {
-        for (int i = 0; i < houses.Count; i++)
-        {
-            houses[i].SetQuery($"{i}");
-        }
-    }
 
     public void Out()
     {
@@ -22,5 +15,5 @@ public class SingleTownManager : MonoBehaviour
         }
     }
     
-    public  List<House> GetHouses() => houses;
+    public List<House> GetHouses() => houses;
 }

@@ -28,12 +28,6 @@ public class House : MonoBehaviour
         ModeTownManager.Instance.ShowRequestHouse(TagCats, this);
     }
 
-    public void SetQuery(string query)
-    {
-        this.query = query;
-    }
-    public string Query => query;
-
     public int CountTagCats() => TagCats.Count;
 }
 

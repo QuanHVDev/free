@@ -117,7 +117,6 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                         {
                             state = StateMode.Busy;
                             CameraMainMenu.Instance.InModeTown();
-                            townManager.Init();
                             this.currentSingleTownManager = townManager;
                             ShowNotiHouse();
                             OnInModeTown?.Invoke();
@@ -153,56 +152,26 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     
     public void ShowNotiHouse()
     {
-        var p = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
-        
-        //Tìm data của Town đang select
-        List<string> dataTown = new List<string>();
-        foreach (var query in p.catSelectedDatas)
-        {
-            query.StartsWith(currentSelectTown.ToString());
-            dataTown.Add(query);
-        }
-        
-        // duyệt từng house có trong Town, nếu house nào đã đủ mèo thì sẽ tắt noti
-        List<int> dataSearched = new List<int>();
-        foreach (var query in dataTown)
-        {
-            var arr = query.Split('|');
-            int indexHouse = -1;
-            
-            if (!int.TryParse(arr[1], out indexHouse) ) {
-                Debug.Log("Convert fail");
-                continue;
-            }
-
-            if (dataSearched.Contains(indexHouse))
-            {
-                continue;
-            }
-            
-            dataSearched.Add(indexHouse);
-            int count = currentSingleTownManager.GetHouses()[indexHouse].CountTagCats();
-            string text = $"{currentSelectTown}|{indexHouse}";
-            foreach (var data in dataTown)
-            {
-                if (data.StartsWith(text))
-                {
-                    count--;
-                }
-            }
-
-            Debug.Log($"{currentSingleTownManager} - house:{indexHouse} - count:{count}");
-            currentSingleTownManager.GetHouses()[indexHouse].EnableNoti(count > 0);
-        }
-
-        // những house không có trong data thì sẽ chưa được duyệt nên bật noti lên
         for (int i = 0; i < currentSingleTownManager.GetHouses().Count; i++)
         {
-            if (!dataSearched.Contains(i))
+            currentSingleTownManager.GetHouses()[i].EnableNoti(IsActiveNotiHouseinCurrentTownWithText(i));
+        }
+    }
+
+    private bool IsActiveNotiHouseinCurrentTownWithText(int indexHouseCheck)
+    {
+        int count = 0;
+        string text = $"{currentSelectTown}|{indexHouseCheck}";
+        var modeTownData = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+        foreach (var data in modeTownData.catSelectedDatas)
+        {
+            if (data.StartsWith(text))
             {
-                currentSingleTownManager.GetHouses()[i].EnableNoti(true);
+                count++;
             }
         }
+
+        return currentSingleTownManager.GetHouses()[indexHouseCheck].CountTagCats() - count > 0;
     }
 
     public void OutModeTown()
@@ -327,7 +296,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         // t{X}h{Y}t{Z}c{Q}
 
         string query = $"{currentSelectTown}|" 
-                       + $"{townManagersSpawned[currentSelectTown].GetHouses()[currentIndexHouse].Query}|"
+                       + $"{currentIndexHouse}|"
                        + $"{indexTag}|"
                        + $"{dataCat.id}";
         
@@ -335,6 +304,11 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         processTown.catSelectedDatas.Add(query);
         UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
         modeTownUI.ShowFilledAdopt(indexTag, dataCat);
+        if (!IsActiveNotiHouseinCurrentTownWithText(currentIndexHouse))
+        {
+            currentSingleTownManager.GetHouses()[currentIndexHouse].EnableNoti(false);
+            modeTownUI.HideAdoptUI();
+        }
         return true;
     }
 }
