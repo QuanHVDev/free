@@ -80,6 +80,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         }
         
         modeTownUI.InitSelectionCat(data);
+        modeTownUI.SetTextCoutSelection(processTown.catSelectionDatas.Count);
     }
 
     private void SpawnTown()
@@ -174,6 +175,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     {
         yield return new WaitUntil(() => Input.touchCount == 0);
         state = StateMode.Busy;
+        SetValueProcessBar();
     }
     
     public void ShowNotiHouse()
@@ -182,6 +184,20 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         {
             currentSingleTownManager.GetHouses()[i].EnableNoti(IsActiveNotiHouseinCurrentTownWithText(i));
         }
+
+        SetValueProcessBar();
+    }
+
+    private void SetValueProcessBar()
+    {
+        int count = 0;
+        for (int i = 0; i < currentSingleTownManager.GetHouses().Count; i++)
+        {
+            bool isActive = IsActiveNotiHouseinCurrentTownWithText(i);
+            if (!isActive) count++;
+        }
+        
+        modeTownUI.SetValueForProcessBar(count * 1.0f / currentSingleTownManager.GetHouses().Count);
     }
 
     private bool IsActiveNotiHouseinCurrentTownWithText(int indexHouseCheck)
@@ -213,6 +229,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     public void BackToBeforeTown()
     {
         modeTownUI.HideAdoptUI();
+        modeTownUI.HideProcessBar();
         
         currentSelectTown = Mathf.Clamp(--currentSelectTown, 0, townLevels.Data.Count - 1);
         this.currentSingleTownManager.Out();
@@ -228,6 +245,8 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
             {
                 ShowNotiHouse();
             }
+
+            SetValueProcessBar();
         });
         
         SpawnTown();
@@ -235,6 +254,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     public void NextToAfterTown()
     {
         modeTownUI.HideAdoptUI();
+        modeTownUI.HideProcessBar();
         
         currentSelectTown = Mathf.Clamp(++currentSelectTown, 0, townLevels.Data.Count - 1);
         this.currentSingleTownManager.Out();
@@ -251,6 +271,8 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
             {
                 ShowNotiHouse();
             }
+            
+            SetValueProcessBar();
         });
         SpawnTown();
     }
@@ -284,7 +306,8 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
         
         modeTownUI.AddSelectionCat(data);
-        modeTownUI.HideGetCatUI();
+        modeTownUI.SetTextCoutSelection(processTown.catSelectionDatas.Count);
+        modeTownUI.HideAddCatUI();
     }
 
     public IconCatSelected SetSelection(PeopleSO data)
@@ -349,11 +372,16 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
             {
                 processTown.indexProcessingTown++;
                 UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
-                NextToAfterTown();
-                ShowNotiHouse();
+                SFX.Instance.PlayCompleteTown();
+            }
+            else
+            {
+                SFX.Instance.PlayCorrect();
             }
         }
         
+        SetValueProcessBar();
+        modeTownUI.SetTextCoutSelection(processTown.catSelectionDatas.Count);
         return true;
     }
 
@@ -381,25 +409,27 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
 
     public bool UndoCatSelected(int indexTag, PeopleSO data)
     {
-        var p = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
-        if (p.indexProcessingTown != currentSelectTown)
+        var processTown = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
+        if (processTown.indexProcessingTown != currentSelectTown)
         {
             Debug.Log($"Not undo with {currentSelectTown}");
             return false;
         }
 
         string query = $"{currentSelectTown}|{currentIndexHouse}|{indexTag}|{data.id}";
-        if (!p.catSelectedDatas.Remove(query))
+        if (!processTown.catSelectedDatas.Remove(query))
         {
             Debug.Log($"Not undo with {currentSelectTown}");
             return false;
         }
         
         Debug.Log($"Undo: {query}");
-        p.catSelectionDatas.Add(data.id);
-        UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, p);
+        processTown.catSelectionDatas.Add(data.id);
+        UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, processTown);
         modeTownUI.AddSelectionCat(data);
         currentSingleTownManager.GetHouses()[currentIndexHouse].EnableNoti(true);
+        SetValueProcessBar();
+        modeTownUI.SetTextCoutSelection(processTown.catSelectionDatas.Count);
         return true;
     }
 }

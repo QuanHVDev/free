@@ -19,6 +19,8 @@ public class ModeTownUI : BaseUIElement
 
     [SerializeField] private CanvasGroup adoptGroup;
     [SerializeField] private Button btnAddCat;
+    [SerializeField] private ProcessBar processBar;
+    [SerializeField] private DotweenRunAnim gift;
 
     private void Start()
     {
@@ -49,6 +51,26 @@ public class ModeTownUI : BaseUIElement
         };
         
         Hide();
+        processBar.Init();
+    }
+
+    public void SetValueForProcessBar(float precent)
+    {
+        processBar.gameObject.SetActive(true);
+        processBar.SetSmooth(precent);
+        if (precent >= 1)
+        {
+            gift.RunAnim();
+        }
+        else
+        {
+            gift.StopAnim();
+        }
+    }
+
+    public void HideProcessBar()
+    {
+        processBar.gameObject.SetActive(false);
     }
 
     private void ModeTownManager_OnOutModeTown()
@@ -114,7 +136,7 @@ public class ModeTownUI : BaseUIElement
         return catTowns[index];
     }
     
-    public void HideGetCatUI()
+    public void HideAddCatUI()
     {
         GetCatUI.Hide();
     }
@@ -138,9 +160,7 @@ public class ModeTownUI : BaseUIElement
             item.gameObject.SetActive(true);
             item.Init(data[i]);
         }
-
-        countSelection = data.Count;
-        SetTextCoutSelection(countSelection);
+        
     }
     
     
@@ -180,7 +200,7 @@ public class ModeTownUI : BaseUIElement
         scrollRectSelection.vertical = enable;
     }
 
-    private void SetTextCoutSelection(int number)
+    public void SetTextCoutSelection(int number)
     {
         txtCountSelection.text = number.ToString();
     }
@@ -199,33 +219,36 @@ public class ModeTownUI : BaseUIElement
     // ReSharper disable Unity.PerformanceAnalysis
     private void CompleteMovingSelected()
     {
-        if (adoptUI.gameObject.activeSelf) {
-            IconAdopt iconMin = new IconAdopt();
-            float min = float.MaxValue;
-            int index = -1;
-            for (int i = 0; i < adoptUI.RequestIcons.Count; i++)
+        if (!adoptUI.gameObject.activeSelf)
+        {
+            SFX.Instance.PlayIncorrect();
+            EnableVerticalScroll(true);
+            return;
+        }
+        
+        IconAdopt iconMin = new IconAdopt();
+        float min = float.MaxValue;
+        int index = -1;
+        for (int i = 0; i < adoptUI.RequestIcons.Count; i++)
+        {
+            float value = Vector3.Distance(iconCatSelected.transform.position, adoptUI.RequestIcons[i].transform.position);
+            if (value < distance && adoptUI.RequestIcons[i].enabled && value < min)
             {
-                float value = Vector3.Distance(iconCatSelected.transform.position, adoptUI.RequestIcons[i].transform.position);
-                if (value < distance && adoptUI.RequestIcons[i].enabled && value < min)
-                {
-                    iconMin = adoptUI.RequestIcons[i];
-                    min = value;
-                    index = i;
-                }
+                iconMin = adoptUI.RequestIcons[i];
+                min = value;
+                index = i;
             }
+        }
 
-            if (min < float.MaxValue && adoptUI.CheckCatWithTags(iconCatSelected.Data.Tags, iconMin))
+        if (min < float.MaxValue && adoptUI.CheckCatWithTags(iconCatSelected.Data.Tags, iconMin))
+        {
+            if (ModeTownManager.Instance.SaveCorrect(index, iconCatSelected.Data))
             {
-                if (ModeTownManager.Instance.SaveCorrect(index, iconCatSelected.Data))
-                {
-                    iconCatSelected.GetIconSelectionPrev().Reset();
-                }
-            }
-            else {
-                EnableVerticalScroll(true);
+                iconCatSelected.GetIconSelectionPrev().Reset();
             }
         }
         else {
+            SFX.Instance.PlayIncorrect();
             EnableVerticalScroll(true);
         }
     }

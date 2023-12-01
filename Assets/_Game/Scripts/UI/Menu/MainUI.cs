@@ -6,6 +6,7 @@ using UnityEngine;
 public class MainUI : BaseUIElement
 {
     [SerializeField] private TMP_Text txtDiamond;
+    [SerializeField] private Transform diamondIcon;
     public override void OnAwake()
     {
         
@@ -15,4 +16,7 @@ public class MainUI : BaseUIElement
     {
         txtDiamond.text = diamond.ToString();
     }
+    
+    public Transform GetDiamondIconTransform() => diamondIcon;
+
 }

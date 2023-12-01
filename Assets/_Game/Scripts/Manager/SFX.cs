@@ -8,6 +8,7 @@ public class SFX : SingletonBehaviourDontDestroy<SFX> {
 
     [SerializeField] private AudioClip correctClip;
     [SerializeField] private AudioClip incorrectClip;
+    [SerializeField] private AudioClip completeClip;
 
     private bool isCanPlay = true;
     public void PlayOneShoot(AudioClip clip) {
@@ -23,6 +24,11 @@ public class SFX : SingletonBehaviourDontDestroy<SFX> {
     
     public void PlayIncorrect() {
         PlayOneShoot(incorrectClip);
+    }
+
+    public void PlayCompleteTown()
+    {
+        PlayOneShoot(completeClip);
     }
 
     public void PlaySoundButton()

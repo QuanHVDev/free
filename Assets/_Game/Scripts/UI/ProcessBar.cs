@@ -1,19 +1,20 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ProcessBar : MonoBehaviour {
-    [SerializeField] private Slider _sliderProcess;
+    [SerializeField] private RectTransform fillerParent;
+    [SerializeField] private RectTransform filler;
 
-    private void Start()
+    public void Init()
     {
-        _sliderProcess.value = 0;
+        filler.sizeDelta = new Vector2(0f, filler.sizeDelta.y);
     }
 
-    public void SetSmooth(float newPercent) {
-        if (_sliderProcess.value < newPercent) {
+    public void SetSmooth(float newPercent)
+    {
+        if (!gameObject.activeSelf) return;
+        if (filler.sizeDelta.x / fillerParent.sizeDelta.x < newPercent) {
             StartCoroutine(SetSmoothIncAsync(newPercent));
         }
         else {
@@ -23,31 +24,31 @@ public class ProcessBar : MonoBehaviour {
 
     private IEnumerator SetSmoothIncAsync(float newPercent)
     {
-        float currentFill = _sliderProcess.value;
+        float currentFill = filler.sizeDelta.x / fillerParent.sizeDelta.x;
         float changeFill = newPercent - currentFill;
 
         while (newPercent - currentFill > Mathf.Epsilon)
         {
             currentFill += changeFill * Time.deltaTime;
-            _sliderProcess.value = currentFill;
+            filler.sizeDelta = new Vector2(currentFill * fillerParent.sizeDelta.x, filler.sizeDelta.y);;
             yield return null;
         }
 
-        _sliderProcess.value = currentFill;
+        filler.sizeDelta = new Vector2(currentFill * fillerParent.sizeDelta.x, filler.sizeDelta.y);
     }
     
     private IEnumerator SetSmoothDescAsync(float newPercent)
     {
-        float currentFill = _sliderProcess.value;
+        float currentFill = filler.sizeDelta.x / fillerParent.sizeDelta.x;
         float changeFill = currentFill - newPercent;
 
         while (currentFill - newPercent > Mathf.Epsilon)
         {
             currentFill -= changeFill * Time.deltaTime;
-            _sliderProcess.value = currentFill;
+            filler.sizeDelta = new Vector2(currentFill * fillerParent.sizeDelta.x, filler.sizeDelta.y);;
             yield return null;
         }
 
-        _sliderProcess.value = currentFill;
+        filler.sizeDelta = new Vector2(currentFill * fillerParent.sizeDelta.x, filler.sizeDelta.y);;
     }
 }
