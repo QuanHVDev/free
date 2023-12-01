@@ -38,16 +38,18 @@ public class GamePlayUI : MonoBehaviour
 			listLevelUI.Show();
 		});
 		
-		btnHome.onClick.AddListener(() =>
-		{
-			GameManager.Instance.CurrentMapManager.RemoveCurrentNavmeshData();
-			LoadSceneUIManager.Instance.LoadMainMenu();
-		});
+		btnHome.onClick.AddListener(GoHomeAction);
 		
 		tryAgainUI.gameObject.SetActive(false);
 		winUI.gameObject.SetActive(false);
 		btnSkip.gameObject.SetActive(false);
 		listLevelUI.gameObject.SetActive(false);
+	}
+
+	public void GoHomeAction()
+	{
+		GameManager.Instance.CurrentMapManager.RemoveCurrentNavmeshData();
+		LoadSceneUIManager.Instance.LoadMainMenu();
 	}
 
 	private void IconHealthManagerUI_OnOverHealth() {

@@ -22,19 +22,24 @@ public class CoinAnimCanvas : BaseUIElement
     private void InitQueue()
     {
         diamond.gameObject.SetActive(false);
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 20; i++)
         {
             var obj = Instantiate(diamond.gameObject, diamondSpawn);
             coinQueue.Enqueue(obj);
         }
     }
 
-    [ContextMenu("RunAnim")]
-    public void RunAnim()
+    public void RunAnim(int amount)
     {
         var queue = coinQueue;
         var duration = 0.1f;
-        for (int i = 0; i < 10; i++)
+        int price = 1;
+        if (amount / price > coinQueue.Count)
+        {
+            price = amount / coinQueue.Count;
+        }
+
+        for (int i = 0; i < amount / price; i++)
         {
             if (queue.Count > 0)
             {
@@ -49,7 +54,7 @@ public class CoinAnimCanvas : BaseUIElement
                 var toPos = mainUI.GetDiamondIconTransform();
 
                 Sequence mySequence = DOTween.Sequence();
-                mySequence.Append(diamond.transform.DOLocalMove(randomPos, UnityEngine.Random.Range(0.6f, 0.7f))
+                mySequence.Append(diamond.transform.DOLocalMove(randomPos, UnityEngine.Random.Range(0.6f, 0.5f))
                         .SetEase(Ease.OutBounce))
                     //.AppendInterval(0.4f)
                     .Append(diamond.transform.DOMove(toPos.position, duration)
