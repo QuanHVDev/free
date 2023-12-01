@@ -54,6 +54,7 @@ public class ModeTownUI : BaseUIElement
     private void ModeTownManager_OnOutModeTown()
     {
         adoptGroup.blocksRaycasts = false;
+        adoptUI.Hide();
     }
 
     private void ModeTownManager_OnInModeTown()

@@ -25,6 +25,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     private enum StateMode
     {
         Free,
+        WaitToBusy,
         Busy
     }
 
@@ -122,7 +123,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                         var processTownFree = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
                         if (hit.transform.TryGetComponent(out SingleTownManager townManager))
                         {
-                            state = StateMode.Busy;
+                            state = StateMode.WaitToBusy;
                             CameraMainMenu.Instance.InModeTown();
                             this.currentSingleTownManager = townManager;
                             
@@ -131,6 +132,8 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                             {
                                 ShowNotiHouse();
                             }
+
+                            StartCoroutine(WaitToBusyState());
                         }
                     }
                     break;
@@ -165,6 +168,12 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                     break;
             }
         }
+    }
+
+    private IEnumerator WaitToBusyState()
+    {
+        yield return new WaitUntil(() => Input.touchCount == 0);
+        state = StateMode.Busy;
     }
     
     public void ShowNotiHouse()
@@ -370,16 +379,27 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         return countProcessNeed <= 0;
     }
 
-    public void UndoCatSelected(int indexTag, PeopleSO data)
+    public bool UndoCatSelected(int indexTag, PeopleSO data)
     {
         var p = UserDataController.Instance.GetData<ProcessModeTown>(UserDataKeys.USER_PROGRESSION_MODETOWN, out _);
         if (p.indexProcessingTown != currentSelectTown)
         {
             Debug.Log($"Not undo with {currentSelectTown}");
-            return;
+            return false;
+        }
+
+        string query = $"{currentSelectTown}|{currentIndexHouse}|{indexTag}|{data.id}";
+        if (!p.catSelectedDatas.Remove(query))
+        {
+            Debug.Log($"Not undo with {currentSelectTown}");
+            return false;
         }
         
-        Debug.Log($"Undo: {currentSelectTown}|{currentIndexHouse}|{indexTag}|{data.id}");
-        p.catSelectedDatas.Remove("");
+        Debug.Log($"Undo: {query}");
+        p.catSelectionDatas.Add(data.id);
+        UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION_MODETOWN, p);
+        modeTownUI.AddSelectionCat(data);
+        currentSingleTownManager.GetHouses()[currentIndexHouse].EnableNoti(true);
+        return true;
     }
 }

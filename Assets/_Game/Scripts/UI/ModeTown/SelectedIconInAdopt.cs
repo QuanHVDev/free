@@ -15,7 +15,10 @@ public class IconCatSelectedInAdopt : IconCatSelected
     {
         btnUndo.onClick.AddListener(()=>
         {
-            ModeTownManager.Instance.UndoCatSelected(indexTag, data);
+            if (ModeTownManager.Instance.UndoCatSelected(indexTag, data))
+            {
+                ActiveAllObject(false);
+            }
         });
     }
 

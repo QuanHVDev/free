@@ -6,6 +6,8 @@ using UnityEngine.Serialization;
 
 public class AdoptUI : BaseUIElement
 {
+    [SerializeField] private RectTransform mainCanvas;
+    
     [SerializeField] private IconAdopt iconRequest;
     [SerializeField] private Transform contentRequest;
     [SerializeField] private IconCatSelectedInAdopt selectedIconSelectedInAdopt;
@@ -16,7 +18,7 @@ public class AdoptUI : BaseUIElement
     private List<IconAdopt> requestIcons;
     private List<IconCatSelectedInAdopt> selectedIcons;
     public List<IconAdopt> RequestIcons => requestIcons;
-
+    private Vector2 sizeMainCanvas;
     public override void OnAwake()
     {
         
@@ -26,6 +28,8 @@ public class AdoptUI : BaseUIElement
     {
         iconRequest.gameObject.SetActive(false);
         selectedIconSelectedInAdopt.gameObject.SetActive(false);
+        sizeMainCanvas = new Vector2(mainCanvas.rect.width * mainCanvas.localScale.x,
+            mainCanvas.rect.height * mainCanvas.localScale.y);
     }
 
     public void ShowRequest(List<TagCat> tags, House houseTransform)
@@ -46,11 +50,14 @@ public class AdoptUI : BaseUIElement
 
         var targetPosition = Camera.main.WorldToScreenPoint(houseTransform.transform.position);
         float targetAnchor = midAnchor;
-        if (targetPosition.x < 450)
+        
+        // ở bên trai màn hình và quá 1 nửa width của box
+        if (targetPosition.x < boxRectTrans.rect.width/2 && sizeMainCanvas.x/2 > targetPosition.x)
         {
             targetAnchor = leftAnchor;
         }
-        else if (targetPosition.x > 960)
+        // ở bên phaải màn hình và quá 1 nửa width của box
+        else if (sizeMainCanvas.x - targetPosition.x < boxRectTrans.rect.width/2 && sizeMainCanvas.x/2 < targetPosition.x)
         {
             targetAnchor = rightAnchor;
         }
