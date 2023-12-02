@@ -6,8 +6,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
 
-public class ModeTownManager : SingletonBehaviour<ModeTownManager>
+public class ModeTownManager : ModeManager
 {
+    public static ModeTownManager Instance { get; private set; }
     [SerializeField] private List<Transform> transformSpawnTownManagers;
     [SerializeField] private LayerMask houseLayerMask;
     [SerializeField] private LayerMask townLayerMask;    
@@ -21,12 +22,19 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     private SingleTownManager currentSingleTownManager;
     private ModeTownUI modeTownUI;
     private TownLevelsSO townLevels;
+    private bool isInit = false;
 
     private enum StateMode
     {
         Free,
         WaitToBusy,
         Busy
+    }
+    
+    protected override void Awake()
+    {
+        Instance = this;
+        GameManager.Instance.SetModeManager(this);
     }
 
     private void Start()
@@ -42,8 +50,11 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         };
     }
 
-    public void Init()
+    public override void Init()
     {
+        if (isInit) return;
+        isInit = true;
+        
         Input.multiTouchEnabled = false;
         
         modeTownUI = UIRoot.Ins.Get<ModeTownUI>();
@@ -133,7 +144,8 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                             {
                                 ShowNotiHouse();
                             }
-
+                            
+                            GameManager.Instance.ChangeState(GameState.InMode);
                             StartCoroutine(WaitToBusyState());
                         }
                     }
@@ -221,6 +233,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         state = StateMode.Free;
         currentSingleTownManager.Out();
         CameraMainMenu.Instance.OutModeTown();
+        GameManager.Instance.ChangeState(GameState.MainMenu);
         OnOutModeTown?.Invoke();
     }
 

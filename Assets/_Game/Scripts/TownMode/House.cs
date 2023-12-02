@@ -20,7 +20,7 @@ public class House : MonoBehaviour
         }
 
         await Task.Delay((int)(notiAnimator.runtimeAnimatorController.animationClips[0].length * 1000));
-        if (!enable) notiAnimator.transform.parent.gameObject.SetActive(enable);
+        if (!enable && notiAnimator) notiAnimator.transform.parent.gameObject.SetActive(enable);
     }
     
     public void Interact()

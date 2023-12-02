@@ -6,7 +6,10 @@ using UnityEngine.Serialization;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
-public class ModeFindCatManager : SingletonBehaviour<ModeFindCatManager> {
+public class ModeFindCatManager : ModeManager
+{
+    public static ModeFindCatManager Instance { get; private set; }
+    
     [SerializeField] private GamePlayUI gamePlayUI;
     [SerializeField] private Transform spawnMap;
     
@@ -28,15 +31,16 @@ public class ModeFindCatManager : SingletonBehaviour<ModeFindCatManager> {
 
     public CameraManager Camera => camera;
 
-    private void Start()
+    public override void Init()
     {
+        GameManager.Instance.ChangeState(GameState.InMode);
         Input.multiTouchEnabled = false;
         udc = UserDataController.Instance;
         var pro = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
         indexMapManager = pro.currentLevel;
         
         if (map) {
-            currentMapManager = map;
+            currentMapManager = map; 
             currentMapManager.InitData();
             SetUpActionCurrentMapManager();
             var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
@@ -56,6 +60,11 @@ public class ModeFindCatManager : SingletonBehaviour<ModeFindCatManager> {
         gamePlayUI.InitListLevel(dataLevelsSO);
     }
 
+    protected override void Awake()
+    {
+        Instance = this;
+        GameManager.Instance.SetModeManager(this);
+    }
 
     private Touch touch;
     private Ray ray;

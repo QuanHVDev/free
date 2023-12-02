@@ -7,15 +7,12 @@ public class UIRootPopupSetup : MonoBehaviour
 {
     [SerializeField] MainUIManager mainUIManager;
     [SerializeField] HomeUIManager homeUIManager;
-    [SerializeField] ModeTownManager modeTownManager;
     private void Start()
     {
         mainUIManager = MainUIManager.Instance;
         homeUIManager = HomeUIManager.Instance;
-        modeTownManager = ModeTownManager.Instance;
         
         mainUIManager.Init();
         homeUIManager.Init();
-        modeTownManager.Init();
     }
 }

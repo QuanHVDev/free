@@ -26,5 +26,6 @@ public class DotweenRunAnim : MonoBehaviour
     public void StopAnim()
     {
         timRunAnim = -1;
+        transform.DOScale(Vector3.one, 0.1f);
     }
 }
