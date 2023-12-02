@@ -11,7 +11,7 @@ public class WinUI : BaseUIElement {
 	private void Start() {
 		btnNextLevel.onClick.AddListener(() => {
 			OnHideLine?.Invoke();
-			GameManager.Instance.NextLevel();
+			ModeFindCatManager.Instance.NextLevel();
 			Hide();
 		});
 	}

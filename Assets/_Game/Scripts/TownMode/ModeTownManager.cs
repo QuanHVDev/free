@@ -14,7 +14,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
     [SerializeField] private LayerMask backUIAdoptLayerMask;
 
 
-    private GameManager.StateTouch touchState;
+    private ModeFindCatManager.StateTouch touchState;
     private StateMode state;
     private int currentSelectTown, currentIndexHouse;
     private SingleTownManager[] townManagersSpawned;
@@ -102,17 +102,17 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
         {
             if (Input.GetMouseButtonUp(0))
             {
-                touchState = GameManager.StateTouch.free;
+                touchState = ModeFindCatManager.StateTouch.free;
                 return;
             }
 
             if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
             {
-                touchState = GameManager.StateTouch.touchUI;
+                touchState = ModeFindCatManager.StateTouch.touchUI;
                 return;
             }
 
-            if (touchState != GameManager.StateTouch.free) return;
+            if (touchState != ModeFindCatManager.StateTouch.free) return;
             Touch touch = Input.GetTouch(0);
             Ray ray = UnityEngine.Camera.main.ScreenPointToRay(touch.position);
             RaycastHit hit;
@@ -157,7 +157,7 @@ public class ModeTownManager : SingletonBehaviour<ModeTownManager>
                                 return;
                             }
                             
-                            touchState = GameManager.StateTouch.touchObject;
+                            touchState = ModeFindCatManager.StateTouch.touchObject;
                             house.Interact();
                         }
                     }

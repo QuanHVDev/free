@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
-public class GameManager : SingletonBehaviour<GameManager> {
+public class ModeFindCatManager : SingletonBehaviour<ModeFindCatManager> {
     [SerializeField] private GamePlayUI gamePlayUI;
     [SerializeField] private Transform spawnMap;
     

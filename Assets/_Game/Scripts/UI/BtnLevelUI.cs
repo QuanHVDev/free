@@ -22,7 +22,7 @@ public class BtnLevelUI : MonoBehaviour
     {
         btn.onClick.AddListener(() =>
         {
-            GameManager.Instance.SpawnLevel(level, step);
+            ModeFindCatManager.Instance.SpawnLevel(level, step);
         });
     }
 }

@@ -33,12 +33,12 @@ public class IconPeopleManagerUI : PoolingManagerBase<IconPeopleManagerUI, IconP
 					pooledObjects[j].RemoveHome(icon.currentTarget);
 				}
 				
-				GameManager.Instance.GetCurrentMapManager().SetCorrectTarget(x);
+				ModeFindCatManager.Instance.GetCurrentMapManager().SetCorrectTarget(x);
 			};
 			
 			icon.OnIncorrect += ()=>
 			{
-				GameManager.Instance.Incorrent();
+				ModeFindCatManager.Instance.Incorrent();
 				SFX.Instance.PlayIncorrect();
 			};
 			

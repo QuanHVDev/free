@@ -9,14 +9,12 @@ public class CameraMainMenu : SingletonBehaviour<CameraMainMenu>
     private const string NAMEANIM_LOOK_TARGET = "vCamera_LTarget";
     
     [SerializeField] private Camera camMain;
-    [SerializeField] private Camera camMainUI;
 
     private Animator animatorCameraMain;
 
     private void Start()
     {
         animatorCameraMain = camMain.GetComponent<Animator>();
-        camMainUI.gameObject.SetActive(true);
     }
 
     public void InModeTown()

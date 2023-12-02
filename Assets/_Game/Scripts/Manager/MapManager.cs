@@ -169,7 +169,7 @@ public class MapManager : MonoBehaviour {
 	private IEnumerator SetCameraLookTargetAsync(PrefabPeople cat, Transform positionToMove) {
 		var x = OnSetCatTarget?.Invoke(cat.transform, MapInfo.cameraPosition);
 		if (MapInfo.valueZoomCamera != 0) {
-			GameManager.Instance.Camera.SetFOV(x, MapInfo.valueZoomCamera);
+			ModeFindCatManager.Instance.Camera.SetFOV(x, MapInfo.valueZoomCamera);
 		}
 		x.VirtualCamera.gameObject.SetActive(true);
 		OnCameraLookTarget?.Invoke(x.triggerNameAnimationState, CameraManager.StateVirtualCamera.Wait);
@@ -179,21 +179,21 @@ public class MapManager : MonoBehaviour {
 		StartCoroutine(WaitCatMoveToTarget(cat, positionToMove));
 		yield return new WaitUntil(() =>
 		{
-			return GameManager.Instance.IsSkip || !IsMapBusy;
+			return ModeFindCatManager.Instance.IsSkip || !IsMapBusy;
 		});
 
-		if (!GameManager.Instance.IsSkip)
+		if (!ModeFindCatManager.Instance.IsSkip)
 		{
 			yield return WaitCatMoveToTarget(cat, positionToMove);
 			yield return new WaitForSeconds(2f);
 		}
 
-		GameManager.Instance.ResetSkip();
+		ModeFindCatManager.Instance.ResetSkip();
 		IsMapBusy = false;
 		OnCompletePath?.Invoke();
 		OnMapBusy?.Invoke(!IsMapBusy);
 		if (MapInfo.valueZoomCamera != 0) {
-			GameManager.Instance.Camera.ResetFOV(x);
+			ModeFindCatManager.Instance.Camera.ResetFOV(x);
 		}
 	}
 

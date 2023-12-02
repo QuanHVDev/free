@@ -29,7 +29,7 @@ public class GamePlayUI : MonoBehaviour
 		winUI.OnHideLine += messageManagerUI.HideAllLine;
 		btnSkip.onClick.AddListener(() =>
 		{
-			GameManager.Instance.DoSkip();
+			ModeFindCatManager.Instance.DoSkip();
 			btnSkip.gameObject.SetActive(false);
 		});
 		
@@ -48,7 +48,7 @@ public class GamePlayUI : MonoBehaviour
 
 	public void GoHomeAction()
 	{
-		GameManager.Instance.CurrentMapManager.RemoveCurrentNavmeshData();
+		ModeFindCatManager.Instance.CurrentMapManager.RemoveCurrentNavmeshData();
 		LoadSceneUIManager.Instance.LoadMainMenu();
 	}
 
@@ -108,7 +108,7 @@ public class GamePlayUI : MonoBehaviour
 
 	public void UpdateTitle()
 	{
-		txtLevel.text = $"Level {GameManager.Instance.IndexMapManager + 1}-{GameManager.Instance.CurrentMapManager.currentIndexStep + 1}";
+		txtLevel.text = $"Level {ModeFindCatManager.Instance.IndexMapManager + 1}-{ModeFindCatManager.Instance.CurrentMapManager.currentIndexStep + 1}";
 	}
 
 	public void ShowButtonSkip(bool enable)

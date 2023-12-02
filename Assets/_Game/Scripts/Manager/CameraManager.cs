@@ -156,7 +156,7 @@ public class CameraManager : MonoBehaviour {
 			
 			Touch t = Input.GetTouch(0);
 
-			if (GameManager.Instance.TouchUIState == GameManager.StateTouch.free)
+			if (ModeFindCatManager.Instance.TouchUIState == ModeFindCatManager.StateTouch.free)
 			{
 				if (!isTouch) {
 					this.originPosition = t.position;
@@ -166,12 +166,12 @@ public class CameraManager : MonoBehaviour {
 				}
 
 				if (Vector3.Distance(originPosition,t.position) > Mathf.Epsilon) {
-					GameManager.Instance.TouchUIState = GameManager.StateTouch.touchRotate;
+					ModeFindCatManager.Instance.TouchUIState = ModeFindCatManager.StateTouch.touchRotate;
 					Debug.Log("Start");
 				}
 			}
 
-			if (GameManager.Instance.TouchUIState != GameManager.StateTouch.touchRotate) return;
+			if (ModeFindCatManager.Instance.TouchUIState != ModeFindCatManager.StateTouch.touchRotate) return;
 			
 			currentPosition = t.position;
 			delta = currentPosition.x - originPosition.x;
@@ -186,7 +186,7 @@ public class CameraManager : MonoBehaviour {
 		}
 		else if(Input.touchCount == 0){
 			isTouch = false;
-			GameManager.Instance.TouchUIState = GameManager.StateTouch.free;
+			ModeFindCatManager.Instance.TouchUIState = ModeFindCatManager.StateTouch.free;
 		}
 	}
 
