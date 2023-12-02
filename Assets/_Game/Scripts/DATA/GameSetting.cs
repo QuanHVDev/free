@@ -23,6 +23,8 @@ public class GameSettings : ScriptableObject {
         }
     }
 
+    public int diamondPassLevel = 10;
+    
     public CatsDataSO CatsDataSO;
     public TownLevelsSO TownsDataSO;
 

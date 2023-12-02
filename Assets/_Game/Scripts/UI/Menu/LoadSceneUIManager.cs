@@ -46,8 +46,8 @@ public class LoadSceneUIManager : SingletonBehaviourDontDestroy<LoadSceneUIManag
         do
         {
             await Task.Delay(100);
-            loadSceneUI.SetFill(scene.progress);
-        } while (scene.progress < 0.9f);
+            if(loadSceneUI && scene != null) loadSceneUI.SetFill(scene.progress);
+        } while (scene != null && scene.progress < 0.9f);
 
         await Task.Delay(1000);
         State = LoadingState.Done;

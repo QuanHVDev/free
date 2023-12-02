@@ -11,6 +11,10 @@ public class GameManager : IronPirate.SingletonBehaviourDontDestroy<GameManager>
     {
         state = GameState.MainMenu;
         ModeTownManager.Instance.Init();
+        RewardUIManager.Instance.Init();
+        MainUIManager.Instance.Init();
+        var pro = UserDataController.Instance.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+        MainUIManager.Instance.ChangeValueDiamond(pro.diamond);
     }
 
     private Coroutine Coroutine;
@@ -29,9 +33,20 @@ public class GameManager : IronPirate.SingletonBehaviourDontDestroy<GameManager>
     private IEnumerator WaitSetMode()
     {
         yield return new WaitUntil(() => currentMode && LoadSceneUIManager.Instance.State == LoadSceneUIManager.LoadingState.Done);
-        currentMode.Init();
+        if (currentMode)
+        {
+            currentMode.Init();
+            currentMode = null;
+        }
+        
         LoadSceneUIManager.Instance.SetOffLoading();
-        currentMode = null;
+        var pro = UserDataController.Instance.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+        
+        yield return new WaitUntil(() => UIRoot.Ins.Get<MainUI>());
+        MainUIManager.Instance.ChangeValueDiamond(pro.diamond - RewardUIManager.Instance.DiamondNeedShow);
+        
+        yield return new WaitUntil(() => UIRoot.Ins.Get<RewardCanvas>());
+        RewardUIManager.Instance.Init();
     }
 
     private ModeManager currentMode;

@@ -74,6 +74,7 @@ public class GamePlayUI : MonoBehaviour
 
 	public void ShowUIWin() {
 		// show trong 0.6s đợi message fade
+		winUI.SetValueDiamond(GameSettings.Ins.diamondPassLevel);
 		winUI.Show();
 	}
 	

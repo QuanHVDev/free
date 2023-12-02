@@ -51,6 +51,7 @@ public class ProcessData : IUserData
     public bool IsShowHint = true;
     public int currentLevel = 0;
     public int currentStep = 0;
+    public int diamond = 0;
 }
 
 public class ProcessModeTown : IUserData
@@ -58,10 +59,5 @@ public class ProcessModeTown : IUserData
     public List<string> catSelectedDatas = new List<string>();
     public List<string> catSelectionDatas = new List<string>();
     public int indexProcessingTown = 0;
-}
-
-public class InventoryData : IUserData
-{
-    public int diamond = 0;
 }
 

@@ -267,6 +267,9 @@ public class ModeFindCatManager : ModeManager
             }
             
             pro.currentLevel = indexMapManager;
+            pro.diamond += GameSettings.Ins.diamondPassLevel;
+            RewardUIManager.Instance.AddDiamondNeedShow(GameSettings.Ins.diamondPassLevel);
+
             udc.SetData(UserDataKeys.USER_PROGRESSION, pro);
         };
 

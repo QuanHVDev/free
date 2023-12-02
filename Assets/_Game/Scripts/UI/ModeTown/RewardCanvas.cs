@@ -5,7 +5,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class CoinAnimCanvas : BaseUIElement
+public class RewardCanvas : BaseUIElement
 {
     Queue<GameObject> coinQueue = new();
     [SerializeField] private Transform spawnPos;
@@ -66,7 +66,11 @@ public class CoinAnimCanvas : BaseUIElement
                             diamond.transform.localPosition = new(0, 0, 0);
                             queue.Enqueue(diamond);
                             mainUI.GetDiamondIconTransform().DOPunchScale(Vector3.one * 0.1f, 0.2f)
-                                .SetEase(Ease.Linear).OnComplete(() => { mainUI.GetDiamondIconTransform().DOScale(Vector3.one, 0.1f); });
+                                .SetEase(Ease.Linear).OnComplete(() =>
+                                {
+                                    mainUI.GetDiamondIconTransform().DOScale(Vector3.one, 0.1f);
+                                });
+                            MainUIManager.Instance.AddValueDiamond(price);
                         }));
                 duration += 0.1f;
             }
