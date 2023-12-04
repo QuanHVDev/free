@@ -8,7 +8,7 @@ public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome>
 	[SerializeField] private IconHome parentHomeHor;
 	private List<IconHome> currentLevelIconHome;
 	private int amount;
-	public void Add(MapManager mapManager, GamePlayUI gamePlayUI) {
+	public void Add(MapManager mapManager, ModeFindCatUI modeFindCatUI) {
 		int startIndexPeople = 0;
 		
 		List<IconPeople> iconDoneHome = new List<IconPeople>();
@@ -38,8 +38,8 @@ public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome>
 				if(e.peoples.Count < 2) currentLevelIconHome.Add(icon);
 			}
 			
-			gamePlayUI.GetIconPeopleManagerUI().Add(targets, e, startIndexPeople);
-			foreach (var icon in gamePlayUI.GetIconPeopleManagerUI().GetIconDoneHome()) {
+			modeFindCatUI.GetIconPeopleManagerUI().Add(targets, e, startIndexPeople);
+			foreach (var icon in modeFindCatUI.GetIconPeopleManagerUI().GetIconDoneHome()) {
 				iconDoneHome.Add(icon);
 				currentLevelIconHome.Remove(icon.currentTarget);
 			}
@@ -52,7 +52,7 @@ public class IconHomeManagerUI : PoolingManagerBase<IconHomeManagerUI, IconHome>
 			icon.ComeHome(true);
 		}
 
-		gamePlayUI.GetIconPeopleManagerUI().SetAmountPeople(startIndexPeople);
+		modeFindCatUI.GetIconPeopleManagerUI().SetAmountPeople(startIndexPeople);
 		parentHomeHor.gameObject.SetActive(false);
 		
 		amount = startIndexPeople;

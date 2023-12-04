@@ -1,9 +1,10 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GamePlayUI : MonoBehaviour
+public class ModeFindCatUI : MonoBehaviour
 {
 	[SerializeField] private IconHomeManagerUI iconHomeManagerUI;
 	[SerializeField] private IconPeopleManagerUI iconPeopleManagerUI;
@@ -72,10 +73,26 @@ public class GamePlayUI : MonoBehaviour
 		return messageManagerUI;
 	}
 
+	private int currentDiamond = 0;
 	public void ShowUIWin() {
-		// show trong 0.6s đợi message fade
-		winUI.SetValueDiamond(GameSettings.Ins.diamondPassLevel);
 		winUI.Show();
+		currentDiamond = 0;
+	}
+
+	public void AddValueDiamondWinUI(int value)
+	{
+		StartCoroutine(AddValueDiamondWinUIAsync(value));
+	}
+
+	private IEnumerator AddValueDiamondWinUIAsync(int value)
+	{
+		float timeAnim = 0.03f;
+		for (int i = 0; i < value; i++)
+		{
+			currentDiamond += 1;
+			winUI.SetValueDiamond(currentDiamond, timeAnim);
+			yield return new WaitForSeconds(timeAnim);
+		}
 	}
 	
 	public void EnableRaycastTargetIconPeople(bool enable) {

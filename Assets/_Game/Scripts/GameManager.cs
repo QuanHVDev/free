@@ -13,8 +13,7 @@ public class GameManager : IronPirate.SingletonBehaviourDontDestroy<GameManager>
         ModeTownManager.Instance.Init();
         RewardUIManager.Instance.Init();
         MainUIManager.Instance.Init();
-        var pro = UserDataController.Instance.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
-        MainUIManager.Instance.ChangeValueDiamond(pro.diamond);
+        UpdateDiamond();
     }
 
     private Coroutine Coroutine;
@@ -54,6 +53,12 @@ public class GameManager : IronPirate.SingletonBehaviourDontDestroy<GameManager>
     public void SetModeManager(ModeManager currentMode)
     {
         this.currentMode = currentMode;
+    }
+
+    public void UpdateDiamond()
+    {
+        var pro = UserDataController.Instance.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+        MainUIManager.Instance.ChangeValueDiamond(pro.diamond);
     }
 }
 

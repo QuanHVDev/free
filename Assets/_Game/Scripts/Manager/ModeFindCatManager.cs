@@ -10,7 +10,7 @@ public class ModeFindCatManager : ModeManager
 {
     public static ModeFindCatManager Instance { get; private set; }
     
-    [SerializeField] private GamePlayUI gamePlayUI;
+    [FormerlySerializedAs("gamePlayUI")] [SerializeField] private ModeFindCatUI modeFindCatUI;
     [SerializeField] private Transform spawnMap;
     
     [SerializeField] private DataLevelsSO dataLevelsSO;
@@ -45,10 +45,10 @@ public class ModeFindCatManager : ModeManager
             SetUpActionCurrentMapManager();
             var element = camera.GetVirtualCameraFree(currentMapManager.GetCurrentCameraPosition());
             camera.MoveCameraToVirtualCamera(element, SetUpTutorial);
-            gamePlayUI.GetIconHomeManagerUI().Add(currentMapManager, gamePlayUI);
-            gamePlayUI.GetIconPeopleManagerUI()
-                .SetAllHomesForIcon(gamePlayUI.GetIconHomeManagerUI().GetCurrentIconForMap());
-            gamePlayUI.GetMessageManagerUI().Init(currentMapManager.GetMessagesForHint());
+            modeFindCatUI.GetIconHomeManagerUI().Add(currentMapManager, modeFindCatUI);
+            modeFindCatUI.GetIconPeopleManagerUI()
+                .SetAllHomesForIcon(modeFindCatUI.GetIconHomeManagerUI().GetCurrentIconForMap());
+            modeFindCatUI.GetMessageManagerUI().Init(currentMapManager.GetMessagesForHint());
 
             LoadHealth();
         }
@@ -56,8 +56,8 @@ public class ModeFindCatManager : ModeManager
             SpawnLevel(pro.currentLevel, pro.currentStep);
         }
 
-        gamePlayUI.UpdateTitle();
-        gamePlayUI.InitListLevel(dataLevelsSO);
+        modeFindCatUI.UpdateTitle();
+        modeFindCatUI.InitListLevel(dataLevelsSO);
     }
 
     protected override void Awake()
@@ -135,7 +135,7 @@ public class ModeFindCatManager : ModeManager
         var process = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
         if (!process.IsShowSwipe && !process.IsShowHint && !process.IsShowSkip)
         {
-            gamePlayUI.TurnOffTutorialUI();
+            modeFindCatUI.TurnOffTutorialUI();
         }
         else
         {
@@ -147,11 +147,11 @@ public class ModeFindCatManager : ModeManager
             }else if (process.IsShowSkip)
             {
                 Time.timeScale = 0.7f;
-                gamePlayUI.ShowHintObj(gamePlayUI.BtnSkip.transform, () =>
+                modeFindCatUI.ShowHintObj(modeFindCatUI.BtnSkip.transform, () =>
                 {
                     Time.timeScale = 1f;
                     DoSkip();
-                    gamePlayUI.ShowButtonSkip(false);
+                    modeFindCatUI.ShowButtonSkip(false);
                 });
                 process.IsShowSkip = false;
                 udc.SetData(UserDataKeys.USER_PROGRESSION, process);
@@ -159,7 +159,7 @@ public class ModeFindCatManager : ModeManager
             else if(process.IsShowSwipe)
             {
                 process.IsShowSwipe = false;
-                gamePlayUI.ShowUISwipe(true);
+                modeFindCatUI.ShowUISwipe(true);
                 udc.SetData(UserDataKeys.USER_PROGRESSION, process);
             }
         }
@@ -168,10 +168,10 @@ public class ModeFindCatManager : ModeManager
     IEnumerator SetupAsync()
     {
         yield return new WaitForSeconds(0.1f);
-        Transform s = gamePlayUI.GetIconPeopleManagerUI().Icons[1].transform;
-        var list = gamePlayUI.GetIconPeopleManagerUI().Icons[1].Targets;
+        Transform s = modeFindCatUI.GetIconPeopleManagerUI().Icons[1].transform;
+        var list = modeFindCatUI.GetIconPeopleManagerUI().Icons[1].Targets;
         Transform e = list[Random.Range(0, list.Count)].transform;
-        gamePlayUI.SetHint(s, e);
+        modeFindCatUI.SetHint(s, e);
     }
 
     public void NextLevel()
@@ -215,8 +215,8 @@ public class ModeFindCatManager : ModeManager
 
     private IEnumerator RemovePreMapAsync(bool isForceDestroyMap)
     {
-        gamePlayUI.GetIconHomeManagerUI().FinishMap();
-        gamePlayUI.GetIconPeopleManagerUI().FinishMap();
+        modeFindCatUI.GetIconHomeManagerUI().FinishMap();
+        modeFindCatUI.GetIconPeopleManagerUI().FinishMap();
         currentMapManager.DeleteAllCats();
         if (currentMapManager.currentIndexStep >= currentMapManager.GetCountMaps() || isForceDestroyMap)
         {
@@ -230,10 +230,10 @@ public class ModeFindCatManager : ModeManager
 
     private void LoadLevelUI()
     {
-        gamePlayUI.GetIconHomeManagerUI().Add(currentMapManager, gamePlayUI);
-        gamePlayUI.GetIconPeopleManagerUI().SetAllHomesForIcon(gamePlayUI.GetIconHomeManagerUI().GetCurrentIconForMap());
-        gamePlayUI.GetMessageManagerUI().Init(currentMapManager.GetMessagesForHint());
-        gamePlayUI.UpdateTitle();
+        modeFindCatUI.GetIconHomeManagerUI().Add(currentMapManager, modeFindCatUI);
+        modeFindCatUI.GetIconPeopleManagerUI().SetAllHomesForIcon(modeFindCatUI.GetIconHomeManagerUI().GetCurrentIconForMap());
+        modeFindCatUI.GetMessageManagerUI().Init(currentMapManager.GetMessagesForHint());
+        modeFindCatUI.UpdateTitle();
     }
 
     private void LoadLevel(int level, int step = -1) {
@@ -249,10 +249,13 @@ public class ModeFindCatManager : ModeManager
         camera.MoveCameraToVirtualCamera(element, SetUpTutorial);
     }
 
+    private int diamond;
     private void SetUpActionCurrentMapManager() {
         currentMapManager.OnFinishLevel += () =>
         {
-            gamePlayUI.ShowUIWin();
+            diamond = GameSettings.Ins.diamondPassLevel;
+            modeFindCatUI.ShowUIWin();
+            modeFindCatUI.AddValueDiamondWinUI(diamond);
             currentMapManager.currentIndexStep++;
 
             var pro = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
@@ -267,8 +270,8 @@ public class ModeFindCatManager : ModeManager
             }
             
             pro.currentLevel = indexMapManager;
-            pro.diamond += GameSettings.Ins.diamondPassLevel;
-            RewardUIManager.Instance.AddDiamondNeedShow(GameSettings.Ins.diamondPassLevel);
+            pro.diamond += diamond;
+            RewardUIManager.Instance.AddDiamondNeedShow(diamond);
 
             udc.SetData(UserDataKeys.USER_PROGRESSION, pro);
         };
@@ -279,7 +282,7 @@ public class ModeFindCatManager : ModeManager
             camera.ChangeState(x, y);
             if (currentMapManager.CountCatMoved < currentMapManager.MaxCatNeedMove)
             {
-                gamePlayUI.ShowButtonSkip(true);
+                modeFindCatUI.ShowButtonSkip(true);
             }
             SetUpTutorial();
         };
@@ -288,32 +291,26 @@ public class ModeFindCatManager : ModeManager
             camera.ChangeState(element.triggerNameAnimationState, CameraManager.StateVirtualCamera.Wait);
             element.VirtualCamera.gameObject.SetActive(true);
             SetUpTutorial();
-            gamePlayUI.ShowButtonSkip(false);
+            modeFindCatUI.ShowButtonSkip(false);
         };
 
-        currentMapManager.OnMapBusy += gamePlayUI.EnableRaycastTargetIconPeople;
-        currentMapManager.OnCorrect += gamePlayUI.SetSmoothBar;
+        currentMapManager.OnMapBusy += modeFindCatUI.EnableRaycastTargetIconPeople;
+        currentMapManager.OnCorrect += modeFindCatUI.SetSmoothBar;
     }
 
 
     private void LoadHealth() {
         currentHealth = maxHealth;
-        gamePlayUI.GetIconHealthManagerUI().Init(currentHealth);
+        modeFindCatUI.GetIconHealthManagerUI().Init(currentHealth);
     }
 
     public void Incorrent() {
         --currentHealth;
-        gamePlayUI.GetIconHealthManagerUI().LoseHealth();
+        modeFindCatUI.GetIconHealthManagerUI().LoseHealth();
     }
 
     public MapManager GetCurrentMapManager() {
         return currentMapManager;
-    }
-
-    [ContextMenu("DeleteData")]
-    public void DeleteData()
-    {
-        PlayerPrefs.DeleteAll();
     }
 
     [ContextMenu("SetData")]
@@ -333,5 +330,17 @@ public class ModeFindCatManager : ModeManager
     public void DoSkip()
     {
         IsSkip = true;
+    }
+
+    public void Getx2WithAds()
+    {
+        Debug.Log("TODO: Show ads");
+        modeFindCatUI.AddValueDiamondWinUI(diamond);
+        
+        var pro = udc.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+        pro.diamond += diamond;
+        udc.SetData(UserDataKeys.USER_PROGRESSION, pro);
+        RewardUIManager.Instance.AddDiamondNeedShow(diamond);
+
     }
 }

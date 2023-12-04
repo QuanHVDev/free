@@ -21,6 +21,7 @@ public class ModeTownUI : BaseUIElement
     [SerializeField] private Button btnAddCat;
     [SerializeField] private ProcessBar processBar;
     [SerializeField] private DotweenRunAnim gift;
+    [SerializeField] private TMP_Text txtPriceRollCat;
 
     private void Start()
     {
@@ -52,6 +53,11 @@ public class ModeTownUI : BaseUIElement
         
         Hide();
         processBar.Init();
+    }
+
+    public void SetTextRollCat(int price)
+    {
+        txtPriceRollCat.text = price.ToString();
     }
 
     public void SetValueForProcessBar(float precent)

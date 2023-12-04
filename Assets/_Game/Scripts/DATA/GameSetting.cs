@@ -11,6 +11,11 @@ public class GameSettings : ScriptableObject {
         private static void OpenGameSettings() {
             UnityEditor.Selection.activeObject = GameSettings.Ins;
         }
+        
+        [UnityEditor.MenuItem("GAME/DeleteAllData")]
+        private static void DeleteAllData() {
+            PlayerPrefs.DeleteAll();
+        }
 #endif
 
     private static GameSettings _ins;
@@ -24,6 +29,7 @@ public class GameSettings : ScriptableObject {
     }
 
     public int diamondPassLevel = 10;
+    public int diamondPriceRollCat = 1;
     
     public CatsDataSO CatsDataSO;
     public TownLevelsSO TownsDataSO;

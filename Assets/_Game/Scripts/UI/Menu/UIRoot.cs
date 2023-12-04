@@ -76,7 +76,7 @@ public abstract class BaseUIElement : MonoBehaviour
     public UIRoot Root { get; set; }
     public abstract void OnAwake();
 
-    public void Show(float toAlpha = 0.75f)
+    public virtual void Show(float toAlpha = 0.75f)
     {
         gameObject.SetActive(true);
         if (bg)

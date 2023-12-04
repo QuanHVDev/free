@@ -59,6 +59,7 @@ public class ModeTownManager : ModeManager
         
         modeTownUI = UIRoot.Ins.Get<ModeTownUI>();
         modeTownUI.Init();
+        modeTownUI.SetTextRollCat(GameSettings.Ins.diamondPriceRollCat);
         InitSelectionCat();
         townLevels = GameSettings.Ins.TownsDataSO;
         
@@ -293,6 +294,11 @@ public class ModeTownManager : ModeManager
     private int amountCat = 3;
     public void AddCatTown()
     {
+        var p = UserDataController.Instance.GetData<ProcessData>(UserDataKeys.USER_PROGRESSION, out _);
+        p.diamond -= GameSettings.Ins.diamondPriceRollCat;
+        UserDataController.Instance.SetData(UserDataKeys.USER_PROGRESSION, p);
+        GameManager.Instance.UpdateDiamond();
+        
         List<PeopleSO> peoples = new List<PeopleSO>();
         
         var data = new List<PeopleSO>(GameSettings.Ins.CatsDataSO.ListData);
